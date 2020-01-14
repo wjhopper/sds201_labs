@@ -1,4 +1,12 @@
+# R Files
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+# Ruby/Jekyll Files
+.bundle
+_site
+.sass-cache
+.jekyll-metadata
+
