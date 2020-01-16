@@ -36,7 +36,14 @@ paginate: 15
 sass:
   sass_dir: assets/css
   style: :nested
-  
+
+defaults:
+  -
+    scope:
+      type: "posts"
+    values:
+      permalink: /posts/:title
+
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
