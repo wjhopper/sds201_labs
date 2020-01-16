@@ -1,0 +1,36 @@
+---
+title: "Intro to R with Rstudio"
+author: "Will Hopper"
+date: "`r format(Sys.Date(), '%b %d, %Y')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    css: ["default", "default-fonts", "../../assets/css/sds.css"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+root_dir <- rprojroot::is_rstudio_project$find_file()
+```
+
+
+## The R Language
+
+- R is a programming language and computing environment specialized for statistical analysis, data manipulation and reporting.
+- We can use it to perform statistical tests, create data visualizations, connect to databases, write files to disk, etc...
+- Despite its focus being data and statistics, it is still very feature rich, and relatively easy to learn, as far as programming languages go. 
+- Download at https://cran.r-project.org/
+
+---
+## Rstudio 
+
+- Rstudio is a graphical front end that simplifies common tasks, prettifies things, and makes it easier to use R. 
+- Rstudio is like a workbench and toolbox, where R is like a hammer. 
+    - It certainly is possible for you to use your hammer to build something *without* a workbench and toolbox
+    - But it's nice to have the workbench to rest things on while you work, and to have the toolbox holding your nails right next to your hammer, etc. 
+- Download at https://www.rstudio.com/products/rstudio/download#download

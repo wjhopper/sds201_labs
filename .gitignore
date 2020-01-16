@@ -10,3 +10,6 @@ _site
 .sass-cache
 .jekyll-metadata
 
+# rendered .html files in source dirs
+labs_source/*/*.html
+labs_source/*/*/remark-css*

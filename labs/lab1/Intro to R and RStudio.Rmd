@@ -4,7 +4,7 @@ author: "Will Hopper"
 date: "`r format(Sys.Date(), '%b %d, %Y')`"
 output:
   xaringan::moon_reader:
-    lib_dir: "libs"
+    lib_dir: libs
     nature:
       highlightStyle: github
       highlightLines: true

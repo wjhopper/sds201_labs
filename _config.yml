@@ -44,6 +44,10 @@ defaults:
     values:
       permalink: /posts/:title
 
+collections:
+  labs:
+    order:
+      - "Intro to R and RStudio"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -55,3 +59,5 @@ exclude:
    - renv/
    - renv.lock
    - sds201_labs.Rproj
+   - labs_source/
+   - R/
