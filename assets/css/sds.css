@@ -5,11 +5,43 @@ h2 { margin: .25em 0;}
   font-size: 24px;
 }
 
+.remark-slide-scaler {
+  overflow: hidden;
+}
+
 .remark-code {
   font-size: 20px;
 }
 
+.remark-inline-code {
+    color: #333;
+    background: #f8f8f8;
+    padding: 0 .05em
+}
+
 li {
-  margin-bottom: 1rem;
-  
+  margin: 1rem;
+}
+
+ul ul li {
+  margin: .5em;
+}
+
+.noverticalmargin p {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.noverticalmargin img {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.compactlist li {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.hljs pre {
+  margin: 0;
 }

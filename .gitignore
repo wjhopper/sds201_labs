@@ -3,6 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*_cache
 
 # Ruby/Jekyll Files
 .bundle
