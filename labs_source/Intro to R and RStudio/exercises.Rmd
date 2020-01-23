@@ -14,10 +14,12 @@ output:
 library(knitr) 
 ```
 
-Please put all answers (code chunks and text answers below the "Solution" header for each exercise. 
+Please put all answers (both code chunks and text answers) below the "Solution" header for each exercise. 
 
 <div id="license">
 Remember to save your work as you go along! Click the save button in the upper left hand corner of the R Markdown window. 
+
+It is a good idea to try kitting your document as you go along, to make sure your document is knitting, and that your html file includes Exercise headers, text, and code. Note that knitting automatically saves your Rmd file too!
 </div>
 
 
@@ -34,8 +36,7 @@ First let's practice some basic formatting. Using <a href="https://rmarkdown.rst
 Answer the following with code in a code chunk (no text necessary). Remember that the code is just **instructions** for R. You need to run the code chunk to make R execute those instructions!
 
 -   Create a variable called `y` with the value of 7 
--   Multiply `x` by `y`, and store the answer in a variable named `z` like so: `z <- x * y`
--   You should now see `favorite_movie`, `x`, `v`, `y`, and `z` all in your Environment pane 
+-   Multiply `y` by `2.75`, and store the answer in a variable named `z`
     
 ### Solution
 
@@ -45,14 +46,9 @@ Run the following mathematical operation in a code chunk: `6 + 3`. Where does th
 ### Solution
 
 ## Exercise
-In a new code chunk, save the results of `6 + 3` as a variable called a.Does the answer appear? (please answer with **text**). Where does the object `a` show up? (please answer with **text**). Next type `a` into the code chunk and re-run the code chunk. What happens? (please answer with **text**)
+In a new code chunk, save the results of `6 + 3` as a variable called `a`. Does the answer appear? (please answer with **text**). Where does the object `a` show up? (please answer with **text**). Next type `a` into the code chunk and re-run the code chunk. What happens? (please answer with **text**)
 
 ### Solution
-
-<div id="license">
-It is a good idea to try kitting your document from time to time as you go along! Go ahead, and make sure your document is knitting, and that your html file includes Exercise headers, text, and code. Note that knitting automatically saves your Rmd file too!
-</div>
-
 
 ## Exercise
 Run following command in a new code chunk. `a^2`. What does the `^` operator do? (please answer with **text**)
@@ -60,12 +56,12 @@ Run following command in a new code chunk. `a^2`. What does the `^` operator do?
 ### Solution
 
 ## Exercise
-Type the following command into a new code chunk. `sum(a, x, y)`.`sum` is a function. Based on the output, what do you think the `sum` function does? (please answer with **text**)
+Type the following command into a new code chunk. `sum(a, 10, -1)`.`sum` is a function. Based on the output, what do you think the `sum` function does? (please answer with **text**)
 
 ### Solution
 
 ## Exercise
-Click the little broom icon in the upper right hand corner of the **Environment** pane. Click yes on the window that opens. What happened? (please answer with **text**, and don't freak out)
+Click the little broom icon in the upper right hand corner of the **Environment** pane. Click yes on the window that opens. What happened? (please answer with **text**)
 
 ### Solution
 
@@ -75,10 +71,10 @@ Go to the **Run** button at the top right of the R Markdown pane, and choose **R
 ### Solution
 
 ## Exercise
-Recall the vector `v` we created earlier. Copy, paste and run the following in a code chunk. What does this code accomplish? (please answer with **text**)
+Consider the following code chunk. What is the value of the variable `y` before running this code chunk. What is the value of the variable `y` after running this code chunk? Why? (please answer with **text**)
 
 ```{r eval = F}
-v + 2
+y + 2
 ```
 
 ### Solution
