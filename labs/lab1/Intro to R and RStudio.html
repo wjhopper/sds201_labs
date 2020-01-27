@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 
 # Intro to R with Rstudio
 ### Will Hopper
-### Jan 16, 2020
+### Jan 27, 2020
 
 ---
 
@@ -37,6 +37,338 @@ class: center, middle, inverse, title-slide
     - It certainly is possible for you to use your hammer to build something *without* a workbench and toolbox
     - But it's nice to have the workbench to rest things on while you work, and to have the toolbox holding your nails right next to your hammer, etc. 
 - Download at https://www.rstudio.com/products/rstudio/download#download
+
+---
+## The Rstudio IDE*
+
+.noverticalmargin[
+![Rstudio IDE layout](img/rstudio.png)
+
+*Integrated Development Environment
+]
+
+---
+
+## 1: The Console
+
+
+- The console pane allows interactive use of the R interpreter
+    - The R interpreter is the program on your computer that listens to incoming R commands (called *expressions*), evaluates them, and gives you back a result or an error.
+- Type input at the prompt (the `&gt;` symbol), press Enter, and output is printed below the command
+- Examples with basic math (`*` = multiplication, `/` = division)
+
+
+```r
+2+2
+```
+
+```
+## [1] 4
+```
+
+```r
+# R knows the order of operations
+2*10 + 3/10
+```
+
+```
+## [1] 20.3
+```
+
+---
+
+## Console Tricks
+
+- Tab completion of variables and functions
+    - Try it by typing `mea` and pressing Tab
+- Navigate the history of commands you've entered with the up and down arrow keys
+
+---
+
+## Activity: **Try out the console**
+
+Try out several basic mathematical operations
+
+- `+` = addition
+- `-` = subtraction
+- `/` = division
+- `*` = multiplication
+- `^` = power of
+
+Practice using the up-arrow key to navigate your history!
+
+---
+
+## 2: The Editor
+
+- The editor pane is where you can create, modify, and save plain text documents
+- A central purpose is to help you create R scripts, which is just a text file that contains valid R code (the same kind of commands you would enter into the console)
+- R scripts are more like stand-alone computer programs. 
+
+---
+
+## Comments
+
+- In addition to valid code, R scripts can contain *comments**, which are short explanations of what your code is are doing, and why it is being done this way!
+- You write a comment by prefixing the comment's text with the pound sign `#`
+- Comments can go on their own line, or at the end of an R expression
+  
+
+```r
+# Hi I am a comment. 
+# The R interprer ignores me!
+2*10 + 3/10 # comments can go here too!
+```
+
+```
+## [1] 20.3
+```
+
+---
+
+## Editor Tricks
+
+- When you have an R script open in the editor, you can run all the code it contains with the *source* command.
+    + Ctrl + Shift + S shortcut on PC 
+- You can run the code on the line your cursor is on using the *run* command
+    + Ctrl + ENTER shortcut on PC 
+- You can highlight blocks of code, and run all the lines in that block with *run*  or Ctrl + Enter
+
+---
+
+## R Scripts vs. R Console
+
+- Think of the console as a quick calculator, or a piece of scratch paper
+    - Use it for doing simple calculations, or testing out an idea
+- Think of the R scripts as a "recipe" for things you want to easily repeat
+    - So, if you are doing a task with multiple steps and want to save your work for later use, write an R script!
+
+---
+
+## Activity: **Try out the editor**
+
+1. Create a new R script (Try out **Ctrl** + **Shift** + **N**)
+2. Copy all the basic math operations you did in the console to your script
+3. Save it (anywhere, just take note of where)
+4. Open it again, and run it 3 different ways
+    + Line by line
+    + Highlight all lines and run 
+    + Source the document
+
+---
+
+## 3: The Environment &amp; Objects
+
+The environment pane shows you a list of all the R objects available to you.
+
+- An R object is like a variable from algebra: they are named stand-ins for pieces of R code that you can utilize.
+- An object (a.k.a. variable) is defined by a name and value pair, linked together by the *assignment operator*
+    - The assignment operator is the symbol `&lt;-`. 
+
+---
+
+## 3: Object Examples {.smaller}
+
+Here let's create an R object called `score` with the value set to the expression `2*10 + 3/10` 
+
+```r
+score &lt;- 2*10 + 3/10
+score
+```
+
+```
+## [1] 20.3
+```
+
+Now we can use the variable `score` as a stand-in for the value `20.3` anywhere we want!.
+
+```r
+new_score &lt;- score*3 # same as 20.3*3
+new_score
+```
+
+```
+## [1] 60.9
+```
+
+We can change the value of the object `score`, but it doesn't affect the object `new_score`.
+
+```r
+score &lt;- 1
+new_score
+```
+
+```
+## [1] 60.9
+```
+
+---
+
+## 4: Miscellaneous | Tabs to know
+
+- History: List of commands you've given
+    + Double click to re-evaluate
+- Plots: Tab where graphics are displayed after they are made/"printed"
+- Packages: List of installed and loaded packages
+    + Groups of additional commands you can load into R
+    + Checked = loaded
+- Help: Documentation on R functions
+    + `?mean`
+
+---
+
+## R Markdown
+
+In addition to R scripts, there is a second kind of executable document you can write called an **R Markdown document**.
+
+Just like an R script, R Markdown files can contain R code that will be evaluated. 
+
+But they can also contain formatted human language (e.g., a sentence with italics, or a bulleted list), other computer languages (e.g., both R and Python Code), and computer output (e.g., the result of multiplying two numbers, or a plot of a data set).
+
+The final product of our work becomes a typeset PDF or HTML document explaining all of our work and results.
+
+---
+
+## Why R Markdown?
+
+R Markdown documents solve the awkward problem of having our work (e.g., R code we've written to answer a HW problem) separated from the reporting of our solution (e.g., the PDF we upload on Moodle).
+
+By keeping everything in one document, your work and your answers are naturally kept in sync.
+
+In this way, R Markdown documents are a lit like a Word document that has the R interpreter built into it!
+
+There is a lot to learn about about R Markdown, and you don't *have* to use R Markdown documents to code in R, but it's absolutely worth it to learn.
+
+---
+
+## Getting Started
+
+.compactlist[
+1. In RStudio, go to File --&gt; New File --&gt; R Markdown
+2. In the a dialogue box, select HTML as our output format.
+3. Choose your title and set yourself as author.
+4. Hit the "Knit HTML" button in the editor pane, save the document, and something like this should pop up:
+]
+
+![Rmarkdown Template](img/Rmarkdownsample.png)
+
+---
+
+## Getting Started
+
+Congrats on creating your very first R Markdown document!
+
+If you look in the folder where you saved the R Markdown document, you should see a new HTML file with the same name as you R Markdown document.
+
+This HTML file is the output of *knitting* your R Markdown document, which is the term used to describe evaluating all the code in the document, merging the output back together with the original document, and converting it to a new, easier to read format (HTML in this case).
+
+Now let's take a closer look at this R Markdown template, and try to understand it better by making some connections between the input and the output
+---
+
+## The YAML Header
+At the very top of the document are some key/value pairs fenced off from the rest of the document by three dashes at the top and bottom, like this:
+
+```yaml
+---
+title: "Sample Doc"
+author: "William Hopper"
+date: "1/22/2020"
+output: html_document
+---
+```
+
+This section is called the **YAML Header**, or sometimes the frontmatter. The YAML header is there to tell the R interpreter information about how to render the final output document.
+
+For example, the &lt;kbd&gt; `output: html_document` &lt;/kbd&gt; option tells interpreter to construct an HTML document (as opposed to a PDF).
+
+---
+
+## R Code Chunks
+
+Below the YAML header, you'll see the following block of lines with a grey background:
+
+.hljs[
+````
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+````
+]
+
+This is an **R Code chunk**. All the R code that you want to be run need to go inside these special chunks. R Code chunks are defined by 3 things
+
+1. Three backticks at the start of a line: ```
+2. The lowercase letter r inside curly braces immediately after the three backticks
+3. Three more backticks on another line
+
+The code chunk can optionally have a name (the chunk above is named `setup`) and specify any *chunk options*. The chunk above has the option `include=FALSE`. This option tells R to not display the code itself or any of it's result in the output document.
+
+---
+
+## R Code Chunks
+
+This sample document has a total of 3 code chunks that all get evaluated when the document is knit to HTML. Let's take a closer look at the second one:
+
+![chunk2](img/chunk2.png)
+
+And now let's look at the corresponding section of the output document:
+
+.noverticalmargin[
+![output of chunk 2](img/output.png)
+
+The results from running the `summary(cars)` code have been inserted into the document!
+]
+
+---
+## Interactively Running R Code Chunks
+
+In the top right corner of the code chunk, there is a green "play" arrow. You can press this button to run the code in this chunk interactively, like it was part of a normal R Script!
+
+![chunk2](img/chunk2.png)
+
+In fact, we can even still run code in R code chunks line-by-line by placing your cursor on that line, and pressing Ctrl + Enter, or highlighting multiple lines and pressing Ctrl + Enter, just like the code in a normal R Script!
+
+---
+
+### Inline vs. Console output
+By default, the results from running R Code chunks interactively are shown in the editor window, just below the code itself.
+
+If you like this, great. If you don't, you can get output to show "normally" in the console by clicking the gear icon next to the "Knit" button, and selecting "Chunk Output in Console" instead of "Chunk Output Inline".
+
+.center[![inline or console](img/inline.png)]
+
+---
+
+## Styling Text with Markdown
+
+Around each of the code chunks in the document you'll see text describing what is being done. But you'll also see that there are some special character scattered throughout as well.
+
+For example, a few lines start with two pound-signs and then a space. And the word "knit" has two asterisks at the beginning and the end, with no spaces. What are these doing here?
+
+These special character sequences are examples of **Markdown** formatting, and they are essentially a simplified way to specify how some elements in the document should appear. If you open the HTML file you created as output in a web browser, you'll see that the lines starting the two pound-signs appear as larger section titles, while "knit" has been bolded.
+
+&lt;span class="center"&gt;
+&lt;img src="img/markdown.png"  width=75%&gt;
+&lt;/span&gt;
+
+---
+
+## Further Reading and Examples
+
+- [An Introduction to RMarkdown](https://rmarkdown.rstudio.com/lesson-1.html) (very thorough)
+- [A Quick-Reference guide](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf) (keep this handy, also see Help --&gt; Markdown Quick Reference in RStudio!)
+- [Chunk Options Documentation](http://yihui.name/knitr/options/) (Don't be overwhelmed, you can probably get 90% of things you need done with about 20% of the options)
+- [My Self-Documenting Example](https://raw.githubusercontent.com/wjhopper/psych640-labs/gh-pages/data/rmarkdown_example.Rmd) (good for trying things out)
+
+---
+
+
+## Problem Sets
+
+- See Problem Set 1 at https://wjhopper.github.io/sds201_labs/labs/lab1/Lab%201%20Exercises.html (or on moodle)
+- Download the template at https://wjhopper.github.io/sds201_labs/labs/lab1/Lab%201%20Exercises.html (or on moodle)
+- Open the template in RStudio and fill in your solutions in the `## Solution` section under each problem
+- Turn in the knitted HTML file on Moodle!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

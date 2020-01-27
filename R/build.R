@@ -37,6 +37,9 @@ for (lab in all_labs) {
 
   ## Rename the lab output directory in numerical sequence
   numerical_lab_dir <- file.path(output_dir, paste0("lab", counter))
+  if (file.exists(numerical_lab_dir)) {
+    unlink(numerical_lab_dir, recursive = TRUE)
+  }
   file.rename(from=file.path(output_dir, lab), to=numerical_lab_dir)
   
   ## Remove solutions from site output
