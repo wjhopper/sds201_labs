@@ -46,6 +46,10 @@ for (lab in all_labs) {
   solutions <- list.files(numerical_lab_dir, pattern = "solution", full.names = TRUE)
   file.remove(solutions)
   
+  ## Remove cache from site output
+  cache <- list.files(numerical_lab_dir, pattern = "_cache$", full.names = TRUE)
+  unlink(cache, recursive = TRUE)
+  
   ## Rename lab Rmd template and assignment file to have informative names
   template <- list.files(file.path(numerical_lab_dir), pattern = "exercises.Rmd", full.names = TRUE, ignore.case = TRUE)
   assignment <- list.files(file.path(numerical_lab_dir), pattern = "exercises.html", full.names = TRUE, ignore.case = TRUE)
