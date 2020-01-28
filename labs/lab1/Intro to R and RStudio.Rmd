@@ -72,7 +72,7 @@ root_dir <- rprojroot::is_rstudio_project$find_file()
 
 ---
 
-## Activity: **Try out the console**
+## Activity: Try out the console
 
 Try out several basic mathematical operations
 
@@ -127,7 +127,7 @@ Practice using the up-arrow key to navigate your history!
 
 ---
 
-## Activity: **Try out the editor**
+## Activity: Try out the editor
 
 1. Create a new R script (Try out **Ctrl** + **Shift** + **N**)
 2. Copy all the basic math operations you did in the console to your script
@@ -264,7 +264,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is an **R Code chunk**. All the R code that you want to be run need to go inside these special chunks. R Code chunks are defined by 3 things
 
-1. Three backticks at the start of a line: ```
+1. Three backticks at the start of a line
 2. The lowercase letter r inside curly braces immediately after the three backticks
 3. Three more backticks on another line
 
@@ -297,7 +297,7 @@ In fact, we can even still run code in R code chunks line-by-line by placing you
 
 ---
 
-### Inline vs. Console output
+## Inline vs. Console output
 By default, the results from running R Code chunks interactively are shown in the editor window, just below the code itself.
 
 If you like this, great. If you don't, you can get output to show "normally" in the console by clicking the gear icon next to the "Knit" button, and selecting "Chunk Output in Console" instead of "Chunk Output Inline".
