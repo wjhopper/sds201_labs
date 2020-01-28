@@ -149,7 +149,7 @@ The environment pane shows you a list of all the R objects available to you.
 
 ---
 
-## 3: Object Examples {.smaller}
+## 3: Object Examples
 
 Here let's create an R object called `score` with the value set to the expression `2*10 + 3/10` 
 ```{r assigment1}
@@ -202,7 +202,7 @@ R Markdown documents solve the awkward problem of having our work (e.g., R code 
 
 By keeping everything in one document, your work and your answers are naturally kept in sync.
 
-In this way, R Markdown documents are a lit like a Word document that has the R interpreter built into it!
+In this way, R Markdown documents are a bit like a Word document that has the R interpreter built into it!
 
 There is a lot to learn about about R Markdown, and you don't *have* to use R Markdown documents to code in R, but it's absolutely worth it to learn.
 
@@ -333,6 +333,6 @@ These special character sequences are examples of **Markdown** formatting, and t
 ## Problem Sets
 
 - See Problem Set 1 at https://wjhopper.github.io/sds201_labs/labs/lab1/Lab%201%20Exercises.html (or on moodle)
-- Download the template at https://wjhopper.github.io/sds201_labs/labs/lab1/Lab%201%20Exercises.html (or on moodle)
+- Download the template at https://wjhopper.github.io/sds201_labs/labs/lab1/Lab%201%20Exercises%20Template.Rmd (or on moodle)
 - Open the template in RStudio and fill in your solutions in the `## Solution` section under each problem
 - Turn in the knitted HTML file on Moodle!
