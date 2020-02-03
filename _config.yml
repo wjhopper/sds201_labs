@@ -48,6 +48,7 @@ collections:
   labs:
     order:
       - "Intro to R and RStudio"
+      - "Data Visualization with ggplot"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

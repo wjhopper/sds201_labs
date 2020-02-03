@@ -41,14 +41,19 @@ for (lab in all_labs) {
     unlink(numerical_lab_dir, recursive = TRUE)
   }
   file.rename(from=file.path(output_dir, lab), to=numerical_lab_dir)
+
+  ## Remove cache from site output
+  cache <- list.files(numerical_lab_dir, pattern = "_cache$", full.names = TRUE)
+  if (!identical(cache, character(0))) {
+    unlink(cache, recursive = TRUE)
+  }
   
   ## Remove solutions from site output
   solutions <- list.files(numerical_lab_dir, pattern = "solution", full.names = TRUE)
-  file.remove(solutions)
+  if (!identical(solutions, character(0))) {
+    unlink(solutions, recursive = TRUE)
+  }
   
-  ## Remove cache from site output
-  cache <- list.files(numerical_lab_dir, pattern = "_cache$", full.names = TRUE)
-  unlink(cache, recursive = TRUE)
   
   ## Rename lab Rmd template and assignment file to have informative names
   template <- list.files(file.path(numerical_lab_dir), pattern = "exercises.Rmd", full.names = TRUE, ignore.case = TRUE)
@@ -79,4 +84,7 @@ for (lab in all_labs) {
     file.remove(post_file)
   }
   writeLines(c(yaml_header, body), con=post_file, sep="")
+  counter <- counter + 1 # Get next lab number
 }
+
+

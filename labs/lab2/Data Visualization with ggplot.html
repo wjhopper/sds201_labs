@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Visualizing Data with ggplot</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Will Hopper" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sds.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Visualizing Data with ggplot
+### Will Hopper
+### Feb 03, 2020
+
+---
+
+
+
+
+
+## The Grammar of Graphics
+The `ggplot2` package provides a library of plotting and graphics tools that implements the ["Grammar of Graphics"](http://www.springer.com/us/book/9780387245447) (Wilkinson, 2005; Wilkinson, Anand, &amp; Grossman, 2005).
+
+Wilkinson's "Grammar of Graphics" is both a technical description of the structures used to produce quantitative visualizations, as well as a new language to describe the visual features of quantitative visualizations.
+
+In many ways, it formalizes what you intuitively know about plots and graphs already, but had no specific words for.
+
+Before going any further, let's make sure the `ggplot2` package is installed and loaded in R
+
+
+```r
+install.packages("ggplot2") # only need to do this once
+library(ggplot) # need to do this every time you open RStudio
+```
+
+---
+
+## The Grammar of Graphics
+The `ggplot` system of plotting distinguishes between four main sets of features that all visualizations posses.
+
+- Data
+    - The observations that the plot is dedicated to displaying
+- Geoms
+    - The geometric objects used to instantiate the data visually
+- Aesthetics
+    - The perceptual features of the data displayed in a plot
+- Scales
+    - The aspects of a plot that allow you to measure the aesthetics
+---
+
+## Data
+
+- The source of the observations in a ggplot is always a `data.frame` object in R
+
+- A `data.frame` is like a table of data arranged in "tidy" form
+    - Rows are all observations from one unit
+    - Columns are all measurements of one variable
+---
+
+## Aesthetics
+
+Aesthetics are the "simple" features possessed by data when they are displayed visually
+
+- The color of a datum is one of its aesthetics
+- The x position of a datum is one of its aesthetics
+- The y position of a datum is one of its aesthetics
+- The size of a datum is one of its aesthetics
+- The shape of a datum is one of its aesthetics
+
+In any visualization, aesthetics may or may not be used to carry information 
+
+  - E.g., the color of each datum may be the same, or colors may differ in order to convey that there are different groups of data.
+
+---
+
+## Geoms
+
+Geoms are the geometric objects chosen to instantiate the data visually, like points, lines, bars, or text.
+
+Choosing the right geom can bring clarity to your visualization
+
+  - The same observations could be visualized with circles, or lines, or rectangular bars, or with all 3!
+
+Different geoms have different aesthetics
+  
+  - A bar can't have a shape aesthetic (it's already a rectangle), but it can take on different border colors, different fill colors, and different positions
+  - A line can't have a shape aesthetic (it's a line) or a fill aesthetic (it's 1D, you can't fill it), but it can have different types (dotted, dashed, etc) and line colors.
+
+---
+
+## Scales
+Scales are the features of a plot that allow you to measure the aesthetics (i.e., map them back from colors and shapes to the variable and values of the dataset)
+
+  - The ticks and labels on the x axis might allow you to match axis position with a specific timepoint
+  - The colors and labels in a legend allow you to match colors to a specific group
+  
+The general term "scales" is chosen over the more common term "legend" because these features of the plot are used to measure and map many different aesthetics, discrete or continuous.
+
+---
+
+## ggplot is dataset-driven plotting
+The ggplot tool set is specifically oriented around creating a plot from your *dataset*, rather than from individual vectors.
+
+In my view, this is the best conceptual model to have: all plots begin with data, and data are never a set of values without a context. 
+
+This is the main reason we choose data frames as the structure to hold our data in R. Data frames allows us to efficiently organize our data by the unique observations we've made, and each variable we've made observations of.
+
+So the main aim of the `ggplot` tool set is to take the relational structure you've already defined in your data frame and translate it into a visualization via *aesthetic mappings*.
+
+---
+
+## Mapping variables to aesthetics
+Making a plot with `ggplot2` always begins with a call to the `ggplot` function, which takes 2 arguments:
+
+  - `data`: The name of the data frame which holds the information you'd like to plot
+  - `mapping:` The list of aesthetic mappings to use for the plot
+
+---
+
+## Mapping variables to aesthetics
+The `mapping` argument requires a special list of values created by the function `aes`. The `aes` function constructs this list when you provide it special key/value pairs 
+
+  - The "keys" are unquoted names of plot aesthetics (`x`, `y`, `color`, `shape`, `linetype`, etc.)
+  - The "values" are unquoted names of variables (i.e., column names) in your data frame
+
+---
+
+## Getting Started
+Let's get into some code! We'll be creating visualizations of the `ncbirths` data set, so let's start by importing that data set into R.
+
+
+```r
+ncbirths &lt;- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+                     stringsAsFactors = FALSE)
+head(ncbirths, n = 4) # Take a peek at the data
+```
+
+
+```
+##   fage mage      mature weeks    premie visits gained weight    sex smoker
+## 1   22   20 younger mom    32    premie      5     40   2.69   male      1
+## 2   32   32 younger mom    38 full term     10     42   8.88   male      0
+## 3   34   33 younger mom    38 full term     18      6   7.06 female      0
+## 4   NA   18 younger mom    42 full term     15     27   7.44   male      0
+```
+
+---
+
+## A First Plot
+Let's begin by visualizing the distribution of infant birth weights using a histogram. Remember, a histogram shows the number of (or proportion of) values that fall within specific intervals, called **bins**.
+
+The range of values your variable has is represented along the x-axis in a histogram, so we'll need to map the variable representing the birth weights (called `weights`) to the `x` aesthetic.
+
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = weight)
+       )
+```
+
+All ggplot figures are made beginning with the `ggplot` function. Inside the parenthesis, I told it: 
+
+1. The data to use for plotting (`data=ncbirths`)
+2. The aesthetic mapping to use (`mapping = aes(x = weight)`)
+
+---
+
+## A First (Blank) Plot
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = weight)
+       )
+```
+
+&lt;img src="slides_files/figure-html/frist_two-1.svg" style="display: block; margin: auto;" /&gt;
+
+Wait, where's the data?
+
+---
+
+## We need a geom!
+Our plot is blank because we didn't add any geometric objects to represent the data!
+
+In ggplot, we add a geom objects to represent the data by adding a new "layer" containing those geom objects onto the plot.
+
+We do this, we need two things: we need a function to create the geometric object layer, and function to add it to the plot.
+
+---
+
+## We need a geom!
+As pointed out earlier, ggplot supports creating many different geometric objects, and there is a different function to create the layer for each one. 
+
+The names of the these functions follow a common pattern: `geom_`, followed by the name of the geometric object.
+
+  - `geom_point`, `geom_line`, `geom_bar`, `geom_boxplot`, etc.
+
+For histograms, `ggplot` provides a specialized geom, named `geom_histogram`
+
+
+To add this geom to the plot, we literally add it - using the `+` symbol!
+
+---
+
+## Completing our histogram
+Let's finish our histogram now, with the following code:
+
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = weight)
+       ) +
+  geom_histogram()
+```
+
+&lt;img src="slides_files/figure-html/histogram-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Customizing our histogram
+Let's customize our histogram by widening the bins, changing the border color (the `color` argument) and the interior color (the `fill` argument)
+
+.noverticalmargin[
+
+```r
+ggplot(data = ncbirths, mapping = aes(x = weight)) +
+  geom_histogram(binwidth = .5, color = "white", fill = "steelblue")
+```
+
+&lt;img src="slides_files/figure-html/histogram2-1.svg" style="display: block; margin: auto;" /&gt;
+
+Note that none of these arguments went inside the aesthetic mapping argument as they do not specifically represent mappings of variables.
+]
+
+---
+
+## ggplots are first-class
+Note that we do *not* necessarily have to create the entire plot at once. ggplots can be saved as R objects, instead of being drawn in the plot window, simply by using the assignment operator.
+
+
+```r
+weight_hist &lt;- ggplot(data = ncbirths, mapping = aes(x = weight))
+weight_hist &lt;- weight_hist + geom_histogram(binwidth = .5)
+weight_hist
+```
+
+&lt;img src="slides_files/figure-html/firstclass-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Faceting to create panels
+It's common practice to compare distributions of two related groups by plotting their data side-by-side across multiple panels.
+
+&gt; *Think of panels as sub-plots within your larger visualization.*
+
+For example, we may want to compare the birth weights of babies born to smokers to the birth weights of babies born to non-smokers, by plotting two side-by-side histograms.
+
+When using `ggplot`, the term **facet** is synonymous with sub-plot or panel.
+
+---
+
+## Faceting to create panels
+
+Within `ggplot`, there are two functions for "faceting" your data: `facet_grid`, and `facet_wrap`
+
+&gt; *Faceting = breaking your observations into sub-groups, and displaying each sub-group in a different panel*
+
+`facet_grid` is useful for displaying sub-groups in a matrix-like grid, when the number of subgroups is evenly divisible
+
+`facet_wrap` is useful for displaying sub-groups in a "ragged" grid, where there may be fewer plots than there are rows and columns
+
+&gt; *You can think of `facet_wrap` as a more general version of `facet_grid`*
+
+---
+## Faceting with facet_wrap
+You add facets to your plot just like you were adding a geom, but with one twist. 
+
+You don't use an aesthetic mapping, but rather a special symbol called the **formula** operator.
+
+
+```r
+weight_hist + facet_wrap(~smoker)
+```
+
+&lt;img src="slides_files/figure-html/histogram3-1.svg" style="display: block; margin: auto;" /&gt;
+
+The `~smoker` command can by read as "group all the values in my plot by all the unique values in the smoker variable"
+
+---
+
+## Controlling faceting direction
+If you wanted your 3 plots to be arranged vertically instead of side-by-side, you can force ggplot to facet with just a single "column" using the `ncol` argument:
+
+
+```r
+weight_hist + facet_wrap(~smoker, ncol=1)
+```
+
+&lt;img src="slides_files/figure-html/histogram4-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Changing geoms
+Let's switch things up by changing our faceted histogram to a dot plot. In this dot plot, we're going to show **every** observation of the weight variable as a point, instead of binning and counting them. 
+
+The observed weight is going to be represented with the y-axis position, and the smoking/non-smoking status will be indicated along the x-axis.
+
+To make these changes, we need to: 
+
+1. Change our aesthetic mapping to have `weight` mapped to `y` instead of `x`, and `smoker` mapped to `x` instead of faceted.
+
+2. Change geom's, from `geom_histogram` to `geom_point`.
+
+---
+
+## Changing geoms
+
+```r
+ggplot(data = ncbirths, mapping = aes(x = smoker, y = weight)) +
+  geom_point()
+```
+
+&lt;img src="slides_files/figure-html/dot-1.svg" style="display: block; margin: auto;" /&gt;
+
+But there are few issues with this plot: the continuous x-axis, and the overlapping points.
+
+---
+## Making `smoker` categorical
+
+We can convince R that `smoker` should be a categorical variable by using the `factor` function, and editing the x-axis label
+
+
+```r
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+  geom_point() +
+  xlab("Smoker")
+```
+
+&lt;img src="slides_files/figure-html/dot1-1.svg" style="display: block; margin: auto;" /&gt;
+
+See how the observation where the smoking status was `NA` has been kept instead of dropped.
+
+---
+
+## Reducing overplotting
+We can also reduce overlap between the points (called "overplotting") within each smoking group by "jittering" them.
+
+&gt; *Jitter = randomly shifting all points a small distance horizontally and/or vertically*
+
+All we have to is add a little more information to the `geom_point()` function using the `position` argument and the `position_jitter` function:
+
+
+```r
+geom_point(position = position_jitter(width=.15))
+```
+
+The `width` value controls how far you want each point to be randomly "jittered" from side-to-side.
+
+---
+
+## Jittering
+Let's see how it looks when we add it to our dot plot
+
+
+```r
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+&lt;img src="slides_files/figure-html/dot2-1.svg" style="display: block; margin: auto;" /&gt;
+
+Wow, there were a lot more points hiding under there!
+
+---
+ 
+## Adding color to our aesthetic mapping
+Another way to visually distinguish between sub-groups in your data is to color your geom's according to which group an observation belongs to.
+
+To add a group specific coloring, we need to map the variable in our data set representing that group to the color or fill aesthetic in our plot. 
+
+Here we'll add color to represent male and female babies. Remember that if you want to use different aesthetic mappings for a plot, you'll want to "start over" and make a new plot with the `ggplot` function
+
+---
+## Adding color
+
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+&lt;img src="slides_files/figure-html/dot3-1.svg" style="display: block; margin: auto;" /&gt;
+
+Note that we got our color legend automatically!
+
+---
+
+## Adjusting the color scale
+But, we may not like the colors R and ggplot2 pick for us. I'm going to show you two options for customizing the colors in your plots
+
+1. Manually specifying each color
+2. Using a specialized color "palette" that has been already built.
+
+---
+
+## Manual colors
+ggplot includes a function called `scale_color_manual` for overriding the default colors with ones of your choosing.
+
+You can use hexadecimal RGB color codes, or pick from one of R's 657 built-in color names!
+
+
+```r
+colors() # prints the whole list of names!
+```
+
+```
+##   [1] "white"                "aliceblue"            "antiquewhite"         "antiquewhite1"        "antiquewhite2"        "antiquewhite3"       
+##   [7] "antiquewhite4"        "aquamarine"           "aquamarine1"          "aquamarine2"          "aquamarine3"          "aquamarine4"         
+##  [13] "azure"                "azure1"               "azure2"               "azure3"               "azure4"               "beige"               
+##  [19] "bisque"               "bisque1"              "bisque2"              "bisque3"              "bisque4"              "black"               
+##  [25] "blanchedalmond"       "blue"                 "blue1"                "blue2"                "blue3"                "blue4"               
+##  [31] "blueviolet"           "brown"                "brown1"               "brown2"               "brown3"               "brown4"              
+##  [37] "burlywood"            "burlywood1"           "burlywood2"           "burlywood3"           "burlywood4"           "cadetblue"           
+##  [43] "cadetblue1"           "cadetblue2"           "cadetblue3"           "cadetblue4"           "chartreuse"           "chartreuse1"         
+##  [49] "chartreuse2"          "chartreuse3"          "chartreuse4"          "chocolate"            "chocolate1"           "chocolate2"          
+##  [55] "chocolate3"           "chocolate4"           "coral"                "coral1"               "coral2"               "coral3"              
+##  [61] "coral4"               "cornflowerblue"       "cornsilk"             "cornsilk1"            "cornsilk2"            "cornsilk3"           
+##  [67] "cornsilk4"            "cyan"                 "cyan1"                "cyan2"                "cyan3"                "cyan4"               
+##  [73] "darkblue"             "darkcyan"             "darkgoldenrod"        "darkgoldenrod1"       "darkgoldenrod2"       "darkgoldenrod3"      
+##  [79] "darkgoldenrod4"       "darkgray"             "darkgreen"            "darkgrey"             "darkkhaki"            "darkmagenta"         
+##  [85] "darkolivegreen"       "darkolivegreen1"      "darkolivegreen2"      "darkolivegreen3"      "darkolivegreen4"      "darkorange"          
+##  [91] "darkorange1"          "darkorange2"          "darkorange3"          "darkorange4"          "darkorchid"           "darkorchid1"         
+##  [97] "darkorchid2"          "darkorchid3"          "darkorchid4"          "darkred"              "darksalmon"           "darkseagreen"        
+## [103] "darkseagreen1"        "darkseagreen2"        "darkseagreen3"        "darkseagreen4"        "darkslateblue"        "darkslategray"       
+## [109] "darkslategray1"       "darkslategray2"       "darkslategray3"       "darkslategray4"       "darkslategrey"        "darkturquoise"       
+## [115] "darkviolet"           "deeppink"             "deeppink1"            "deeppink2"            "deeppink3"            "deeppink4"           
+## [121] "deepskyblue"          "deepskyblue1"         "deepskyblue2"         "deepskyblue3"         "deepskyblue4"         "dimgray"             
+## [127] "dimgrey"              "dodgerblue"           "dodgerblue1"          "dodgerblue2"          "dodgerblue3"          "dodgerblue4"         
+## [133] "firebrick"            "firebrick1"           "firebrick2"           "firebrick3"           "firebrick4"           "floralwhite"         
+## [139] "forestgreen"          "gainsboro"            "ghostwhite"           "gold"                 "gold1"                "gold2"               
+## [145] "gold3"                "gold4"                "goldenrod"            "goldenrod1"           "goldenrod2"           "goldenrod3"          
+## [151] "goldenrod4"           "gray"                 "gray0"                "gray1"                "gray2"                "gray3"               
+## [157] "gray4"                "gray5"                "gray6"                "gray7"                "gray8"                "gray9"               
+## [163] "gray10"               "gray11"               "gray12"               "gray13"               "gray14"               "gray15"              
+## [169] "gray16"               "gray17"               "gray18"               "gray19"               "gray20"               "gray21"              
+## [175] "gray22"               "gray23"               "gray24"               "gray25"               "gray26"               "gray27"              
+## [181] "gray28"               "gray29"               "gray30"               "gray31"               "gray32"               "gray33"              
+## [187] "gray34"               "gray35"               "gray36"               "gray37"               "gray38"               "gray39"              
+## [193] "gray40"               "gray41"               "gray42"               "gray43"               "gray44"               "gray45"              
+## [199] "gray46"               "gray47"               "gray48"               "gray49"               "gray50"               "gray51"              
+## [205] "gray52"               "gray53"               "gray54"               "gray55"               "gray56"               "gray57"              
+## [211] "gray58"               "gray59"               "gray60"               "gray61"               "gray62"               "gray63"              
+## [217] "gray64"               "gray65"               "gray66"               "gray67"               "gray68"               "gray69"              
+## [223] "gray70"               "gray71"               "gray72"               "gray73"               "gray74"               "gray75"              
+## [229] "gray76"               "gray77"               "gray78"               "gray79"               "gray80"               "gray81"              
+## [235] "gray82"               "gray83"               "gray84"               "gray85"               "gray86"               "gray87"              
+## [241] "gray88"               "gray89"               "gray90"               "gray91"               "gray92"               "gray93"              
+## [247] "gray94"               "gray95"               "gray96"               "gray97"               "gray98"               "gray99"              
+## [253] "gray100"              "green"                "green1"               "green2"               "green3"               "green4"              
+## [259] "greenyellow"          "grey"                 "grey0"                "grey1"                "grey2"                "grey3"               
+## [265] "grey4"                "grey5"                "grey6"                "grey7"                "grey8"                "grey9"               
+## [271] "grey10"               "grey11"               "grey12"               "grey13"               "grey14"               "grey15"              
+## [277] "grey16"               "grey17"               "grey18"               "grey19"               "grey20"               "grey21"              
+## [283] "grey22"               "grey23"               "grey24"               "grey25"               "grey26"               "grey27"              
+## [289] "grey28"               "grey29"               "grey30"               "grey31"               "grey32"               "grey33"              
+## [295] "grey34"               "grey35"               "grey36"               "grey37"               "grey38"               "grey39"              
+## [301] "grey40"               "grey41"               "grey42"               "grey43"               "grey44"               "grey45"              
+## [307] "grey46"               "grey47"               "grey48"               "grey49"               "grey50"               "grey51"              
+## [313] "grey52"               "grey53"               "grey54"               "grey55"               "grey56"               "grey57"              
+## [319] "grey58"               "grey59"               "grey60"               "grey61"               "grey62"               "grey63"              
+## [325] "grey64"               "grey65"               "grey66"               "grey67"               "grey68"               "grey69"              
+## [331] "grey70"               "grey71"               "grey72"               "grey73"               "grey74"               "grey75"              
+## [337] "grey76"               "grey77"               "grey78"               "grey79"               "grey80"               "grey81"              
+## [343] "grey82"               "grey83"               "grey84"               "grey85"               "grey86"               "grey87"              
+## [349] "grey88"               "grey89"               "grey90"               "grey91"               "grey92"               "grey93"              
+## [355] "grey94"               "grey95"               "grey96"               "grey97"               "grey98"               "grey99"              
+## [361] "grey100"              "honeydew"             "honeydew1"            "honeydew2"            "honeydew3"            "honeydew4"           
+## [367] "hotpink"              "hotpink1"             "hotpink2"             "hotpink3"             "hotpink4"             "indianred"           
+## [373] "indianred1"           "indianred2"           "indianred3"           "indianred4"           "ivory"                "ivory1"              
+## [379] "ivory2"               "ivory3"               "ivory4"               "khaki"                "khaki1"               "khaki2"              
+## [385] "khaki3"               "khaki4"               "lavender"             "lavenderblush"        "lavenderblush1"       "lavenderblush2"      
+## [391] "lavenderblush3"       "lavenderblush4"       "lawngreen"            "lemonchiffon"         "lemonchiffon1"        "lemonchiffon2"       
+## [397] "lemonchiffon3"        "lemonchiffon4"        "lightblue"            "lightblue1"           "lightblue2"           "lightblue3"          
+## [403] "lightblue4"           "lightcoral"           "lightcyan"            "lightcyan1"           "lightcyan2"           "lightcyan3"          
+## [409] "lightcyan4"           "lightgoldenrod"       "lightgoldenrod1"      "lightgoldenrod2"      "lightgoldenrod3"      "lightgoldenrod4"     
+## [415] "lightgoldenrodyellow" "lightgray"            "lightgreen"           "lightgrey"            "lightpink"            "lightpink1"          
+## [421] "lightpink2"           "lightpink3"           "lightpink4"           "lightsalmon"          "lightsalmon1"         "lightsalmon2"        
+## [427] "lightsalmon3"         "lightsalmon4"         "lightseagreen"        "lightskyblue"         "lightskyblue1"        "lightskyblue2"       
+## [433] "lightskyblue3"        "lightskyblue4"        "lightslateblue"       "lightslategray"       "lightslategrey"       "lightsteelblue"      
+## [439] "lightsteelblue1"      "lightsteelblue2"      "lightsteelblue3"      "lightsteelblue4"      "lightyellow"          "lightyellow1"        
+## [445] "lightyellow2"         "lightyellow3"         "lightyellow4"         "limegreen"            "linen"                "magenta"             
+## [451] "magenta1"             "magenta2"             "magenta3"             "magenta4"             "maroon"               "maroon1"             
+## [457] "maroon2"              "maroon3"              "maroon4"              "mediumaquamarine"     "mediumblue"           "mediumorchid"        
+## [463] "mediumorchid1"        "mediumorchid2"        "mediumorchid3"        "mediumorchid4"        "mediumpurple"         "mediumpurple1"       
+## [469] "mediumpurple2"        "mediumpurple3"        "mediumpurple4"        "mediumseagreen"       "mediumslateblue"      "mediumspringgreen"   
+## [475] "mediumturquoise"      "mediumvioletred"      "midnightblue"         "mintcream"            "mistyrose"            "mistyrose1"          
+## [481] "mistyrose2"           "mistyrose3"           "mistyrose4"           "moccasin"             "navajowhite"          "navajowhite1"        
+## [487] "navajowhite2"         "navajowhite3"         "navajowhite4"         "navy"                 "navyblue"             "oldlace"             
+## [493] "olivedrab"            "olivedrab1"           "olivedrab2"           "olivedrab3"           "olivedrab4"           "orange"              
+## [499] "orange1"              "orange2"              "orange3"              "orange4"              "orangered"            "orangered1"          
+## [505] "orangered2"           "orangered3"           "orangered4"           "orchid"               "orchid1"              "orchid2"             
+## [511] "orchid3"              "orchid4"              "palegoldenrod"        "palegreen"            "palegreen1"           "palegreen2"          
+## [517] "palegreen3"           "palegreen4"           "paleturquoise"        "paleturquoise1"       "paleturquoise2"       "paleturquoise3"      
+## [523] "paleturquoise4"       "palevioletred"        "palevioletred1"       "palevioletred2"       "palevioletred3"       "palevioletred4"      
+## [529] "papayawhip"           "peachpuff"            "peachpuff1"           "peachpuff2"           "peachpuff3"           "peachpuff4"          
+## [535] "peru"                 "pink"                 "pink1"                "pink2"                "pink3"                "pink4"               
+## [541] "plum"                 "plum1"                "plum2"                "plum3"                "plum4"                "powderblue"          
+## [547] "purple"               "purple1"              "purple2"              "purple3"              "purple4"              "red"                 
+## [553] "red1"                 "red2"                 "red3"                 "red4"                 "rosybrown"            "rosybrown1"          
+## [559] "rosybrown2"           "rosybrown3"           "rosybrown4"           "royalblue"            "royalblue1"           "royalblue2"          
+## [565] "royalblue3"           "royalblue4"           "saddlebrown"          "salmon"               "salmon1"              "salmon2"             
+## [571] "salmon3"              "salmon4"              "sandybrown"           "seagreen"             "seagreen1"            "seagreen2"           
+## [577] "seagreen3"            "seagreen4"            "seashell"             "seashell1"            "seashell2"            "seashell3"           
+## [583] "seashell4"            "sienna"               "sienna1"              "sienna2"              "sienna3"              "sienna4"             
+## [589] "skyblue"              "skyblue1"             "skyblue2"             "skyblue3"             "skyblue4"             "slateblue"           
+## [595] "slateblue1"           "slateblue2"           "slateblue3"           "slateblue4"           "slategray"            "slategray1"          
+## [601] "slategray2"           "slategray3"           "slategray4"           "slategrey"            "snow"                 "snow1"               
+## [607] "snow2"                "snow3"                "snow4"                "springgreen"          "springgreen1"         "springgreen2"        
+## [613] "springgreen3"         "springgreen4"         "steelblue"            "steelblue1"           "steelblue2"           "steelblue3"          
+## [619] "steelblue4"           "tan"                  "tan1"                 "tan2"                 "tan3"                 "tan4"                
+## [625] "thistle"              "thistle1"             "thistle2"             "thistle3"             "thistle4"             "tomato"              
+## [631] "tomato1"              "tomato2"              "tomato3"              "tomato4"              "turquoise"            "turquoise1"          
+## [637] "turquoise2"           "turquoise3"           "turquoise4"           "violet"               "violetred"            "violetred1"          
+## [643] "violetred2"           "violetred3"           "violetred4"           "wheat"                "wheat1"               "wheat2"              
+## [649] "wheat3"               "wheat4"               "whitesmoke"           "yellow"               "yellow1"              "yellow2"             
+## [655] "yellow3"              "yellow4"              "yellowgreen"
+```
+
+---
+
+## Manual Colors
+.noverticalmargin[
+
+Let's try "wheat4" and "cadetblue2".
+
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_manual(values=c("wheat4", "cadetblue2"))
+```
+
+&lt;img src="slides_files/figure-html/dot4-1.svg" style="display: block; margin: auto;" /&gt;
+
+Yikes!
+]
+
+---
+
+## Pre-built Palettes
+
+A pre-built color palette is perhaps a safer and easier choice. The `RColorBrewer` package comes with several pre-built palettes, which we can see by loading the package and using `display.brewer.all()`
+
+
+```r
+library(RColorBrewer)
+display.brewer.all() # it is a huge plot!
+```
+
+![](slides_files/figure-html/brewer_pal.svg)
+
+---
+
+## Pre-built Palettes
+I'm a big fan of the "Set1" palette, and we can use it in our plot with the `scale_color_brewer` function:
+
+
+```r
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_brewer(palette="Set1")
+```
+
+&lt;img src="slides_files/figure-html/dot5-1.svg" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
