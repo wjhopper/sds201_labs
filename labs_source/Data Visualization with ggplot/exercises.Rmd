@@ -1,0 +1,96 @@
+
+---
+title: 'Problem Set 02: Data Visualization'
+author: "Your Name Here!"
+output:
+  html_document:
+    theme: lumen
+    toc: yes
+    toc_float: yes
+    toc_level: 2
+    df_print: kable
+    css: "../../assets/css/lab.css"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE, message = FALSE}
+library(ggplot2)
+```
+
+**Use the `ggplot2` package to create all the figures for this problem set.**
+
+
+### The Data
+
+For this problem set, you'll continue working with the `ncbirths` data set. Just like in the lab 2  slides, you can import this data into R using the following code:
+
+```{r,eval=FALSE}
+ncbirths <- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+                     stringsAsFactors = FALSE)
+```
+
+### Reminders and Suggestions
+
+Remember, "running code means" telling R "do this". You tell R to do something by passing it through the console. You can run existing code many ways:
+
+- Re-typing code out directly in the console (most laborious method)
+- Copying and pasting existing code into the console and hitting enter (easier method)
+- Click on the green triangle in the code chunk (easiest method 1)
+- Highlight the code and hit `Control-Enter` on PC or `Command-Return` on a Mac (easiest method 2).
+
+You can also execute all your R code chunks when you press the "Knit" button, but this execution happens separately and apart from your console, and your results will only show up in the HTML output document.
+
+In this problem set, I recommend that you test and "prototype" your code by running it "interactively" in your console, using the methods mention above. When you've got things working the way you want, then "knit" your HTML file and continue on to the next problem
+
+## Exercise
+Explore the data using the `str` function e.g., `str(ncbirths)`. 
+
+a. Explain what you can learn from the output of this function.
+b. How can you tell which variables are likely categorical, and which are likely to be numeric, based on the output of the `str` function.
+c. Does R seem to consider the `smoker` variable categorical or numerical?
+
+### Solution
+
+## Exercise
+Construct a histogram of the `weeks` variable where each bin represents one week. Be sure your solution includes both your code and the figure.
+
+### Solution
+
+## Exercise
+The y-axis of figure you created in the previous problem should be labeled "count". What is specifically being counted in this figure? In other words, what does the y-axis values represent?
+
+### Solution
+
+## Exercise
+Based on your histogram, what do you think is the most likely pregnancy duration?
+
+**HINT:** If you're having trouble matching columns to x-axis positions because the columns are "touching" and blending together visually, try adding `color="white"` to your code.
+
+### Solution
+
+## Exercise
+What would the problem be with setting a bin width of 80 for this histogram? What would the problem with setting a bin width of 0.5 be for this histogram?
+
+**Hint:** If you're not sure, try creating histograms with binwidths of 100 and 0.5, and see what the problems are.
+
+### Solution
+
+## Exercise
+Now, create a new histogram with the `premie` variable mapped to the `fill` aesthetic of the plot (remember, the `fill` aesthetic controls what color the bars of the histogram are filled in with). Keep the bins set to one week.
+
+Based on this histogram, what can you learn about how the the `premie`, and `full-term` categories are constructed. How can you tell this from the plot?
+
+### Solution
+
+## Exercise
+Now, create a new histogram with one panel for "younger moms", and one panel for "mature moms". Keep the fill aesthetic mapped to `premie`, and the bins set to one week.
+
+What can we learn about the size of these two groups from this plot?
+
+### Solution
+
+## Exercise
+Create a boxplot with the "younger mom" and "mature mom" categories represented along the x-axis, and pregnancy duration in weeks represented along the y axis.
+
+### Solution
