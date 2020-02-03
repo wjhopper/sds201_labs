@@ -24,7 +24,7 @@ knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', 
 ```
 
 ## The Grammar of Graphics
-The `ggplot2` package provides a library of plotting and graphics tools that implements the ["Grammar of Graphics"](http://www.springer.com/us/book/9780387245447) (Wilkison, 2005; Wilkinson, Anand, & Grossman, 2005).
+The `ggplot2` package provides a library of plotting and graphics tools that implements the ["Grammar of Graphics"](http://www.springer.com/us/book/9780387245447) (Wilkinson, 2005; Wilkinson, Anand, & Grossman, 2005).
 
 Wilkinson's "Grammar of Graphics" is both a technical description of the structures used to produce quantitative visualizations, as well as a new language to describe the visual features of quantitative visualizations.
 
@@ -156,19 +156,18 @@ ggplot(data = ncbirths,
        )
 ```
 
-All ggplot figures are made beggining with the `ggplot` function. Inside the parenthesis, I told it: 
+All ggplot figures are made beginning with the `ggplot` function. Inside the parenthesis, I told it: 
 
 1. The data to use for plotting (`data=ncbirths`)
 2. The aesthetic mapping to use (`mapping = aes(x = weight)`)
 
 ---
 
-
 ## A First (Blank) Plot
-```{r frist_two, ref.label="frist", echo=TRUE}
+```{r frist_two, ref.label="frist", echo=TRUE, fig.height=4, fig.width=8.5}
 ```
 
-Wait, where's the data? 
+Wait, where's the data?
 
 ---
 
@@ -210,7 +209,7 @@ ggplot(data = ncbirths,
 ## Customizing our histogram
 Let's customize our histogram by widening the bins, changing the border color (the `color` argument) and the interior color (the `fill` argument)
 
-.novertspace[
+.noverticalmargin[
 ```{r histogram2, fig.height=3, fig.width=6.5}
 ggplot(data = ncbirths, mapping = aes(x = weight)) +
   geom_histogram(binwidth = .5, color = "white", fill = "steelblue")
@@ -218,6 +217,7 @@ ggplot(data = ncbirths, mapping = aes(x = weight)) +
 
 Note that none of these arguments went inside the aesthetic mapping argument as they do not specifically represent mappings of variables.
 ]
+
 ---
 
 ## ggplots are first-class
@@ -248,11 +248,11 @@ Within `ggplot`, there are two functions for "faceting" your data: `facet_grid`,
 
 > *Faceting = breaking your observations into sub-groups, and displaying each sub-group in a different panel*
 
-`facet_grid` is useful for displaying sub-groups in a matrix-like grid, when the number of subgroups is evenly divisble
+`facet_grid` is useful for displaying sub-groups in a matrix-like grid, when the number of subgroups is evenly divisible
 
 `facet_wrap` is useful for displaying sub-groups in a "ragged" grid, where there may be fewer plots than there are rows and columns
 
-> *You can think of `facet_wrap` as a more general verison of `facet_grid`*
+> *You can think of `facet_wrap` as a more general version of `facet_grid`*
 
 ---
 ## Faceting with facet_wrap
@@ -268,63 +268,160 @@ The `~smoker` command can by read as "group all the values in my plot by all the
 
 ---
 
-## Changing geoms
-Let's switch things up by changing our faceted histogram to a boxplot. To do this, we need to change geom's, from `geom_histogram` to `geom_boxplot`.
+## Controlling faceting direction
+If you wanted your 3 plots to be arranged vertically instead of side-by-side, you can force ggplot to facet with just a single "column" using the `ncol` argument:
 
-But we also need to update our aesthetic mapping. With histograms, ggplot automatically computes the y-axis variable, the bin counts, for you. With a boxplot, no such computation is performed, so we need to explicitly say what variable is represented on **each** axis
+```{r histogram4, fig.height=4, fig.width=4.5}
+weight_hist + facet_wrap(~smoker, ncol=1)
+```
+
+---
+
+## Changing geoms
+Let's switch things up by changing our faceted histogram to a dot plot. In this dot plot, we're going to show **every** observation of the weight variable as a point, instead of binning and counting them. 
+
+The observed weight is going to be represented with the y-axis position, and the smoking/non-smoking status will be indicated along the x-axis.
+
+To make these changes, we need to: 
+
+1. Change our aesthetic mapping to have `weight` mapped to `y` instead of `x`, and `smoker` mapped to `x` instead of faceted.
+
+2. Change geom's, from `geom_histogram` to `geom_point`.
 
 ---
 
 ## Changing geoms
-box to points with jitter
+```{r dot, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = smoker, y = weight)) +
+  geom_point()
+```
+
+But there are few issues with this plot: the continuous x-axis, and the overlapping points.
 
 ---
+## Making `smoker` categorical
+
+We can convince R that `smoker` should be a categorical variable by using the `factor` function, and editing the x-axis label
+
+```{r dot1, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+  geom_point() +
+  xlab("Smoker")
+```
+
+See how the observation where the smoking status was `NA` has been kept instead of dropped.
+
+---
+
+## Reducing overplotting
+We can also reduce overlap between the points (called "overplotting") within each smoking group by "jittering" them.
+
+> *Jitter = randomly shifting all points a small distance horizontally and/or vertically*
+
+All we have to is add a little more information to the `geom_point()` function using the `position` argument and the `position_jitter` function:
+
+```{r jitter, eval=FALSE}
+geom_point(position = position_jitter(width=.15))
+```
+
+The `width` value controls how far you want each point to be randomly "jittered" from side-to-side.
+
+---
+
+## Jittering
+Let's see how it looks when we add it to our dot plot
+
+```{r dot2, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+Wow, there were a lot more points hiding under there!
+
+---
+ 
 ## Adding color to our aesthetic mapping
 Another way to visually distinguish between sub-groups in your data is to color your geom's according to which group an observation belongs to.
 
-To add a group specific coloring, we need to map the variable in our dataset representing that group to the color or fill aesthetic in our plot. 
+To add a group specific coloring, we need to map the variable in our data set representing that group to the color or fill aesthetic in our plot. 
 
-Here's how we would update out plot to also use different colors for smoker's and non-smokers. Note that I can't use the existing `weight_hist` object, because I've already set it's aesthetic mappings. When you want to alter a plot's aesthetic mappings, it's **always** better to start a new plot
-
-```{r histogram4, fig.height=3, fig.width=6.5}
-ggplot(data = ncbirths, mapping = aes(x = weight, fill=mature)) +
-  geom_histogram(binwidth = .5, color = "white") +
-  facet_wrap(~smoker)
-```
-
-## Scales are free
-
-## Adjusting the scale
-
-
-
-## Activity
-The `Indometh` dataset has pharmacokinetics measurements (i.e., excretion/absorption of a drug) of the NSAID pain-killer *indometacin*.
-
-6 subjects were administered a dose of *indometacin*, and their blood concentration levels were measured 11 times afterwards (see `?Indometh` for more info).
-
-Use `ggplot` to visualize the data collected from each subject. Be sure to
-
-1. Distinguish between the data from each subject
-2. Arrange the scale identifying the data from each subject in ascending order.
-3. Experiment with using points, lines, points and lines, with different sizes of each, to see which looks best.
-
-
-```{r indo, include=FALSE}
-ggplot(Indometh, aes(x = time, y = conc, color = Subject)) + 
-  geom_line() +
-  geom_point(size = 1.5)
-```
-
-
-```{r, include=FALSE, eval=FALSE}
-ggplot(Orange, aes(color = age, size = circumference)) + 
-  geom_point(y = .5, x = .5, alpha = .4, fill = NA, shape = 21) +
-  facet_wrap(~Tree) +
-  scale_color_gradientn(colours = rev(rainbow(4)))+
-  scale_radius()
-  (breaks = seq(30,225,25))
-```
-
+Here we'll add color to represent male and female babies. Remember that if you want to use different aesthetic mappings for a plot, you'll want to "start over" and make a new plot with the `ggplot` function
 
 ---
+## Adding color
+
+```{r dot3, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+Note that we got our color legend automatically!
+
+---
+
+## Adjusting the color scale
+But, we may not like the colors R and ggplot2 pick for us. I'm going to show you two options for customizing the colors in your plots
+
+1. Manually specifying each color
+2. Using a specialized color "palette" that has been already built.
+
+---
+
+## Manual colors
+ggplot includes a function called `scale_color_manual` for overriding the default colors with ones of your choosing.
+
+You can use hexadecimal RGB color codes, or pick from one of R's 657 built-in color names!
+
+```{r colors}
+colors() # prints the whole list of names!
+```
+
+---
+
+## Manual Colors
+.noverticalmargin[
+
+Let's try "wheat4" and "cadetblue2".
+
+```{r dot4, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_manual(values=c("wheat4", "cadetblue2"))
+```
+
+Yikes!
+]
+
+---
+
+## Pre-built Palettes
+
+A pre-built color palette is perhaps a safer and easier choice. The `RColorBrewer` package comes with several pre-built palettes, which we can see by loading the package and using `display.brewer.all()`
+
+```{r brewer, eval=FALSE}
+library(RColorBrewer)
+display.brewer.all() # it is a huge plot!
+```
+
+![](slides_files/figure-html/brewer_pal.svg)
+
+---
+
+## Pre-built Palettes
+I'm a big fan of the "Set1" palette, and we can use it in our plot with the `scale_color_brewer` function:
+
+```{r dot5, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_brewer(palette="Set1")
+```
