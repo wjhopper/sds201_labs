@@ -9,24 +9,68 @@ output:
     toc_float: yes
     toc_level: 2
     df_print: kable
-    css: "../../assets/css/lab.css"
     self_contained: true
 editor_options: 
   chunk_output_type: console
 ---
 
+```{css PLEASE_DONT_TOUCH_THIS_CHUNK, echo=FALSE}
+body { counter-reset: exercises toc /* initialize counters */ }
+
+p { margin: 5px 0; }
+
+ol li, ul li { list-style-position: inside; }
+
+div[id^='exercise'] { ackground:rgba(49, 126, 172, 0.1); }
+
+div[id^='exercise'] > h2 {
+  font-weight: bold;
+  color: #fff;
+  background:#317EAC;
+  padding: 5px 10px;
+}
+
+div[id^='exercise'] > h2::after {
+  content: " " counter(exercises);
+  counter-increment: exercises;
+}
+
+.tocify-header > li:after {
+    content: " " counter(toc); /* Use the counter as content */
+    counter-increment: toc; /* Increment the counter by 1 */
+}
+
+.level3 {
+  background: #fff;
+  padding-top: 15px;
+  margin-bottom: 0;
+}
+
+.level3 > h3 { margin: 0;}
+
+#license { 
+  color: #4C721D;
+  border:1px solid #4C721D;
+  padding: 10px 10px;
+  background-color: rgba(76, 114, 29, 0.2);
+  border-radius: 5px;
+}
+```
+
+
 ```{r, include = FALSE, message = FALSE}
 library(ggplot2)
 ```
 
+<div id="license">
 **Use the `ggplot2` package to create all the figures for this problem set.**
-
+</div>
 
 ### The Data
 
 For this problem set, you'll continue working with the `ncbirths` data set. Just like in the lab 2  slides, you can import this data into R using the following code:
 
-```{r,eval=FALSE}
+```{r}
 ncbirths <- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
                      stringsAsFactors = FALSE)
 ```

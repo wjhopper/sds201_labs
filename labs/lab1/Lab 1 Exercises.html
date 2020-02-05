@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Your Name Here!" />
 
 
 <title>Lab 1 Exercises: Intro to R and RStudio</title>
@@ -1351,91 +1352,6 @@ h6 {
 }
 </style>
 
-<style type="text/css">body {
-counter-reset: exercises toc 
-}
-h1 {
-font-family:Arial, Helvetica, sans-serif;
-font-weight:bold;
-}
-h2, h3 {
-font-family:Arial, Helvetica, sans-serif;
-}
-div {
-background: #fff;
-}
-ol, ul {
-margin-left: 15px; 
-padding-left: 15px; 
-}
-ol ol, ol ul {
-padding-left: 20px;
-}
-ol li, ul li {
-list-style-position: inside;
-}
-li ol,
-li ul {margin-top:6px;}
-ol ol li:last-child {margin-bottom:0;}
-.oyo ul {
-list-style-type:decimal;
-}
-p {
-padding-left: 5px;
-}
-div[id^='exercise'] {
-background:rgba(49, 126, 172, 0.1);
-}
-div[id^='exercise'] > h2 {
-font-weight: bold;
-color: #fff;
-background:#317EAC;
-margin: 0 0 10px;
-padding: 5px 10px;
-}
-div[id^='exercise'] > h2::after {
-content: " " counter(exercises); 
-counter-increment: exercises; 
-}
-.level3 {
-background: #fff;
-padding-top: 15px;
-margin-bottom: 0px;
-}
-.level3 > h3 {
-margin: 0px;
-}
-.tocify-header > li:after {
-content: " " counter(toc); 
-counter-increment: toc; 
-}
-hr {
-border: 1px solid #357FAA;
-}
-div#boxedtext {
-background-color: rgba(86, 155, 189, 0.2);
-padding: 20px;
-margin-bottom: 20px;
-font-size: 10pt;
-}
-div#template {
-margin-top: 30px;
-margin-bottom: 30px;
-color: #808080;
-border:1px solid #808080;
-padding: 10px 10px;
-background-color: rgba(128, 128, 128, 0.2);
-border-radius: 5px;
-}
-div#license { margin-top: 30px;
-margin-bottom: 30px;
-color: #4C721D;
-border:1px solid #4C721D;
-padding: 10px 10px;
-background-color: rgba(76, 114, 29, 0.2);
-border-radius: 5px;
-}
-</style>
 
 
 
@@ -1618,10 +1534,53 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Lab 1 Exercises: Intro to R and RStudio</h1>
+<h4 class="author">Your Name Here!</h4>
 
 </div>
 
 
+<style type="text/css">
+body { counter-reset: exercises toc /* initialize counters */ }
+
+p { margin: 5px 0; }
+
+ol li, ul li { list-style-position: inside; }
+
+div[id^='exercise'] { ackground:rgba(49, 126, 172, 0.1); }
+
+div[id^='exercise'] > h2 {
+  font-weight: bold;
+  color: #fff;
+  background:#317EAC;
+  padding: 5px 10px;
+}
+
+div[id^='exercise'] > h2::after {
+  content: " " counter(exercises);
+  counter-increment: exercises;
+}
+
+.tocify-header > li:after {
+    content: " " counter(toc); /* Use the counter as content */
+    counter-increment: toc; /* Increment the counter by 1 */
+}
+
+.level3 {
+  background: #fff;
+  padding-top: 15px;
+  margin-bottom: 0;
+}
+
+.level3 > h3 { margin: 0;}
+
+#license { 
+  color: #4C721D;
+  border:1px solid #4C721D;
+  padding: 10px 10px;
+  background-color: rgba(76, 114, 29, 0.2);
+  border-radius: 5px;
+}
+</style>
 <p>Please put all answers (both code chunks and text answers) below the “Solution” header for each exercise.</p>
 <div id="license">
 <p>Remember to save your work as you go along! Click the save button in the upper left hand corner of the R Markdown window.</p>
