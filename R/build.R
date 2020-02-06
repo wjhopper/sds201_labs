@@ -62,7 +62,7 @@ for (lab in all_labs) {
   file.rename(from=assignment, to=sub("exercises", paste0("Lab ", counter, " Exercises"), assignment, ignore.case = TRUE))
   
   ## Rename slides to have informative names
-  slides <- list.files(file.path(numerical_lab_dir), pattern =  "slides.*", full.names = TRUE, ignore.case = TRUE)
+  slides <- list.files(file.path(numerical_lab_dir), pattern = "slides\\.[[:alnum:]]+$", full.names = TRUE, ignore.case = TRUE)
   file.rename(from=slides, to=sub("slides", lab, slides, ignore.case = TRUE))
   
   ## Generate "post" with links for labs collection
