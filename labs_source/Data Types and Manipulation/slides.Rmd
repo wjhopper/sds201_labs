@@ -1,0 +1,445 @@
+---
+title: "Data Types and Manipulation"
+author: "Will Hopper"
+date: "2/11/20"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    css: ["default", "default-fonts", "../../assets/css/sds.css"]
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', "cache" = TRUE, dev='svg',prompt=FALSE)
+```
+
+## What is a data type?
+
+A value's **data type** is defined by 
+
+- the types of operations that can be performed with it in your software
+- the range of values it can take on
+- how the information is represented in hardware (e.g., CPU, memory)
+
+R uses many different data types, but the most important to learn are: 
+- **integer**
+- **double**
+- **character**, and
+- **logical**
+
+These are the **atomic** data types in R, because they are the smallest possible building blocks.
+
+Many of R's data types have a loose correspondence to *statistical* variable types (e.g., numeric vs. categorical).
+
+---
+
+## Integers & Doubles 
+
+Just as in mathematics, the **integer** data type can only represent whole numbers
+  + e.g. 6
+
+The **double** data type is used to represent all [real numbers](https://en.wikipedia.org/wiki/Real_number) (i.e., numbers with a fractional component).
+  + e.g. 6.66666667
+  + However, the **double** data type is not infinitely precise, and long decimal components are approximated by the computer.
+  + R uses the double data type to represent numbers by default (i.e., 6 becomes 6.0000)
+
+Together, doubles and integers are referred to as the **numeric** data types.
+
+---
+
+## Character
+
+
+The **character** data type (sometimes referred to as the "string" data type) is used for representing textual data
+
+To encode a value as character data in R, it must be wrapped in quotes (`" "` or `' '` are both acceptable)
+
+```{r textdata_good}
+a <- "foobar"
+a
+```
+
+Without quotes, R will interpret the text as the name of an R object, and attempt to find that object and return its value. Missing quotes is a common source of "object not found" errors.
+
+.errormsg[
+```{r textdatabad, error=TRUE}
+a <- foobar 
+```
+]
+---
+
+## Numbers as Numerics vs. Numbers as Characters
+
+`4.2` can be represented in R as both a character and a double. But, only in one case can mathematical operations be performed on them.
+
+.errormsg[
+```{r badtyping, error=TRUE}
+"4.2" + 1
+```
+]
+
+```{r goodtyping}
+4.2 + 1
+```
+This illustrates a practical differences between data types: some types do not support specific operations (e.g., characters do not support math operations)!
+
+---
+
+## Logical
+
+Logical data can only take on 2 possible values: `TRUE` or `FALSE`
+
+This type of datum is used to represent whether some state exists (is true) or does not exist (is false)
+
+`TRUE` and `FALSE` *must* be upper-cased
+  + *can* be abbreviated as `T` and `F`, but **I strongly recommend you do not do this**
+
+This type of data is *extremely* useful for data manipulation.
+
+---
+
+## Checking Data Types 
+You can use the `typeof` function to see what data type an object holds. 
+
+```{r typeChecking}
+typeof(2)
+typeof(2L) # L at the end forces R to use integer, not double
+typeof("herp")
+typeof(FALSE)
+```
+
+---
+
+## Coercion
+Values stored in one data type can sometimes be changed to another data type. This transformation is called *coercion*
+
+```{r coerce}
+as.double("4.2") + 1
+```
+
+Sometimes when an operation requires a specific data type, R will coerce things to the proper types for us (called an implicit conversion).
+
+```{r autocoerce}
+TRUE + 1 # coerces TRUE to an integer 1 and adds
+```
+
+But things aren't always magically perfect
+
+.errormsg[
+```{r failcoerce, error=TRUE}
+"TRUE" + 1
+```
+]
+
+---
+
+## Data Structures
+
+Of course, in a language focused on analyzing data, it is helpful to have the ability to group multiple values together - this is where **data structures** come into plot.
+
+Think of data structures in R as big containers for grouping together many values. After storing your data in these containers, you can reuse it multiple places (e.g. create an R object to store it) or access different subsets of it by position or name.
+
+The four most used data structures, in order of flexibility, in R are:
+
+1. Vectors
+2. Matrices
+3. Data Frames
+4. Lists
+
+In this course, we will be primarily working with vectors and data frames.
+
+---
+
+## Vectors
+Vectors are 1 dimensional data structures which can hold numeric, logical, and character data.
+
+Vectors are the most basic data structures in R. In fact, all the values we have worked with so far are represented internally by R as vectors of length 1!!
+
+Data types may not be mixed in a vector (e.g. you cannot have some elements be characters and other be integers)
+
+The individual values held in the vector are referred to as *elements*, and every vector has a *length* equal to the number of elements it contains. 
+
+---
+
+## Creating a vector
+
+Vectors, no matter what type of data they hold, can be created by using the `c()` function in R, short for *concatenate*. 
+
+Just place each value you want to be included in the vector inside the parenthesis, separated by a comma.
+
+```{r vector_creation}
+new_vector <- c(1, 10, 45, -1)
+char_vector <- c("foo", "bar", "herp", "derp")
+```
+
+`c()` can combine existing vectors as well, not just create new ones.
+```{r concatenate}
+c(new_vector, c(1, 2, 3, 4, 5))
+```
+
+---
+
+## Names 
+After you create a vector, you can give the elements names, using the `names()` function, and a character vector.
+
+```{r named_Vec}
+new_vector
+names(new_vector) <- c("A","B","C","D")
+new_vector
+```
+
+This can be useful later when you want to pick out a few values from the larger vector (more about this later on).
+
+---
+
+## Vector Tricks
+You can create a sequential numeric vector using the colon operator `:`, instead of typing out hundreds or thousands of values by hand.
+
+```{r colon}
+55:100
+```
+
+Sequences of other step sizes can be made with the `seq()` function
+```{r seq}
+seq(from = 5, to = 22, by = 3)
+```
+
+---
+
+## Element-wise Math operations
+You can apply the math operators we used in the first class to vectors as well.
+
+When you add, divide, multiply, or subtract a set of vectors, R matches the vectors up by position and applies the operation to each pair of elements.
+
+```{r math_vectors}
+vec1 <- c(5, -1, 100, 75)
+vec2 <- c(10, 3, 4, -4)
+vec2 + vec1
+vec2 * vec1
+```
+
+So, the first element of `vec1` gets added to the first element of `vec2`, etc...
+
+If you want to find the grand sum or product of *all* the elements in a numeric vector, use the `sum()` and `prod()` functions, respectively.
+
+---
+
+## Recycling
+If you just want to do something like multiply every number in a vector by 2, and your vector is 10,000 elements long, don't despair - you needn't type out 10,000 two's.
+
+When two data structures have different lengths, R will **recycle** the input with the shorter length. In other words, it will automatically repeat the shorter input again and again until it matches the length of the longer one.
+
+So if you have `vec1 <- c(5, -1, 100, 75)`, and you want to multiply every element by 2, you can just write `vec1 * 2` and R will automatically recycle the 2 into `vec1 * c(2, 2, 2, 2)` with no extra work on your part.
+
+```{r recycling_vectors}
+vec1 <- c(5, -1, 100, 75)
+vec1 * 2
+```
+
+---
+
+## Factors
+Factors are a data structure that is a hybrid between a character vector, and a numeric vector.
+
+Their purpose is to compactly represent the levels of a categorical variable.
+
+The hybrid nature of a factor vector makes them tricky to work with, especially for new users of R.
+
+The most important thing to remember is that the values you see when observing or "printing out" a factor vector **are not** the same as the values R stores and uses internally.
+
+Let's take a look...
+
+---
+
+## Factors
+
+Let's say we're representing data about smoker or non-smoker status using a 1 to indicate a smoker, and a 0 to indicate a non-smoker, like in the `ncbirths` data set.
+
+And, since we know R cannot read our minds, and automagically know our zeros and ones represent categories instead of numbers, we choose to be good programmers and enter this data into R using the `factor` function.
+
+```{r factors}
+smoking <- factor(c(1, 0, 0, 0, 1, 0))
+smoking
+```
+
+We see our 6 observations printed out, along with the `level` attribute, which tells us all the unique category levels in our data.
+
+---
+
+## Factors
+
+But imagine that another researcher working on a similar project has coded their smoking data using 1 and 2, instead of 0 and 1, and we want to compare our data.
+
+Instinct kicks in, and you decide just to add 1 to your data, so it matches the other researches data.
+
+```{r factors1}
+smoking
+```
+
+.errormsg[
+```{r factors2, warning=TRUE}
+smoking + 1
+```
+]
+
+Oh right, addition and subtraction aren't meaningful for categories! So even though our data *looks like* numbers when printed, R remembers they're categories.
+
+---
+
+## Factors
+
+But, we *really* know what we're doing™: we're not adding to do math, we're just re-coding our category labels the easy way.
+
+Let's try coercing our factor vector back to a numeric variable, doing the addition there, and then using the `factor` function again.
+
+```{r factor3}
+smoking <- as.numeric(smoking)
+smoking
+```
+
+Wait, how are they already one's and two's?????
+
+---
+
+## Factors
+This weirdness is because behind the scenes, R was *already* using a 1 for non-smoker and a 2 for smoker.
+
+The zeros and ones we saw printed out **were just labels** for the categories that R inferred based on our input data!
+
+
+Printed Label | Internal Value
+:-----------: | :------------:
+     1        |       2       
+     0        |       1       
+     0        |       1       
+     0        |       1       
+     1        |       2       
+     0        |       1       
+
+---
+
+## Factors
+R uses numbers as the internal representation for your categories even when the input data are explicitly character data.
+
+```{r factor4}
+smoker <- factor(c("smoker","nonsmoker","nonsmoker",
+                   "nonsmoker", "smoker","nonsmoker")
+                 )
+smoker
+as.numeric(smoker)
+```
+
+---
+
+## Factors
+If you really do need to use addition on your numerically-labeled factor vector, the easiest thing to do is convert it to a character vector with `as.character` (which will use the labels) and *then* use `as.numeric`
+```{r factor5}
+smoker <- factor(c(1, 0, 0, 0, 1, 0))
+as.character(smoker)
+as.numeric(as.character(smoker))
+as.numeric(as.character(smoker)) + 10
+```
+
+---
+
+## Factors
+The best thing is to not use numeric labels for your categories, so you avoid this confusion.
+
+If your input data are numeric, you can give each level as non-numeric label using the `labels` argument to the `factor` function.
+
+```{r factor6}
+smoker <- factor(c(1, 0, 0, 0, 1, 0),
+                 labels = c("nonsmoker", "smoker")
+                 )
+smoker
+```
+
+Just make sure you supply the labels in the correct order!! The value 0 will be the first level, and 1 the second level, so we supply the labels with nonsmoker first, then smoker second, to preserve the interpretation of our coding.
+
+---
+
+## Data Frames
+
+Data Frames are a 2D, rectangular data structure that allow for different data types to be stored in each column.
+
+A Data Frame is usually the best way to store and work with data that mixes qualitative and quantitative variables.
+
+And don't forget to keep your data frames tidy!!
+
+---
+
+## Creating Data Frames
+Data frames can be created by passing `name = value` pairs to the `data.frame()` function.
+
+The values should be vectors (of any type) and the names should be unquoted strings of text, which will be used to label the column.
+
+
+Importantly, all the vectors stored in the data frame must be of *identical length*.
+
+```{r dataframeexample}
+df <- data.frame(x =     c(  1,    4,   4,     2  ),
+                 y =     c(  3,    3,   1,     4  ),
+                 month = c("Sep","Oct","Nov","Jan"),
+                 stringsAsFactors = FALSE)
+df
+```
+
+---
+
+## stringsAsFactors?
+This example also shows an extra argument, `stringsAsFactors = FALSE`, that was **not** a variable to store in the data frame. This argument controls how R interprets character vectors when forming the data frame.
+
+Under the default setting, where `stringsAsFactors` is `TRUE`, R converts all character vectors into **factor** vectors inside the data frame. If `stringsAsFactors = FALSE`, then R leaves the data alone when forming the data frame.
+
+Since there are lots of confusing "gotchas" to worry about with factors (even more than ones I showed you earlier!), my advice is to override the default, and use `stringsAsFactors = FALSE`.
+
+Note that **a lot** of data import related functions have this argument, so get into the habit of specifying `stringsAsFactors = FALSE` when you use functions that create data frames (e.g., `data.frame()`, `read.csv()`, `read.table()`, etc.)
+
+If you want to know more about the reasons for all this nonsense, [stringsAsFactors: An unauthorized biography](https://simplystatistics.org/2015/07/24/stringsasfactors-an-unauthorized-biography/) and [stringsAsFactors = sigh](http://notstatschat.tumblr.com/post/124987394001/stringsasfactors-sigh) are two great reads.
+
+---
+
+## Data Frame Tricks (and Traps)
+The `data.frame()` function can also recycle input, so you can save some keystrokes if you have a column that has only a few unique values that repeat.
+
+R compares the length of the first vector to the length of each vector after it. If the lengths don't match, R will check if the length of the longer vector is a multiple of the length of the shorter vector.
+
+If so, R will repeat the shorter vector over and over so the lengths match up. In this example, the `x` variable has length 4, and the `month` vector has length 1; since 4 is a multiple of 1 (1 x 4 = 4), R will repeat the `month` vector 4 times so the lengths match.
+
+```{r goodrecycle}
+data.frame(x = c(1, 4, 4, 2),
+           month = "Sep"
+           )
+```
+
+---
+
+## Data Frame Tricks (and Traps)
+The `data.frame()` function will throw an error if the length of the longer vector is not a multiple of the shorter vector's lengths.
+
+Here, the `x` variable still has length 4, but the `month` vector has length 3; since 4 is not multiple of 3, an error occurs.
+
+.errormsg[
+```{r badrecycle, error=TRUE}
+data.frame(x = c(1, 4, 4, 2),
+           month=c("Sep", "Oct", "Nov")
+           ) 
+```
+]
+
+---
+
+## Recycling Advice
+Recycling enables concise code, but can make for hard to spot bugs when you didn't intended for recycling to happen. 
+
+This is especially likely when the number of columns in your data frame starts to grow - when you have 10 columns, what are the odds the recycling works the way you want for *all* the columns? 
+
+My advice: Favor being explicit about your vector lengths when programming, and only rely on length 1 inputs being recycled correctly!
+
+---

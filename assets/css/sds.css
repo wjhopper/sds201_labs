@@ -20,11 +20,11 @@ h2 { margin: .25em 0;}
 }
 
 li {
-  margin: 1rem;
+  margin: .5rem;
 }
 
 ul ul li {
-  margin: .5em;
+  margin: .3em;
 }
 
 .noverticalmargin p {
@@ -44,4 +44,10 @@ ul ul li {
 
 .hljs pre {
   margin: 0;
+}
+
+.errormsg pre {
+  color: red;
+  max-width: 100%;
+  white-space: pre-wrap;
 }
