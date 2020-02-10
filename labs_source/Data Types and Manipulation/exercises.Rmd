@@ -1,0 +1,86 @@
+
+---
+title: 'Problem Set 03: Data Types & Manipulation'
+author: "Your Name Here!"
+output:
+  html_document:
+    theme: lumen
+    toc: yes
+    toc_float: yes
+    toc_level: 2
+    df_print: kable
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{css PLEASE_DONT_TOUCH_THIS_CHUNK, echo=FALSE}
+body { counter-reset: exercises toc /* initialize counters */ }
+
+p { margin: 5px 0; }
+
+ol li, ul li { list-style-position: inside; }
+
+div[id^='exercise'] { ackground:rgba(49, 126, 172, 0.1); }
+
+div[id^='exercise'] > h2 {
+  font-weight: bold;
+  color: #fff;
+  background:#317EAC;
+  padding: 5px 10px;
+}
+
+div[id^='exercise'] > h2::after {
+  content: " " counter(exercises);
+  counter-increment: exercises;
+}
+
+.tocify-header > li:after {
+    content: " " counter(toc); /* Use the counter as content */
+    counter-increment: toc; /* Increment the counter by 1 */
+}
+
+.level3 {
+  background: #fff;
+  padding-top: 15px;
+  margin-bottom: 0;
+}
+
+.level3 > h3 { margin: 0;}
+
+#license { 
+  color: #4C721D;
+  border:1px solid #4C721D;
+  padding: 10px 10px;
+  background-color: rgba(76, 114, 29, 0.2);
+  border-radius: 5px;
+}
+```
+
+## Exercise
+(5 points)
+
+Try to create a vector that holds all the 4 basic data types. Does this work? What type or types of data are stored in the resulting vector?
+
+### Solution
+
+
+## Exercise
+(5 points)
+
+Find the grand sum of the all the elements in the two following vectors (using R, of course).
+
+```{r grand_sum}
+x <- c(149, 486, 174, 435, 188, 397, 497, 256, 346, 494)
+y <- c(1839, 2709, 2422, 1547, 1686, 2159, 2929, 651, 1358, 756)
+```
+
+### Solution
+
+
+## Exercise
+A local grocery store sells several varieties of fruit: grapes for $4, kiwis for $2.00, mangoes for $3.00, and apples for 99 cents. Each fruit also has a "sell by" date: the grapes must be sold by February 19th, the kiwis must be sold by February 20th, the mangoes must be sold by February 18th, and the apples must be sold by February 28th. 
+
+In R, create a "tidy" data frame that represents each fruit for sale, its price, and its expiration date. Make sure each column in your data frame has an appropriate name, and carefully consider what **type** you represent each piece of information with.
+
+### Solution
