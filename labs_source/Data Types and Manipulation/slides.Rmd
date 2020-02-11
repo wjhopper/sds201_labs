@@ -1,3 +1,4 @@
+
 ---
 title: "Data Types and Manipulation"
 author: "Will Hopper"
@@ -72,6 +73,7 @@ Without quotes, R will interpret the text as the name of an R object, and attemp
 a <- foobar 
 ```
 ]
+
 ---
 
 ## Numbers as Numerics vs. Numbers as Characters
@@ -443,3 +445,310 @@ This is especially likely when the number of columns in your data frame starts t
 My advice: Favor being explicit about your vector lengths when programming, and only rely on length 1 inputs being recycled correctly!
 
 ---
+
+## Indexing
+
+All throughout your data analysis pipeline, you will face the need to take smaller chunks out of a larger data structure. Sometimes you will need to change the data that is stored in your structure, or use it as input to another function, or perhaps you need to plot it. 
+
+The task of slicing a smaller chunk out of a larger data structure is called **indexing** in R (also  called **subsetting**), and is performed using the square bracket characters `[]`.
+
+---
+
+## Indexing 'Ingredients'
+
+Indexing a data structure in R requires 4 ingredients. 
+
+1. An R object that supports indexing 
+    + e.g. A data frame, matrix, vector or list
+2. An opening square bracket `[`
+3. 1 (or more) vectors which indicate which values from the larger data structure should be pulled out. 
+4. a closing square bracket `]`
+
+Arrange the ingredients in an R expression like so:
+
+`DataStructure[IndexVector]`
+
+We will focus on learning what can go inside the square brackets for different types of R data structures
+
+---
+
+## Indexing Vectors
+
+Broadly, there are 2 types of indexing vectors that are useful inside the square brackets. 
+
+1. Numeric Vectors
+    + e.g. `c(1, 4, 5, 10)`
+2. Logical Vectors 
+    + e.g. `c(TRUE,FALSE,FALSE,TRUE)`
+    
+We'll start with numeric indexing vectors to get a feel for the general procedure, and move up to logical indexing.
+
+---
+
+## Numeric Index Vectors 
+We'll start by slicing smaller chunks out of a larger vector. Here, the numeric vectors inside the brackets tell R the *positions* of the elements we wish to extract.
+```{r large_and_smaller}
+alphabet <- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o",
+              "p","q","r","s","t","u","v","w","x","y","z") 
+alphabet[c(1,26)] # Extract First and 26th element
+alphabet[10:20] # Extract tenth through 20th
+alphabet[seq(from=1,to=26,by=2)] # Extract every other element
+```
+
+---
+
+## Common Errors with Numeric Indices
+The most common mistake is including a value in your indexing vector which is greater than the length of the vector you are subsetting
+
+```{r outofbounds, error=TRUE}
+alphabet[100] # there are not 100 letters in the alphabet
+```
+
+We get an `NA` becasue the value is missing - there is no 100<sup>th</sup> letter of the alphabet. This is commonly referred to as an "index out of bounds" error.
+
+Another common mistake is forgetting to concatenate the values you want to use for the indexing vector (i.e. forgetting the `c()` function).
+
+.errormsg[
+```{r no-c, error=TRUE}
+alphabet[1,5,10]
+```
+]
+
+---
+
+## Indexing Tricks
+
+Instead of creating a vector of values you *do* want to pick out, it may be easier to come up with a vector of ones you *don't* want. We can use negative number's to specify which vector elements we don't want. 
+
+```{r negatives}
+alphabet[c(-1,-26)] # Same as alphabet[2:24]
+alphabet[-1:-10]
+```
+
+Indexing with positive vectors is usually preferred, as the intent of the code is more clear, but sometimes this is easier and more clear (e.g. when dropping the first or last value).
+
+---
+
+## Logical Indexing
+
+When performing logical indexing, you supply a vector specifying whether to extract a specific element (with a `TRUE`) or to *not* extract a specific element (with a `FALSE`).
+
+Let's revisit the example of selecting the first and last elements of the alphabet vector: We make a vector of logicals and stick it in the square brackets after your vector.
+
+```{r bad_logical_indexing}
+alphabet[c(1,26)]
+alphabet[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+           FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+           FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE
+           )
+         ]
+```
+
+---
+
+## Logical Indexing
+
+But this specific example is not a good use case for logical vectors. Why?
+
+1. Longer Code: length of the logical vector must match the length of the object its subsetting.
+2. Duplicating work: If you already know the position of the elements you want, just put them into a numeric vector and you're done!
+
+The utility of logical vectors occurs when you *don't* know the positions of the elements you are interested in, and must search for them!
+
+---
+
+## Logical Tests
+
+"But wait" you say: "If we don't know where they are already, how are we going to find them?". This brings us to **logical testing** and **relational operators**
+
+Relational operators are R expressions that test whether some value meets a condition or not.
+
+- If the value meets your test's condition(s), the test returns `TRUE`
+- If the value does *not* meet your test's condition(s), the test returns `FALSE`. 
+
+You already know lots of relational operators. The equal to, greater than and less than expressions are all relational operators!
+
+---
+
+## Relational Operators Table
+
+Comparison | Expression   | Example    | Result
+---------- | :----------: | ---------- | 
+Less Than | `<` | `5 < 10`<br>`5 < 1` | `r 5 < 10`<br>`r 5 < 1` 
+Less Than or Equal To | `<=` | `5 <= 5`<br>`5 <= 1`| `r 5 <= 5`<br>`r 5 <= 1`
+Greater Than | `>` | `10 > 5`<br>`5 > 5` | `r 10 > 5`<br>`r 5 > 5`
+Greater Than or Equal To | `>=` | `10 >= 10`<br>`10 >= 12` | `r 10 >= 10`<br>`r 10 >= 12`
+Equal To | `==` | `5 == 6`<br>`5 == 5` |  `r 5 == 6`<br>`r 5 == 5`
+Not equal to | `!=` | `5 != 6`<br>`5 != 5` | `r 5 != 6`<br>`r 5 != 5`
+
+---
+
+## Relational Operators & Indexing
+What makes relational operators useful is that they can be applied to all the elements of a data structure simultaneously. 
+```{r lisa}
+lisa <- c(34, 509, 63, 187, 998, 78, 3330)
+print(lisa)
+lisa <= 100 # Apply the "less than or equal to" test
+```
+
+As you can see, values that meet the criteria (<= 5) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
+
+```{r lisa_pt2}
+lisa[lisa <= 100] # Index vector named lisa with the results of the test. 
+```
+
+---
+
+## Relational Operators & Indexing
+We index character vectors using the `==` and `!=` operators, but not the greater/less than operators. Quantity makes no sense for characters!
+```{r charTesting}
+months <- c("January", "February", "March", "April", "May", "June", "July",
+           "August", "September", "October", "November", "December")
+months == "June" # The sixth element is TRUE
+months[months == "June"]
+months[months != "July"]
+```
+
+---
+
+## Other Useful Tests: `is.na()`
+Unfortunately, we often have to deal with missing observations in real world data sets. R codes missing data as `NA` (or sometimes `NaN`). We can use the `is.na()` function to find any missing values in a vector. 
+```{r isna}
+missingno <- c(10,NA,1,4,2,NA,NA,99,NaN, NA)
+is.na(missingno)
+missingno[!is.na(missingno)] # Select things that are the opposite of missing
+```
+
+---
+
+## Tips and Tricks
+A useful function to know is `which()`. When used on a logical vector, it will return to your the position indices of the vector's `TRUE` element. It is useful when you want to know **where** in the vector your matches occur. 
+```{r which}
+lisa <= 100
+which(lisa <= 100)
+```
+
+But don't do:
+```{r bad_which}
+lisa[which(lisa <= 100)]
+```
+
+Using `which` is an unneccesary extra step here that can slow performance.
+
+---
+
+## Testing Multiple Conditions 
+Sometimes you need to select elements based on multiple conditions. For example, you might want to select only those values that are less than 4 standard deviations above or below the mean.
+
+In R, we can select elements based on multiple conditions by combining individual logical tests together using *logical operators*. The logical operations we have at our disposal are: 
+
+- AND
+    - Each element must meet **all**  conditions to return `TRUE`
+- OR
+    - Each element must meet **at least one** conditions to return `TRUE`
+- Negation
+    - Reverse the current logical (e.g., `TRUE` becomes `FALSE`)
+
+---
+
+## Logical Operators 
+Logic | Expression | Example | Result
+----- | ---------- | ------- | ------
+Elementwise AND | `&` | `c(1,3) > 0 & c(1,3) <=2` |`r c(1,3) > 0 & c(1,3) <=2` 
+Elementwise OR | <code>&#124;</code> | <code>c(1,3) > 0 &#124; c(1,3) <=2</code> | `r c(1,3) > 0 | c(1,3) <=2` 
+Negate | `!` | `!(c(1,3) > 0)` | `r !(c(1,3) > 0)`
+
+
+The elementwise logical operators operators test all their arguments (i.e., they test all the pairs elements of the logical vectors supplied) and return a vector the same length as the input.
+
+---
+
+## Indexing with Multiple Conditions 
+Let's say we wanted to select the elements in `lisa` which were less than 500 or greater than 1000.
+
+```{r show_lisa_again}
+lisa
+```
+
+To do this, we need to:
+
+1. Test each element of `lisa` to see if it is less then 500
+    - `lisa < 500`
+2. Test each element of `lisa` to see if it is greater than 1000
+    - `lisa > 1000`
+3. Combine the results of both tests together into a single test
+    - ???
+
+---
+
+## Indexing with Multiple Conditions {.conditionals}
+The goal is to have our test return a `TRUE` for each element that passes the "less than 500" test **OR** passes the "greater than 1000" test.
+
+Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
+------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
+`lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
+`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa > 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
+Pass Either Test? | <span style="color: Green">&#10003;</span> | 	 <span style="color: Red">&#10005; </span> | <span style="color: Green"> &#10003; </span> | <span style="color: Green"> &#10003; </span>| 	 <span style="color: Red"> &#10005; </span> | <span style="color: Green"> &#10003; </span>| <span style="color: Green"> &#10003; </span>
+
+---
+
+## Indexing with Multiple Conditions 
+Our goal of the test is to have it return a `TRUE` for each element if it passed the "less than 500" test **OR** if it passed the "greater than 1000" test.
+
+We can do that by combining the two tests with the `|` logical operator
+
+Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
+------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
+`lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
+`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa > 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
+<code>lisa < 500 &#124; lisa > 1000</code> | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `TRUE` 
+
+
+```{r lisa_or}
+lisa[lisa < 500 | lisa > 1000]
+```
+
+---
+
+## Indexing with Multiple Conditions 
+Now let's say we wanted to select the elements in `lisa` which were less than 500 and greater than or equal to 50.
+
+To do this, we need to:
+
+- Test each element of `lisa` to see if it is less then 500
+     * `lisa < 500`
+- Test each element of `lisa` to see if it is greater than or equal to 50
+     * `lisa >= 50`
+- Combine the results of both tests together into a single test
+    * `&`
+
+---
+
+## Indexing with Multiple Conditions 
+Our goal of the test is to have it return a `TRUE` for each element if it passed the "less than 500" test **AND** if it passed the "greater than 50" test.
+
+Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
+------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
+`lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
+`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa >= 50` | `FALSE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE`
+`lisa < 500 & lisa >= 50` | `FALSE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+
+<br>
+```{r lisa_and}
+lisa[lisa < 500 & lisa >= 50]
+```
+
+---
+
+## Indexing with Multiple Conditions 
+```{r lisa_nothing}
+lisa[lisa < 500 & lisa >= 998]
+```
+When you index any structure in R with a vector of all `FALSE`s, you get back `numeric(0)` which means "nothing to see here!"
+
+So why does this test and subset return nothing?
+
+Because no number can be less than 500 and greater than 998, so every test comes back `FALSE`, and all elements are ignored in the subset.
