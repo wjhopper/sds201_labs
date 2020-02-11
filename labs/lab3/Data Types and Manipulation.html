@@ -1,24 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Data Types and Manipulation</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Will Hopper" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sds.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Data Types and Manipulation
+### Will Hopper
+### 2/11/20
 
 ---
-title: "Data Types and Manipulation"
-author: "Will Hopper"
-date: "2/11/20"
-output:
-  xaringan::moon_reader:
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      ratio: '16:9'
-    css: ["default", "default-fonts", "../../assets/css/sds.css"]
-editor_options: 
-  chunk_output_type: console
----
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', "cache" = TRUE, dev='svg',prompt=FALSE)
-```
+
+
 
 ## What is a data type?
 
@@ -40,7 +41,7 @@ Many of R's data types have a loose correspondence to *statistical* variable typ
 
 ---
 
-## Integers & Doubles 
+## Integers &amp; Doubles 
 
 Just as in mathematics, the **integer** data type can only represent whole numbers
   + e.g. 6
@@ -61,16 +62,26 @@ The **character** data type (sometimes referred to as the "string" data type) is
 
 To encode a value as character data in R, it must be wrapped in quotes (`" "` or `' '` are both acceptable)
 
-```{r textdata_good}
-a <- "foobar"
+
+```r
+a &lt;- "foobar"
 a
+```
+
+```
+## [1] "foobar"
 ```
 
 Without quotes, R will interpret the text as the name of an R object, and attempt to find that object and return its value. Missing quotes is a common source of "object not found" errors.
 
 .errormsg[
-```{r textdatabad, error=TRUE}
-a <- foobar 
+
+```r
+a &lt;- foobar 
+```
+
+```
+## Error in eval(expr, envir, enclos): object 'foobar' not found
 ```
 ]
 
@@ -81,13 +92,23 @@ a <- foobar
 `4.2` can be represented in R as both a character and a double. But, only in one case can mathematical operations be performed on them.
 
 .errormsg[
-```{r badtyping, error=TRUE}
+
+```r
 "4.2" + 1
+```
+
+```
+## Error in "4.2" + 1: non-numeric argument to binary operator
 ```
 ]
 
-```{r goodtyping}
+
+```r
 4.2 + 1
+```
+
+```
+## [1] 5.2
 ```
 This illustrates a practical differences between data types: some types do not support specific operations (e.g., characters do not support math operations)!
 
@@ -109,11 +130,37 @@ This type of data is *extremely* useful for data manipulation.
 ## Checking Data Types 
 You can use the `typeof` function to see what data type an object holds. 
 
-```{r typeChecking}
+
+```r
 typeof(2)
+```
+
+```
+## [1] "double"
+```
+
+```r
 typeof(2L) # L at the end forces R to use integer, not double
+```
+
+```
+## [1] "integer"
+```
+
+```r
 typeof("herp")
+```
+
+```
+## [1] "character"
+```
+
+```r
 typeof(FALSE)
+```
+
+```
+## [1] "logical"
 ```
 
 ---
@@ -121,21 +168,36 @@ typeof(FALSE)
 ## Coercion
 Values stored in one data type can sometimes be changed to another data type. This transformation is called *coercion*
 
-```{r coerce}
+
+```r
 as.double("4.2") + 1
+```
+
+```
+## [1] 5.2
 ```
 
 Sometimes when an operation requires a specific data type, R will coerce things to the proper types for us (called an implicit conversion).
 
-```{r autocoerce}
+
+```r
 TRUE + 1 # coerces TRUE to an integer 1 and adds
+```
+
+```
+## [1] 2
 ```
 
 But things aren't always magically perfect
 
 .errormsg[
-```{r failcoerce, error=TRUE}
+
+```r
 "TRUE" + 1
+```
+
+```
+## Error in "TRUE" + 1: non-numeric argument to binary operator
 ```
 ]
 
@@ -175,14 +237,20 @@ Vectors, no matter what type of data they hold, can be created by using the `c()
 
 Just place each value you want to be included in the vector inside the parenthesis, separated by a comma.
 
-```{r vector_creation}
-new_vector <- c(1, 10, 45, -1)
-char_vector <- c("foo", "bar", "herp", "derp")
+
+```r
+new_vector &lt;- c(1, 10, 45, -1)
+char_vector &lt;- c("foo", "bar", "herp", "derp")
 ```
 
 `c()` can combine existing vectors as well, not just create new ones.
-```{r concatenate}
+
+```r
 c(new_vector, c(1, 2, 3, 4, 5))
+```
+
+```
+## [1]  1 10 45 -1  1  2  3  4  5
 ```
 
 ---
@@ -190,10 +258,23 @@ c(new_vector, c(1, 2, 3, 4, 5))
 ## Names 
 After you create a vector, you can give the elements names, using the `names()` function, and a character vector.
 
-```{r named_Vec}
+
+```r
 new_vector
-names(new_vector) <- c("A","B","C","D")
+```
+
+```
+## [1]  1 10 45 -1
+```
+
+```r
+names(new_vector) &lt;- c("A","B","C","D")
 new_vector
+```
+
+```
+##  A  B  C  D 
+##  1 10 45 -1
 ```
 
 This can be useful later when you want to pick out a few values from the larger vector (more about this later on).
@@ -203,13 +284,25 @@ This can be useful later when you want to pick out a few values from the larger 
 ## Vector Tricks
 You can create a sequential numeric vector using the colon operator `:`, instead of typing out hundreds or thousands of values by hand.
 
-```{r colon}
+
+```r
 55:100
 ```
 
+```
+##  [1]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70
+## [17]  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86
+## [33]  87  88  89  90  91  92  93  94  95  96  97  98  99 100
+```
+
 Sequences of other step sizes can be made with the `seq()` function
-```{r seq}
+
+```r
 seq(from = 5, to = 22, by = 3)
+```
+
+```
+## [1]  5  8 11 14 17 20
 ```
 
 ---
@@ -219,11 +312,23 @@ You can apply the math operators we used in the first class to vectors as well.
 
 When you add, divide, multiply, or subtract a set of vectors, R matches the vectors up by position and applies the operation to each pair of elements.
 
-```{r math_vectors}
-vec1 <- c(5, -1, 100, 75)
-vec2 <- c(10, 3, 4, -4)
+
+```r
+vec1 &lt;- c(5, -1, 100, 75)
+vec2 &lt;- c(10, 3, 4, -4)
 vec2 + vec1
+```
+
+```
+## [1]  15   2 104  71
+```
+
+```r
 vec2 * vec1
+```
+
+```
+## [1]   50   -3  400 -300
 ```
 
 So, the first element of `vec1` gets added to the first element of `vec2`, etc...
@@ -237,11 +342,16 @@ If you just want to do something like multiply every number in a vector by 2, an
 
 When two data structures have different lengths, R will **recycle** the input with the shorter length. In other words, it will automatically repeat the shorter input again and again until it matches the length of the longer one.
 
-So if you have `vec1 <- c(5, -1, 100, 75)`, and you want to multiply every element by 2, you can just write `vec1 * 2` and R will automatically recycle the 2 into `vec1 * c(2, 2, 2, 2)` with no extra work on your part.
+So if you have `vec1 &lt;- c(5, -1, 100, 75)`, and you want to multiply every element by 2, you can just write `vec1 * 2` and R will automatically recycle the 2 into `vec1 * c(2, 2, 2, 2)` with no extra work on your part.
 
-```{r recycling_vectors}
-vec1 <- c(5, -1, 100, 75)
+
+```r
+vec1 &lt;- c(5, -1, 100, 75)
 vec1 * 2
+```
+
+```
+## [1]  10  -2 200 150
 ```
 
 ---
@@ -265,9 +375,15 @@ Let's say we're representing data about smoker or non-smoker status using a 1 to
 
 And, since we know R cannot read our minds, and automagically know our zeros and ones represent categories instead of numbers, we choose to be good programmers and enter this data into R using the `factor` function.
 
-```{r factors}
-smoking <- factor(c(1, 0, 0, 0, 1, 0))
+
+```r
+smoking &lt;- factor(c(1, 0, 0, 0, 1, 0))
 smoking
+```
+
+```
+## [1] 1 0 0 0 1 0
+## Levels: 0 1
 ```
 
 We see our 6 observations printed out, along with the `level` attribute, which tells us all the unique category levels in our data.
@@ -280,13 +396,28 @@ But imagine that another researcher working on a similar project has coded their
 
 Instinct kicks in, and you decide just to add 1 to your data, so it matches the other researches data.
 
-```{r factors1}
+
+```r
 smoking
 ```
 
+```
+## [1] 1 0 0 0 1 0
+## Levels: 0 1
+```
+
 .errormsg[
-```{r factors2, warning=TRUE}
+
+```r
 smoking + 1
+```
+
+```
+## Warning in Ops.factor(smoking, 1): '+' not meaningful for factors
+```
+
+```
+## [1] NA NA NA NA NA NA
 ```
 ]
 
@@ -300,9 +431,14 @@ But, we *really* know what we're doing™: we're not adding to do math, we're ju
 
 Let's try coercing our factor vector back to a numeric variable, doing the addition there, and then using the `factor` function again.
 
-```{r factor3}
-smoking <- as.numeric(smoking)
+
+```r
+smoking &lt;- as.numeric(smoking)
 smoking
+```
+
+```
+## [1] 2 1 1 1 2 1
 ```
 
 Wait, how are they already one's and two's?????
@@ -329,23 +465,55 @@ Printed Label | Internal Value
 ## Factors
 R uses numbers as the internal representation for your categories even when the input data are explicitly character data.
 
-```{r factor4}
-smoker <- factor(c("smoker","nonsmoker","nonsmoker",
+
+```r
+smoker &lt;- factor(c("smoker","nonsmoker","nonsmoker",
                    "nonsmoker", "smoker","nonsmoker")
                  )
 smoker
+```
+
+```
+## [1] smoker    nonsmoker nonsmoker nonsmoker smoker    nonsmoker
+## Levels: nonsmoker smoker
+```
+
+```r
 as.numeric(smoker)
+```
+
+```
+## [1] 2 1 1 1 2 1
 ```
 
 ---
 
 ## Factors
 If you really do need to use addition on your numerically-labeled factor vector, the easiest thing to do is convert it to a character vector with `as.character` (which will use the labels) and *then* use `as.numeric`
-```{r factor5}
-smoker <- factor(c(1, 0, 0, 0, 1, 0))
+
+```r
+smoker &lt;- factor(c(1, 0, 0, 0, 1, 0))
 as.character(smoker)
+```
+
+```
+## [1] "1" "0" "0" "0" "1" "0"
+```
+
+```r
 as.numeric(as.character(smoker))
+```
+
+```
+## [1] 1 0 0 0 1 0
+```
+
+```r
 as.numeric(as.character(smoker)) + 10
+```
+
+```
+## [1] 11 10 10 10 11 10
 ```
 
 ---
@@ -355,11 +523,17 @@ The best thing is to not use numeric labels for your categories, so you avoid th
 
 If your input data are numeric, you can give each level as non-numeric label using the `labels` argument to the `factor` function.
 
-```{r factor6}
-smoker <- factor(c(1, 0, 0, 0, 1, 0),
+
+```r
+smoker &lt;- factor(c(1, 0, 0, 0, 1, 0),
                  labels = c("nonsmoker", "smoker")
                  )
 smoker
+```
+
+```
+## [1] smoker    nonsmoker nonsmoker nonsmoker smoker    nonsmoker
+## Levels: nonsmoker smoker
 ```
 
 Just make sure you supply the labels in the correct order!! The value 0 will be the first level, and 1 the second level, so we supply the labels with nonsmoker first, then smoker second, to preserve the interpretation of our coding.
@@ -384,12 +558,21 @@ The values should be vectors (of any type) and the names should be unquoted stri
 
 Importantly, all the vectors stored in the data frame must be of *identical length*.
 
-```{r dataframeexample}
-df <- data.frame(x =     c(  1,    4,   4,     2  ),
+
+```r
+df &lt;- data.frame(x =     c(  1,    4,   4,     2  ),
                  y =     c(  3,    3,   1,     4  ),
                  month = c("Sep","Oct","Nov","Jan"),
                  stringsAsFactors = FALSE)
 df
+```
+
+```
+##   x y month
+## 1 1 3   Sep
+## 2 4 3   Oct
+## 3 4 1   Nov
+## 4 2 4   Jan
 ```
 
 ---
@@ -414,10 +597,19 @@ R compares the length of the first vector to the length of each vector after it.
 
 If so, R will repeat the shorter vector over and over so the lengths match up. In this example, the `x` variable has length 4, and the `month` vector has length 1; since 4 is a multiple of 1 (1 x 4 = 4), R will repeat the `month` vector 4 times so the lengths match.
 
-```{r goodrecycle}
+
+```r
 data.frame(x = c(1, 4, 4, 2),
            month = "Sep"
            )
+```
+
+```
+##   x month
+## 1 1   Sep
+## 2 4   Sep
+## 3 4   Sep
+## 4 2   Sep
 ```
 
 ---
@@ -428,10 +620,15 @@ The `data.frame()` function will throw an error if the length of the longer vect
 Here, the `x` variable still has length 4, but the `month` vector has length 3; since 4 is not multiple of 3, an error occurs.
 
 .errormsg[
-```{r badrecycle, error=TRUE}
+
+```r
 data.frame(x = c(1, 4, 4, 2),
            month=c("Sep", "Oct", "Nov")
            ) 
+```
+
+```
+## Error in data.frame(x = c(1, 4, 4, 2), month = c("Sep", "Oct", "Nov")): arguments imply differing number of rows: 4, 3
 ```
 ]
 
@@ -487,12 +684,31 @@ We'll start with numeric indexing vectors to get a feel for the general procedur
 
 ## Numeric Index Vectors 
 We'll start by slicing smaller chunks out of a larger vector. Here, the numeric vectors inside the brackets tell R the *positions* of the elements we wish to extract.
-```{r large_and_smaller}
-alphabet <- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o",
+
+```r
+alphabet &lt;- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o",
               "p","q","r","s","t","u","v","w","x","y","z") 
 alphabet[c(1,26)] # Extract First and 26th element
+```
+
+```
+## [1] "a" "z"
+```
+
+```r
 alphabet[10:20] # Extract tenth through 20th
+```
+
+```
+##  [1] "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t"
+```
+
+```r
 alphabet[seq(from=1,to=26,by=2)] # Extract every other element
+```
+
+```
+##  [1] "a" "c" "e" "g" "i" "k" "m" "o" "q" "s" "u" "w" "y"
 ```
 
 ---
@@ -500,17 +716,27 @@ alphabet[seq(from=1,to=26,by=2)] # Extract every other element
 ## Common Errors with Numeric Indices
 The most common mistake is including a value in your indexing vector which is greater than the length of the vector you are subsetting
 
-```{r outofbounds, error=TRUE}
+
+```r
 alphabet[100] # there are not 100 letters in the alphabet
 ```
 
-We get an `NA` becasue the value is missing - there is no 100<sup>th</sup> letter of the alphabet. This is commonly referred to as an "index out of bounds" error.
+```
+## [1] NA
+```
+
+We get an `NA` becasue the value is missing - there is no 100&lt;sup&gt;th&lt;/sup&gt; letter of the alphabet. This is commonly referred to as an "index out of bounds" error.
 
 Another common mistake is forgetting to concatenate the values you want to use for the indexing vector (i.e. forgetting the `c()` function).
 
 .errormsg[
-```{r no-c, error=TRUE}
+
+```r
 alphabet[1,5,10]
+```
+
+```
+## Error in alphabet[1, 5, 10]: incorrect number of dimensions
 ```
 ]
 
@@ -520,9 +746,22 @@ alphabet[1,5,10]
 
 Instead of creating a vector of values you *do* want to pick out, it may be easier to come up with a vector of ones you *don't* want. We can use negative number's to specify which vector elements we don't want. 
 
-```{r negatives}
+
+```r
 alphabet[c(-1,-26)] # Same as alphabet[2:24]
+```
+
+```
+##  [1] "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q"
+## [17] "r" "s" "t" "u" "v" "w" "x" "y"
+```
+
+```r
 alphabet[-1:-10]
+```
+
+```
+##  [1] "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
 ```
 
 Indexing with positive vectors is usually preferred, as the intent of the code is more clear, but sometimes this is easier and more clear (e.g. when dropping the first or last value).
@@ -535,13 +774,25 @@ When performing logical indexing, you supply a vector specifying whether to extr
 
 Let's revisit the example of selecting the first and last elements of the alphabet vector: We make a vector of logicals and stick it in the square brackets after your vector.
 
-```{r bad_logical_indexing}
+
+```r
 alphabet[c(1,26)]
+```
+
+```
+## [1] "a" "z"
+```
+
+```r
 alphabet[c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
            FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
            FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE
            )
          ]
+```
+
+```
+## [1] "a" "z"
 ```
 
 ---
@@ -574,63 +825,131 @@ You already know lots of relational operators. The equal to, greater than and le
 
 Comparison | Expression   | Example    | Result
 ---------- | :----------: | ---------- | 
-Less Than | `<` | `5 < 10`<br>`5 < 1` | `r 5 < 10`<br>`r 5 < 1` 
-Less Than or Equal To | `<=` | `5 <= 5`<br>`5 <= 1`| `r 5 <= 5`<br>`r 5 <= 1`
-Greater Than | `>` | `10 > 5`<br>`5 > 5` | `r 10 > 5`<br>`r 5 > 5`
-Greater Than or Equal To | `>=` | `10 >= 10`<br>`10 >= 12` | `r 10 >= 10`<br>`r 10 >= 12`
-Equal To | `==` | `5 == 6`<br>`5 == 5` |  `r 5 == 6`<br>`r 5 == 5`
-Not equal to | `!=` | `5 != 6`<br>`5 != 5` | `r 5 != 6`<br>`r 5 != 5`
+Less Than | `&lt;` | `5 &lt; 10`&lt;br&gt;`5 &lt; 1` | TRUE&lt;br&gt;FALSE 
+Less Than or Equal To | `&lt;=` | `5 &lt;= 5`&lt;br&gt;`5 &lt;= 1`| TRUE&lt;br&gt;FALSE
+Greater Than | `&gt;` | `10 &gt; 5`&lt;br&gt;`5 &gt; 5` | TRUE&lt;br&gt;FALSE
+Greater Than or Equal To | `&gt;=` | `10 &gt;= 10`&lt;br&gt;`10 &gt;= 12` | TRUE&lt;br&gt;FALSE
+Equal To | `==` | `5 == 6`&lt;br&gt;`5 == 5` |  FALSE&lt;br&gt;TRUE
+Not equal to | `!=` | `5 != 6`&lt;br&gt;`5 != 5` | TRUE&lt;br&gt;FALSE
 
 ---
 
-## Relational Operators & Indexing
+## Relational Operators &amp; Indexing
 What makes relational operators useful is that they can be applied to all the elements of a data structure simultaneously. 
-```{r lisa}
-lisa <- c(34, 509, 63, 187, 998, 78, 3330)
+
+```r
+lisa &lt;- c(34, 509, 63, 187, 998, 78, 3330)
 print(lisa)
-lisa <= 100 # Apply the "less than or equal to" test
 ```
 
-As you can see, values that meet the criteria (<= 5) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
+```
+## [1]   34  509   63  187  998   78 3330
+```
 
-```{r lisa_pt2}
-lisa[lisa <= 100] # Index vector named lisa with the results of the test. 
+```r
+lisa &lt;= 100 # Apply the "less than or equal to" test
+```
+
+```
+## [1]  TRUE FALSE  TRUE FALSE FALSE  TRUE FALSE
+```
+
+As you can see, values that meet the criteria (&lt;= 5) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
+
+
+```r
+lisa[lisa &lt;= 100] # Index vector named lisa with the results of the test. 
+```
+
+```
+## [1] 34 63 78
 ```
 
 ---
 
-## Relational Operators & Indexing
+## Relational Operators &amp; Indexing
 We index character vectors using the `==` and `!=` operators, but not the greater/less than operators. Quantity makes no sense for characters!
-```{r charTesting}
-months <- c("January", "February", "March", "April", "May", "June", "July",
+
+```r
+months &lt;- c("January", "February", "March", "April", "May", "June", "July",
            "August", "September", "October", "November", "December")
 months == "June" # The sixth element is TRUE
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE
+## [11] FALSE FALSE
+```
+
+```r
 months[months == "June"]
+```
+
+```
+## [1] "June"
+```
+
+```r
 months[months != "July"]
+```
+
+```
+##  [1] "January"   "February"  "March"     "April"     "May"      
+##  [6] "June"      "August"    "September" "October"   "November" 
+## [11] "December"
 ```
 
 ---
 
 ## Other Useful Tests: `is.na()`
 Unfortunately, we often have to deal with missing observations in real world data sets. R codes missing data as `NA` (or sometimes `NaN`). We can use the `is.na()` function to find any missing values in a vector. 
-```{r isna}
-missingno <- c(10,NA,1,4,2,NA,NA,99,NaN, NA)
+
+```r
+missingno &lt;- c(10,NA,1,4,2,NA,NA,99,NaN, NA)
 is.na(missingno)
+```
+
+```
+##  [1] FALSE  TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE
+```
+
+```r
 missingno[!is.na(missingno)] # Select things that are the opposite of missing
+```
+
+```
+## [1] 10  1  4  2 99
 ```
 
 ---
 
 ## Tips and Tricks
 A useful function to know is `which()`. When used on a logical vector, it will return to your the position indices of the vector's `TRUE` element. It is useful when you want to know **where** in the vector your matches occur. 
-```{r which}
-lisa <= 100
-which(lisa <= 100)
+
+```r
+lisa &lt;= 100
+```
+
+```
+## [1]  TRUE FALSE  TRUE FALSE FALSE  TRUE FALSE
+```
+
+```r
+which(lisa &lt;= 100)
+```
+
+```
+## [1] 1 3 6
 ```
 
 But don't do:
-```{r bad_which}
-lisa[which(lisa <= 100)]
+
+```r
+lisa[which(lisa &lt;= 100)]
+```
+
+```
+## [1] 34 63 78
 ```
 
 Using `which` is an unneccesary extra step here that can slow performance.
@@ -654,9 +973,9 @@ In R, we can select elements based on multiple conditions by combining individua
 ## Logical Operators 
 Logic | Expression | Example | Result
 ----- | ---------- | ------- | ------
-Elementwise AND | `&` | `c(1,3) > 0 & c(1,3) <=2` |`r c(1,3) > 0 & c(1,3) <=2` 
-Elementwise OR | <code>&#124;</code> | <code>c(1,3) > 0 &#124; c(1,3) <=2</code> | `r c(1,3) > 0 | c(1,3) <=2` 
-Negate | `!` | `!(c(1,3) > 0)` | `r !(c(1,3) > 0)`
+Elementwise AND | `&amp;` | `c(1,3) &gt; 0 &amp; c(1,3) &lt;=2` |TRUE, FALSE 
+Elementwise OR | &lt;code&gt;&amp;#124;&lt;/code&gt; | &lt;code&gt;c(1,3) &gt; 0 &amp;#124; c(1,3) &lt;=2&lt;/code&gt; | TRUE, TRUE 
+Negate | `!` | `!(c(1,3) &gt; 0)` | FALSE, FALSE
 
 
 The elementwise logical operators operators test all their arguments (i.e., they test all the pairs elements of the logical vectors supplied) and return a vector the same length as the input.
@@ -666,16 +985,21 @@ The elementwise logical operators operators test all their arguments (i.e., they
 ## Indexing with Multiple Conditions 
 Let's say we wanted to select the elements in `lisa` which were less than 500 or greater than 1000.
 
-```{r show_lisa_again}
+
+```r
 lisa
+```
+
+```
+## [1]   34  509   63  187  998   78 3330
 ```
 
 To do this, we need to:
 
 1. Test each element of `lisa` to see if it is less then 500
-    - `lisa < 500`
+    - `lisa &lt; 500`
 2. Test each element of `lisa` to see if it is greater than 1000
-    - `lisa > 1000`
+    - `lisa &gt; 1000`
 3. Combine the results of both tests together into a single test
     - ???
 
@@ -687,9 +1011,9 @@ The goal is to have our test return a `TRUE` for each element that passes the "l
 Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
 ------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
 `lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
-`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
-`lisa > 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
-Pass Either Test? | <span style="color: Green">&#10003;</span> | 	 <span style="color: Red">&#10005; </span> | <span style="color: Green"> &#10003; </span> | <span style="color: Green"> &#10003; </span>| 	 <span style="color: Red"> &#10005; </span> | <span style="color: Green"> &#10003; </span>| <span style="color: Green"> &#10003; </span>
+`lisa &lt; 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa &gt; 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
+Pass Either Test? | &lt;span style="color: Green"&gt;&amp;#10003;&lt;/span&gt; | 	 &lt;span style="color: Red"&gt;&amp;#10005; &lt;/span&gt; | &lt;span style="color: Green"&gt; &amp;#10003; &lt;/span&gt; | &lt;span style="color: Green"&gt; &amp;#10003; &lt;/span&gt;| 	 &lt;span style="color: Red"&gt; &amp;#10005; &lt;/span&gt; | &lt;span style="color: Green"&gt; &amp;#10003; &lt;/span&gt;| &lt;span style="color: Green"&gt; &amp;#10003; &lt;/span&gt;
 
 ---
 
@@ -701,13 +1025,18 @@ We can do that by combining the two tests with the `|` logical operator
 Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
 ------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
 `lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
-`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
-`lisa > 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
-<code>lisa < 500 &#124; lisa > 1000</code> | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `TRUE` 
+`lisa &lt; 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa &gt; 1000` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `FALSE` | `TRUE`
+&lt;code&gt;lisa &lt; 500 &amp;#124; lisa &gt; 1000&lt;/code&gt; | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `TRUE` 
 
 
-```{r lisa_or}
-lisa[lisa < 500 | lisa > 1000]
+
+```r
+lisa[lisa &lt; 500 | lisa &gt; 1000]
+```
+
+```
+## [1]   34   63  187   78 3330
 ```
 
 ---
@@ -718,11 +1047,11 @@ Now let's say we wanted to select the elements in `lisa` which were less than 50
 To do this, we need to:
 
 - Test each element of `lisa` to see if it is less then 500
-     * `lisa < 500`
+     * `lisa &lt; 500`
 - Test each element of `lisa` to see if it is greater than or equal to 50
-     * `lisa >= 50`
+     * `lisa &gt;= 50`
 - Combine the results of both tests together into a single test
-    * `&`
+    * `&amp;`
 
 ---
 
@@ -732,23 +1061,142 @@ Our goal of the test is to have it return a `TRUE` for each element if it passed
 Expression | Element 1 | Element 2 | Element 3 | Element 4 | Element 5 | Element 6 | Element 7
 ------------- | --------- | --------- | --------- | --------- | --------- | --------- | ---------
 `lisa` |     34    |   509     |    63     |    187    |    998    |     78    |    3330
-`lisa < 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
-`lisa >= 50` | `FALSE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE`
-`lisa < 500 & lisa >= 50` | `FALSE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa &lt; 500` | `TRUE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
+`lisa &gt;= 50` | `FALSE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE` | `TRUE`
+`lisa &lt; 500 &amp; lisa &gt;= 50` | `FALSE` | `FALSE` | `TRUE` | `TRUE` | `FALSE` | `TRUE` | `FALSE`
 
-<br>
-```{r lisa_and}
-lisa[lisa < 500 & lisa >= 50]
+&lt;br&gt;
+
+```r
+lisa[lisa &lt; 500 &amp; lisa &gt;= 50]
+```
+
+```
+## [1]  63 187  78
 ```
 
 ---
 
 ## Indexing with Multiple Conditions 
-```{r lisa_nothing}
-lisa[lisa < 500 & lisa >= 998]
+
+```r
+lisa[lisa &lt; 500 &amp; lisa &gt;= 998]
+```
+
+```
+## numeric(0)
 ```
 When you index any structure in R with a vector of all `FALSE`s, you get back `numeric(0)` which means "nothing to see here!"
 
 So why does this test and subset return nothing?
 
 Because no number can be less than 500 and greater than 998, so every test comes back `FALSE`, and all elements are ignored in the subset.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
