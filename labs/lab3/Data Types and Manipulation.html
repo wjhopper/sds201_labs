@@ -205,7 +205,7 @@ But things aren't always magically perfect
 
 ## Data Structures
 
-Of course, in a language focused on analyzing data, it is helpful to have the ability to group multiple values together - this is where **data structures** come into plot.
+Of course, in a language focused on analyzing data, it is helpful to have the ability to group multiple values together - this is where **data structures** come into play.
 
 Think of data structures in R as big containers for grouping together many values. After storing your data in these containers, you can reuse it multiple places (e.g. create an R object to store it) or access different subsets of it by position or name.
 
@@ -290,9 +290,8 @@ You can create a sequential numeric vector using the colon operator `:`, instead
 ```
 
 ```
-##  [1]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70
-## [17]  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86
-## [33]  87  88  89  90  91  92  93  94  95  96  97  98  99 100
+##  [1]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87
+## [34]  88  89  90  91  92  93  94  95  96  97  98  99 100
 ```
 
 Sequences of other step sizes can be made with the `seq()` function
@@ -560,19 +559,19 @@ Importantly, all the vectors stored in the data frame must be of *identical leng
 
 
 ```r
-df &lt;- data.frame(x =     c(  1,    4,   4,     2  ),
-                 y =     c(  3,    3,   1,     4  ),
-                 month = c("Sep","Oct","Nov","Jan"),
-                 stringsAsFactors = FALSE)
-df
+finances &lt;- data.frame(sales = c(100,   150,  400,  350 ),
+                       costs = c(300,   300,  100,  200 ),
+                       month = c("Sep","Oct","Nov","Jan"),
+                       stringsAsFactors = FALSE)
+finances
 ```
 
 ```
-##   x y month
-## 1 1 3   Sep
-## 2 4 3   Oct
-## 3 4 1   Nov
-## 4 2 4   Jan
+##   sales costs month
+## 1   100   300   Sep
+## 2   150   300   Oct
+## 3   400   100   Nov
+## 4   350   200   Jan
 ```
 
 ---
@@ -595,21 +594,21 @@ The `data.frame()` function can also recycle input, so you can save some keystro
 
 R compares the length of the first vector to the length of each vector after it. If the lengths don't match, R will check if the length of the longer vector is a multiple of the length of the shorter vector.
 
-If so, R will repeat the shorter vector over and over so the lengths match up. In this example, the `x` variable has length 4, and the `month` vector has length 1; since 4 is a multiple of 1 (1 x 4 = 4), R will repeat the `month` vector 4 times so the lengths match.
+If so, R will repeat the shorter vector over and over so the lengths match up. In this example, the `sales` variable has length 4, and the `month` vector has length 1; since 4 is a multiple of 1 (1 x 4 = 4), R will repeat the `month` vector 4 times so the lengths match.
 
 
 ```r
-data.frame(x = c(1, 4, 4, 2),
+data.frame(sales = c(100, 400, 400, 350),
            month = "Sep"
            )
 ```
 
 ```
-##   x month
-## 1 1   Sep
-## 2 4   Sep
-## 3 4   Sep
-## 4 2   Sep
+##   sales month
+## 1   100   Sep
+## 2   400   Sep
+## 3   400   Sep
+## 4   350   Sep
 ```
 
 ---
@@ -617,18 +616,18 @@ data.frame(x = c(1, 4, 4, 2),
 ## Data Frame Tricks (and Traps)
 The `data.frame()` function will throw an error if the length of the longer vector is not a multiple of the shorter vector's lengths.
 
-Here, the `x` variable still has length 4, but the `month` vector has length 3; since 4 is not multiple of 3, an error occurs.
+Here, the `sales` variable still has length 4, but the `month` vector has length 3; since 4 is not multiple of 3, an error occurs.
 
 .errormsg[
 
 ```r
-data.frame(x = c(1, 4, 4, 2),
-           month=c("Sep", "Oct", "Nov")
+data.frame(sales = c(100, 400, 400, 350),
+           month = c("Sep", "Oct", "Nov")
            ) 
 ```
 
 ```
-## Error in data.frame(x = c(1, 4, 4, 2), month = c("Sep", "Oct", "Nov")): arguments imply differing number of rows: 4, 3
+## Error in data.frame(sales = c(100, 400, 400, 350), month = c("Sep", "Oct", : arguments imply differing number of rows: 4, 3
 ```
 ]
 
@@ -643,6 +642,11 @@ My advice: Favor being explicit about your vector lengths when programming, and 
 
 ---
 
+class: inverse, middle, center
+
+# Indexing
+
+---
 ## Indexing
 
 All throughout your data analysis pipeline, you will face the need to take smaller chunks out of a larger data structure. Sometimes you will need to change the data that is stored in your structure, or use it as input to another function, or perhaps you need to plot it. 
@@ -725,7 +729,7 @@ alphabet[100] # there are not 100 letters in the alphabet
 ## [1] NA
 ```
 
-We get an `NA` becasue the value is missing - there is no 100&lt;sup&gt;th&lt;/sup&gt; letter of the alphabet. This is commonly referred to as an "index out of bounds" error.
+We get an `NA` because the value is missing - there is no 100&lt;sup&gt;th&lt;/sup&gt; letter of the alphabet. This is commonly referred to as an "index out of bounds" error.
 
 Another common mistake is forgetting to concatenate the values you want to use for the indexing vector (i.e. forgetting the `c()` function).
 
@@ -752,8 +756,7 @@ alphabet[c(-1,-26)] # Same as alphabet[2:24]
 ```
 
 ```
-##  [1] "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q"
-## [17] "r" "s" "t" "u" "v" "w" "x" "y"
+##  [1] "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y"
 ```
 
 ```r
@@ -877,8 +880,7 @@ months == "June" # The sixth element is TRUE
 ```
 
 ```
-##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE
-## [11] FALSE FALSE
+##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
 ```
 
 ```r
@@ -894,9 +896,7 @@ months[months != "July"]
 ```
 
 ```
-##  [1] "January"   "February"  "March"     "April"     "May"      
-##  [6] "June"      "August"    "September" "October"   "November" 
-## [11] "December"
+##  [1] "January"   "February"  "March"     "April"     "May"       "June"      "August"    "September" "October"   "November"  "December"
 ```
 
 ---
@@ -1091,6 +1091,415 @@ When you index any structure in R with a vector of all `FALSE`s, you get back `n
 So why does this test and subset return nothing?
 
 Because no number can be less than 500 and greater than 998, so every test comes back `FALSE`, and all elements are ignored in the subset.
+
+---
+
+## Set-based indexing
+
+Sometimes, you'll need to search for matches in a vector, but there are many possible matches that are acceptable.
+
+For example, let's say we had a list of yes or no responses stored in a character vector, and we wanted to count up how many "yes" answers we got. Our first step would be to find each yes, and then count them from there.
+
+But, people could respond "yes" in lots of ways. They might respond "yes", or "Yes", or "Y", or "y", or "YES", or maybe even "OK". If we want an accurate count, we'll need to accept *any* of these as a match, and also do the same thing for "no" responses.
+
+
+```r
+responses &lt;- c("yes", "Yes", "no", "No", "y", "n", "NO", "Y", "YES")
+```
+
+
+What can we do?
+
+---
+
+## Set-based indexing
+
+One thing we could do is chain together a bunch of equality tests with the OR operator.
+
+
+```r
+responses == "Y" | responses == "y" | responses == "YES" |
+  responses == "yes" | responses == "Yes" | responses == "OK"
+```
+
+```
+## [1]  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE
+```
+
+But there's a better way! R provides the `%in%` operator to look for matches in one set of values (like our vector of responses) anywhere in another set of values (like our set of possible "yes" answers).
+
+
+```r
+responses %in% c("yes", "Yes", "YES", "y", "Y", "OK")
+```
+
+```
+## [1]  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE
+```
+
+We can read the `%in%` operator as answering the question "For each value on the left, is there a match anywhere on the right?"
+
+---
+
+## Indexing summary thus far...
+- Indexing, or subsetting, is the process of slicing a smaller chunk out of a larger data structure
+- Basic syntax template is `DataStructure[IndexVector]`
+- the `IndexVector` can be a numeric or logical vector
+- Logical testing uses relational operators like `&lt;` and `==` and logical operators (e.g., `&amp;` and `|`) to test which elements in our data structure meet specific requirements 
+
+
+So far, we've explored this using vectors, which are one-dimensional data structure.
+
+---
+
+## Indexing Two-Dimensional Structures
+Now we'll learn how to index data structures, such as data frames, that have two dimensions
+
+As we've seen, data frames have both rows **and** columns, making them a 2D data structure
+
+This means when we index them, we must specify which rows we would like to take out in our subset, as well as which columns
+
+We'll practice this with the toy "sales" data frame we made earlier.
+
+```r
+finances &lt;- data.frame(sales = c(100,   150,  400,  350 ),
+                       costs = c(300,   300,  100,  200 ),
+                       month = c("Sep","Oct","Nov","Jan"),
+                       stringsAsFactors = FALSE)
+finances
+```
+
+```
+##   sales costs month
+## 1   100   300   Sep
+## 2   150   300   Oct
+## 3   400   100   Nov
+## 4   350   200   Jan
+```
+
+---
+
+## Indexing Data Frames
+To select both rows and columns from a data frame, we just need two index vectors inside our square brackets, separated from each other by a comma.
+
+The first vector applies to rows, the second applies to columns
+
+The template is: `YourDataFrame[rowIndex, columnIndex]`
+
+Just like when subsetting from vectors, the index vectors you supply can be either:
+
+- numeric vectors specifying the row number(s) / column number(s)  you wish to select
+- logical vectors specifying for each column and row whether we want to select it (`TRUE`)  or ignore it (`FALSE`)
+
+---
+
+## Data Frame Examples
+
+
+```r
+finances[1, 2:3] # Row 1, Column 2 and 3.
+```
+
+```
+##   costs month
+## 1   300   Sep
+```
+
+```r
+finances[1:2, 2:3] # Rows 1 and 2, Columns 2 and 3.  
+```
+
+```
+##   costs month
+## 1   300   Sep
+## 2   300   Oct
+```
+
+---
+
+## Data Frame Examples
+You can select **all** of one dimension, (e.g., keep all rows or all columns) while indexing the other dimension. Just providing the separating comma as usual, but leave the space for the indexing vector blank  for the dimension you want to stay 100% intact.
+
+
+```r
+finances[1:2, ] # First two rows, all columns
+```
+
+```
+##   sales costs month
+## 1   100   300   Sep
+## 2   150   300   Oct
+```
+
+```r
+finances[, 2:3] # All rows, second and third columns
+```
+
+```
+##   costs month
+## 1   300   Sep
+## 2   300   Oct
+## 3   100   Nov
+## 4   200   Jan
+```
+
+---
+
+## Name-based Indexing
+
+Data Frames also support a powerful name-based set of indexing operations.
+
+Indexing based on the name you've assigned to a row or column is almost always better, because that name is unlikely to change, while the row or column number is **very** likely to get changed
+
+It's also much easier to remember the name of something than remember its position in a data frame.
+
+---
+
+## Name-based Indexing
+If you want to select a single column by name, you can index the data frame using the `$` operator.
+
+You start with the name of the data frame, follow it with the `$` operator, and finish with the *unquoted* name of the variable name.
+
+```r
+finances$month
+```
+
+```
+## [1] "Sep" "Oct" "Nov" "Jan"
+```
+
+Note that the column is returned to you as a vector, *not* a data frame with one column.
+
+
+```r
+class(finances)
+```
+
+```
+## [1] "data.frame"
+```
+
+```r
+class(finances$month)
+```
+
+```
+## [1] "character"
+```
+---
+
+## Name-based Indexing
+
+And remember, since this dollar-sign based indexing returns a vector, you can continue on indexing *that* vector itself!
+
+```r
+finances$month
+```
+
+```
+## [1] "Sep" "Oct" "Nov" "Jan"
+```
+
+```r
+finances$month[c(1,3)]
+```
+
+```
+## [1] "Sep" "Nov"
+```
+
+---
+
+## Name-based Indexing
+If you want to select *multiple* columns by name, you have to return to using the square bracket technique. In this case, you provide the list of column names you want to select as a character vector
+
+
+```r
+finances[, c("sales", "month")]
+```
+
+```
+##   sales month
+## 1   100   Sep
+## 2   150   Oct
+## 3   400   Nov
+## 4   350   Jan
+```
+
+You're free to combine position-based indexing on the rows, and name-based indexing on the columns
+
+```r
+finances[1:2, c("sales", "month")]
+```
+
+```
+##   sales month
+## 1   100   Sep
+## 2   150   Oct
+```
+
+---
+
+## Logical Indexing &amp; 2D structures
+One of the most common subsetting tasks with a data frame is to select values in one column where the values in *another* column meet a certain criteria.
+
+For example, perhaps we want to find out which month we had our best sales figures in. So, we need to find the row(s) in our data set where the `sales` variable is equal to the *maximum* of the `sales` variable.
+
+We can break this job down into a three-step process:
+
+1. Find the maximum value in the `sales` variable
+2. Test each value in the `sales` variable to see if it equals this maximum number
+3. Select just the rows of the data set that pass this test
+
+---
+
+## Logical Indexing &amp; 2D structures
+
+Step 1 can be solved by using the `max()` function on the `sales` variable.
+
+```r
+max_sales &lt;- max(finances$sales)
+max_sales
+```
+
+```
+## [1] 400
+```
+
+Step 2 can be solved by comparing each value in the `sales` variable to the `max_sales` value using the `==` comparison operator.
+
+```r
+finances$sales == max_sales
+```
+
+```
+## [1] FALSE FALSE  TRUE FALSE
+```
+
+Step 3 can be solved by indexing the rows of the `finances` data frame using the logical vector that is returned from step 2.
+
+```r
+finances[finances$sales == max_sales, ]
+```
+
+```
+##   sales costs month
+## 3   400   100   Nov
+```
+
+---
+
+## Practice
+Which months had costs over $200?
+
+Can we make sure *only* the months are printed out, and not any sales or costs values?
+
+Which months did we make a profit? In other words, in which months were sales greater than profits?
+
+---
+
+## Errors when indexing by name
+If you try to select a column of a data frame using the `$` operator, but there is no column with that name, `R` will return `NULL`
+
+
+```r
+finances$profits
+```
+
+```
+## NULL
+```
+
+But, if you use the `[row, column]` style of indexing and ask for a column that doesn't exist, you get a proper error. 
+
+
+```r
+finances[,'profits']
+```
+
+```
+## Error in `[.data.frame`(finances, , "profits"): undefined columns selected
+```
+
+---
+
+## Editing data frames
+You can use indexing operation on the left hand side of an assignment operation to remove or replace values in your data structure. The basic recipe looks like:
+
+`DataFrame[LogicalCriteria] &lt;- NewValues`
+
+A note of caution: this is an irreversible operation. It would behoove you to make a backup copy of your data structure before altering it, like so:
+
+`backup_object &lt;- DataObject`
+
+`DataObject[LogicalCriteria] &lt;- NewValues`
+
+---
+
+## Editing data frames
+Let's say that we made a mistake when entering our sales data, and we actually made $500 in January! Let's update our data frame to reflect the good news! To do this, we need to:
+
+1. Search for the "Jan" row in the data frame
+2. Use the results of this search to select the "Jan" row of the data frame, as well as the "Sales" column
+3. Overwrite the selected cell of the data frame with the number 500
+
+--
+
+
+```r
+finances[finances$month == "Jan", "sales"] &lt;- 500
+finances
+```
+
+```
+##   sales costs month
+## 1   100   300   Sep
+## 2   150   300   Oct
+## 3   400   100   Nov
+## 4   500   200   Jan
+```
+            ↑
+           Tada!
+---
+
+## Removing rows
+
+If you want to remove rows, it's generally more effective to approach the problem as choosing which rows to keep, rather than which rows to delete.
+
+For example, if we wanted to remove the month of September from our financial data, we wouldn't "delete" that row - rather, we would make a new data frame the keeps every row *except* for the September
+
+
+```r
+finances[finances$month != "Sep",]
+```
+
+```
+##   sales costs month
+## 2   150   300   Oct
+## 3   400   100   Nov
+## 4   500   200   Jan
+```
+
+---
+
+## Removing columns
+You can remove a *single* column by indexing it with the `$` operator, and assigning it the special value `NULL`.
+
+
+```r
+finances$month &lt;- NULL
+finances
+```
+
+```
+##   sales costs
+## 1   100   300
+## 2   150   300
+## 3   400   100
+## 4   500   200
+```
+
+If you want to remove *multiple* columns, it's best to think about it the same way as rows - make a new data frame that keeps all the columns you want, and none of the ones you want gone, instead of deleting columns one by one.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
