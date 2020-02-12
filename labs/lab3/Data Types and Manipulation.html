@@ -290,8 +290,8 @@ You can create a sequential numeric vector using the colon operator `:`, instead
 ```
 
 ```
-##  [1]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87
-## [34]  88  89  90  91  92  93  94  95  96  97  98  99 100
+##  [1]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70  71  72  73  74  75  76  77  78  79  80
+## [27]  81  82  83  84  85  86  87  88  89  90  91  92  93  94  95  96  97  98  99 100
 ```
 
 Sequences of other step sizes can be made with the `seq()` function
@@ -857,7 +857,7 @@ lisa &lt;= 100 # Apply the "less than or equal to" test
 ## [1]  TRUE FALSE  TRUE FALSE FALSE  TRUE FALSE
 ```
 
-As you can see, values that meet the criteria (&lt;= 5) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
+As you can see, values that meet the criteria (&lt;= 100) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
 
 
 ```r
@@ -896,7 +896,8 @@ months[months != "July"]
 ```
 
 ```
-##  [1] "January"   "February"  "March"     "April"     "May"       "June"      "August"    "September" "October"   "November"  "December"
+##  [1] "January"   "February"  "March"     "April"     "May"       "June"      "August"    "September"
+##  [9] "October"   "November"  "December"
 ```
 
 ---

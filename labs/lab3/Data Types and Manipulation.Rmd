@@ -596,7 +596,7 @@ print(lisa)
 lisa <= 100 # Apply the "less than or equal to" test
 ```
 
-As you can see, values that meet the criteria (<= 5) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
+As you can see, values that meet the criteria (<= 100) return as `TRUE`. When this logical vector is used to index the vector `lisa`, only the elements where the logical vector has value `TRUE` are returned.
 
 ```{r lisa_pt2}
 lisa[lisa <= 100] # Index vector named lisa with the results of the test. 
