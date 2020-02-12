@@ -643,7 +643,7 @@ Using `which` is an unneccesary extra step here that can slow performance.
 ---
 
 ## Testing Multiple Conditions 
-Sometimes you need to select elements based on multiple conditions. For example, you might want to select only those values that are less than 4 standard deviations above or below the mean.
+Sometimes you need to select elements based on multiple conditions. For example, you might want to select only the rows of the `ncbirths` data where the mother was older than 35 *and* a smoker.
 
 In R, we can select elements based on multiple conditions by combining individual logical tests together using *logical operators*. The logical operations we have at our disposal are: 
 
