@@ -259,7 +259,21 @@ summarize(cropYield, total_yield = sum(Yield))
 
 **Important**: when you do use `summarize` on a data frame, your output will only have your new summary variables (e.g., `total_yield`).
 
-This may not seem incredibly useful on its own, but allows us to segue into what is perhaps the biggest reason to use `dplyr`.
+---
+
+## The summarize function
+
+You can compute multiple summary statistics at once in the summarize function
+
+```{r summarize_more}
+summarize(cropYield,
+          total_yield = sum(Yield),
+          median_yield = median(Yield),
+          min_yield = min(Yield)
+          )
+```
+
+The summarize function may not seem incredibly useful on its own, but allows us to segue into what is perhaps the biggest reason to use `dplyr`.
 
 ---
 
