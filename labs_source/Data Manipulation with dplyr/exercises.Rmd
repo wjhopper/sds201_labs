@@ -98,10 +98,9 @@ For each problem below, always print out the final data frame or vector that giv
 </div>
 
 ## Exercise
-Remove the `date` variable from the data frame, and overwrite the original data frame.
+Remove the `date` variable from the data frame, rename the `median` variable to `median_price`. Be sure to overwrite the original data frame with your results.
 
 ### Solution
-
 
 
 ## Exercise
@@ -111,13 +110,13 @@ Remove any rows of the `txhousing` data set with missing values in the `sales` v
 
 
 ## Exercise
-Make a data set called `dallas` that includes data only from the city of Dallas in the years 2000 through 2010.
+Make a data set called `dallas` that includes data only from the city of Dallas in the years 2000 through 2010. Test to see if your results are correct by using the `distinct` function to show the unique city and year combinations in your data frame.
 
 ### Solution
 
 
 ## Exercise
-What is the median sales volume and the total sales volume for homes in Dallas, across all months and years in the `dallas` data frame? Your solution should present both answers in the same data frame.
+What are the median sales volume and the total sales volume for homes in Dallas, across all months and years in the `dallas` data frame? Your solution should present both answers in the same data frame (no need to save the output here). Remember, you can compute the median value with the `median` function.
 
 ### Solution
 
@@ -127,14 +126,21 @@ Compute the total sales volume for each year in the `dallas` data frame. Save th
 
 *Hint: The correct solution will create a data frame with 11 rows; one row for 2000, one row for 2001, one row for 2002, etc.)*
 
+### Solution
+
+
 ## Exercise:
-Which year in the had the highest sales volume in the  `dallas_annual_volume` data frame? Your solution should print out the single row of the data frame that corresponds to this year. No need to save the results.
+Which year in the had the lowest sales volume in the  `dallas_annual_volume` data frame? Your solution should print out the single row of the data frame that corresponds to this year. No need to save the results.
+
+### Solution
 
 
 ## Exercise
 Using `ggplot`, visualize the sales volume per year from the `dallas_annual_volume` data frame. Describe the pattern of sales volumes over time.
 
-**Hints: Any variable representing time usually goes on the x axis of a figure. You can use the geom_point() function to draw individual points on a plot, and the `geom_line() function to connect them**
+**Hints: Any variable representing time usually goes on the x axis of a figure. You can use the geom_point() function to draw individual points on a plot, and the `geom_line() function to connect the points**
+
+### Solution 
 
 
 ## Exercise
@@ -150,20 +156,7 @@ Which city had the highest sales volume over the entire period recorded in the `
 
 
 ## Exercise
-Which month had the most home sales in 2012?
-
-### Solution
-
-
-```{r include = F}
-txhousing %>% 
-  filter(year == 2012) %>%
-  group_by(month) %>%
-  summarize(top_sales = max(sales)) %>%
-  arrange(desc(top_sales))
-```
-
-## Exercise
 Generate a single table that shows the total number of houses sold in Austin and Dallas over the period of years 2000 and 2001.
 
 ### Solution
+
