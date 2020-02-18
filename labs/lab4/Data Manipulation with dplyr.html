@@ -259,7 +259,7 @@ filter(cropYield, Till == "Ridge" | Till == "Chisel")[c(1:2, 45:46),]
 
 ---
 
-## Filtering with `%in`
+## Filtering with `%in%`
 In this situation, the best thing to do is rely on set-based matching with the `%in%` operator.
 
 So, if you want to include rows where the value of a variable takes on one of many allowable values (e.g., rows where `x` is 1 or 2, instead of just 1, or rows where `Till` is "Ridge" or "Chisel"), you can use the `%in%` operator.
@@ -484,7 +484,7 @@ But `dplyr` has one feature that makes it worth every minute of learning:
 
 The ability to define persistent groups in your data frame, and apply functions to *each individual group, instead of the entire data frame*.
 
-This silver bullet is given to us is the `group_by` function.
+This silver bullet is given to us by the `group_by` function.
 
 ---
 
