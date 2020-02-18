@@ -815,6 +815,31 @@ select(cropYield, -Field) %&gt;%
 ## 6 Ridge  Surface        1685
 ```
 ]
+
+---
+
+## Saving output from piplines
+If you wish to save the final output from your pipeline (the output of the final `summarize` funciton in this case), you place an assignment statement to the left of the **first** expression in the pipeline.
+
+```r
+*total_crop_yields &lt;- select(cropYield, -Field) %&gt;%
+  filter(Till %in% c("Ridge", "Chisel")) %&gt;%
+  group_by(Till, Fert) %&gt;%
+  summarize(total_yeild = sum(Yield))
+total_crop_yields
+```
+
+```
+## # A tibble: 6 x 3
+## # Groups:   Till [2]
+##   Till   Fert    total_yeild
+##   &lt;chr&gt;  &lt;chr&gt;         &lt;int&gt;
+## 1 Chisel Broad          1491
+## 2 Chisel Deep           1605
+## 3 Chisel Surface        1577
+## 4 Ridge  Broad          1408
+## # … with 2 more rows
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

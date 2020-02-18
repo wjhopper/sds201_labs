@@ -19,6 +19,12 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', "cache" = TRUE, dev='svg',prompt=FALSE)
+
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
 ```
 
 ## What is dplyr?
@@ -438,3 +444,15 @@ select(cropYield, -Field) %>%
   summarize(total_yeild = sum(Yield))
 ```
 ]
+
+---
+
+## Saving output from piplines
+If you wish to save the final output from your pipeline (the output of the final `summarize` funciton in this case), you place an assignment statement to the left of the **first** expression in the pipeline.
+```{r, R.options=list(tibble.print_max=4, tibble.print_min=4)}
+total_crop_yields <- select(cropYield, -Field) %>% #<<
+  filter(Till %in% c("Ridge", "Chisel")) %>%
+  group_by(Till, Fert) %>%
+  summarize(total_yeild = sum(Yield))
+total_crop_yields
+```
