@@ -47,19 +47,23 @@ table.rmdtable td {
   background: #33FF57;
 }
 
-.gather2 table:last-of-type tr:nth-child(2),
-.gather2 table:last-of-type tr:nth-child(3) {
+.gather2 table:last-of-type tr:nth-child(1),
+.gather2 table:last-of-type tr:nth-child(2) {
   background: #FF5733;
 }
 
-.gather2 table:last-of-type tr:nth-child(4),
-.gather2 table:last-of-type tr:nth-child(5){
+.gather2 table:last-of-type tr:nth-child(3),
+.gather2 table:last-of-type tr:nth-child(4){
   background: #5733FF;
 }
 
-.gather2 table:last-of-type tr:nth-child(6),
-.gather2 table:last-of-type tr:nth-child(7){
+.gather2 table:last-of-type tr:nth-child(5),
+.gather2 table:last-of-type tr:nth-child(6){
   background: #33FF57;
+}
+
+.gather2 table:last-of-type thead tr {
+  background: #eee !important;
 }
 
 .gather2 table.rmdtable tr:nth-child(odd) td:nth-child(1) {
