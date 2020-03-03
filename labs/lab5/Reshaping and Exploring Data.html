@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Reshaping and Exploring Data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Will Hopper" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../assets/css/sds.css" type="text/css" />
+    <link rel="stylesheet" href="../../assets/css/tidyCellHighlighting.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Reshaping and Exploring Data
+### Will Hopper
+### 2/11/20
+
+---
+
+
+
+
+## Real data's dirty secret
+As you search for project data, you might experience a moment of profound dissapointment:
+
+1. You come up with a cool research question
+2. You actually find a source of relevant data
+3. You open up the data, and... wait what?
+
+The data is so awkward and messy, you've got tons of work to do before you get down the business of statistical inference.
+
+Today, we're going to be talking about how to deal with one of the most common kinds of messy data: data that is not in a "tidy" layout.
+
+---
+
+## Reshaping with `tidyr`
+The tools from the `tidyr` package help you re-arrange data frames, with an emphasis on helping you *normalize* datasets.
+
+There are 4 main functions for re-arranging data in the `tidyr` package:
+
+1. `gather()`: transforms data from wide(r) to long(er)
+2. `spread()`: transforms data from long(er) to wide(r)
+3. `separate()`: splits a single column into multiple columns
+4. `unite()`: combines multiple columns into a single column
+
+---
+
+## The temperature data
+We'll demonstrate how to use each function with a small dataset, so its easy to see what changes get made. So, install `tidyr`, and load the [temperature dataset](../data/temperature.csv).
+
+
+```r
+install.packages("tidyr")
+library(tidyr)
+temperature &lt;- read.csv("https://wjhopper.github.io/psych640-labs/data/temperature.csv")
+temperature
+```
+
+
+
+&lt;table&gt;
+&lt;caption&gt;High Temperatures (Farenheight)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_19_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_18_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_17_2017 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## The temperature data
+&lt;table&gt;
+&lt;caption&gt;High Temperatures (Farenheight)&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_19_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_18_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_17_2017 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+The `temperature` dataset has measurements of 3 variables: **City**, **Date**, and **Temperature**.
+
+But the layout of the dataset is in so-called "wide form", because values of the **Date** variable (Feb_19_2017, Feb_18_2017, and Feb_17_2017) are used as unique variables themselves.
+
+Instead, the dates *should* be in the cells of the table as observed values of the **Date** variable.
+
+---
+
+## The `gather()` function 
+Let's use the `gather` function to move the dates in the column headers down into the table under a new variable **date**, and move the actual temperature measurements into a new variable called **temp**.
+
+`gather` takes 4 required arguments:
+
+1. `data`: the name of the data frame to re-arrange
+2. `key`: the name of the to-be-created variable that will hold values currently in use as variables
+3. `value`: the name of the to-be-created variable that will hold the values from the variables to be gathered.
+4. `...`: A bare list of columns to gather (or columns *not* to gather)
+
+---
+
+## The `gather()` function 
+Let's make this more specific to our situation.
+
+
+```r
+gather(data = temperature,
+       key = "date",
+       value = "temp",
+       -city)
+```
+
+- The `key` column will be named "date", because it will hold the dates that were previously used as individual variables
+- The `value` column will be named "temp" because the values in each of the Feb_19_2017, Feb_18_2017, and Feb_17_2017 variables were our actual temperature measurements.
+- We want to gather values from all the columns *except* the city column, so we can write `-city`. Alternatively, we could write `Feb_19_2017, Feb_18_2017, and Feb_17_2017`.
+
+---
+
+class: gather, spthis
+
+## The `gather()` function 
+So this:
+```r
+temperature &lt;- gather(data = temperature, key = "date", value = "temp", -city)
+```
+.pull-left[
+turns this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_19_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_18_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_17_2017 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+into this:
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+class: gather2
+
+## The `gather()` function
+Critically, the temperature observations are still matched up with the same date!
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_19_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_18_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_17_2017 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## The `spread()` function
+The `spread` function is the complement to the `gather` function, so we can use it to undo this transformation. 
+
+Its job is to takes values from an existing variable in the dataset and "spread" them out, creating a new variable for each unique value in the old variable.
+
+The `spread` function takes 3 required arguments:
+
+1. `data`: the name of the data frame to re-arrange
+2. `key`: the name of the existing variable whose *N* unique values will be "spread out" into *N* new variables
+3. `value`: the name of the existing variable whose values will be used as values in the *N* to-be-created variables.
+
+---
+
+## The `spread()` function
+So to undo the wider-to-longer normalization we just performed, we would use this function call:
+
+
+```r
+spread(data = temperature,
+       key = "date",
+       value = "temp")
+```
+
+- the `key` argument is the "date" column, because the "date" column holds the values we want to be new variables
+- the `value` argument is the "temp" column, because we want the temperature measurements to be observations in the 3 date variables
+
+We don't have to specify the names of the new variable we're creating, because they are going to come from the values in the "date" variable.
+
+---
+
+class: sothis
+
+## The `spread()` function
+So this:
+```r
+spread(data = temperature, key = "date", value = "temp")
+```
+
+.pull-left[
+turns this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+back into this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_17_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_18_2017 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Feb_19_2017 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+## Common `spread()` problems
+A common issue encountered with the `spread` function is the somewhat mysterious error "&lt;code style="color: red;"&gt;Each row of output must be identified by a unique combination of keys.&lt;/code&gt;".
+
+Basically, this means is that when the columns given as the `key` and `value` arguments are removed, the rows of your data frame are not unique. 
+
+Thus, `spread` can't figure out which observations from the `value` column belong in which rows when it reshapes that data. Rather than potentially corrupt your data, it gives up instead.
+
+In general, the solution is to give each row a unique ID number like so:
+
+
+```r
+temperature$id &lt;- 1:nrow(temperature)
+```
+
+---
+
+## Common `spread()` problems
+For example, I can't spread the `X` variable in this data frame into new `A` and `B` variables.
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; X &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Z &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 83 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 192 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+.errormsg[
+
+```r
+spread(d, key=X, value=Z)
+```
+
+```
+## Error: Each row of output must be identified by a unique combination of keys.
+## Keys are shared for 4 rows:
+## * 1, 2
+## * 3, 4
+```
+]
+
+---
+
+## Common `spread()` problems
+To see why, imagine that the `X` and `Z` columns were gone. With just the `Y` column left, rows 1 and 2 are duplicates, as are 3 and 4.
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; X &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Z &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 83 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 192 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+Without unique rows to match against, R can't tell whether 146 or 82 should go in the first row of column `A`. It *could guess* based on row order, but it won't.
+
+---
+
+class: spread_table
+
+## Common `spread()` problems
+If we add an ID variable, we can reshape the data.
+.pull-left[
+
+```r
+d$id &lt;- 1:4
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; X &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Z &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 83 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 121 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 192 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+
+```r
+spread(d, key=X, value=Z)
+```
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Y &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; id &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; A &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; B &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 146 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 83 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 121 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 192 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+This may seem like an odd result, but if you look carefully, everything is correctly matched up. It's just that "B"'s were ever seen with a 1 in `Y`. So, all the rows associated with Y=1 are missing in column B. The same pattern holds for column A and Y=2.
+
+---
+
+## The `separate()` function
+The `separate` function is used to transform one variable in your dataset into many variables in your dataset.
+This is useful when multiple variables have been concatenated into a single variable, and you would like to examine these variables separately.
+
+For example, in our normalized `temperature` dataset, the `date` variable is actually a combination of a month, day of month, and year variable, concatenated together.
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_17_2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## The `separate()` function
+Let's separate this amalgamated "date" variable into 3 different variables, one for the month, day, and year.
+
+The `separate` function has 3 required arguments, and a 4^th^ optional argument you almost may want to specify.
+
+1. `data`: the name of the data frame to re-arrange
+2. `col`: the bare name of the variable to be split-up
+3. `into`: a character vector of names for the to-be-created variables
+4. `sep`: the delimiter defining how to split existing values into multiple new values. 
+
+By default, `separate` will split the values in the `col` variable on any non-alphanumeric character (e.g., `_`,  `-`, `.`, `:`, etc.). You can have it split on a character string, a numeric index (e.g., every 3^rd^ character), or using a regular expression.
+
+
+---
+
+## The `separate()` function
+In our case, we would use the separate function like so:
+
+```r
+separate(data = temperature,
+         col = date,
+         into = c("month", "day", "year"),
+         sep = "_")
+```
+
+- We want to separate the `col`umn named `date` *into* 3 new variables named "month", "day", and "year"
+- We are going to find the values that should go into the month, day, and year variables by splitting up the values in the `date` variable at every underscore character.
+
+
+---
+
+class: sothis
+## The `separate()` function
+So this:
+```r
+temperature &lt;- separate(temperature, col=date, into=c("month", "day", "year"), sep = "_")
+```
+
+.pull-left[
+turns this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+into this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; month &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; day &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+
+## The `unite()` function
+The `unite` function is the complement to the separate function. As you can imagine, its job is to combine multiple variables into a single variable. 
+
+The `unite` function has 3 required arguments, and 2 other arguments you often want to specify:
+
+1. `data`: the name of the data frame to re-arrange
+2. `col`: the bare name of the to-be-created amalgam variable
+3. `...` : bare columns whose values are to be combined row-wise and placed inside the new variable `col`
+4. `sep`: the separator to use between combined values (defaults to `"_"`).
+5. `remove`: a logical value indicating whether or not to remove columns from the data frame after combining them (defaults to `TRUE`).
+
+---
+
+class: sothis
+
+## The `unite()` function
+So to undo our separation of the `date` variable, we could use this:
+```r
+unite(temperature, col=date, month, day, year)
+```
+
+.pull-left[
+to turn this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; month &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; day &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; year &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 19 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+back into this:
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; city &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; date &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; temp &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 55 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Boston &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_19_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 59 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Northampton &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Feb_18_2017 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 48 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ... &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+
+## Resources &amp; More
+For more information about the *theory* behind the `tidyr` package, check out the [package vignette](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) and the [tidy data paper](http://vita.had.co.nz/papers/tidy-data.html).
+
+You may have noticed that the API (i.e., standard syntax) for `tidyr` functions is not unlike that of the functions in `dplyr`. This is not a coincidence; both packages have the same core authors and are part of the "[tidyverse](https://blog.rstudio.org/2016/09/15/tidyverse-1-0-0/)" collection of R packages.
+
+However, `tidyr` is *not* the only choice for reshaping data. The `reshape2` package is also quite useful. Its focus is on reshaping more broadly (e.g., from one type of data structure to another, reshaping through aggregation, etc.). If you need a more general reshaping tool, start with the following `reshape2` tutorials:
+
+- [My reshape2 lab](reshape.html)
+- [A brief but good intro to reshape2](http://seananderson.ca/2013/10/19/reshape.html)
+- [Hadley Wickham's intro to reshape2](http://had.co.nz/reshape/introduction.pdf)
+
+---
+
+## Practice
+
+Consider the following data set:
+
+
+```r
+wide &lt;- data.frame(ID = 1:6,
+                   Face.1 = c(411,723,325,456,579,612),
+                   Face.2 = c(123,300,400,500,600,654),
+                   Face.3 = c(1457,1000,569,896,956,2345)
+                   )
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; ID &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.3 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 411 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 123 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1457 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 723 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 300 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 325 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 400 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 569 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 456 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 500 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 896 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 579 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 600 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 956 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 612 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 654 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2345 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+---
+
+## Practice
+
+Use the `gather` and `separate` functions to put this data set into tidy form, and then use `unite` and `spread` to put in back in the original wide format.
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; ID &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.1 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.2 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Face.3 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 411 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 123 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1457 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 723 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 300 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 325 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 400 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 569 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 456 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 500 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 896 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 579 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 600 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 956 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 612 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 654 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2345 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+class: inverse, middle, center
+
+# Exploring Data
+
+---
+
+## Exploring New Datasets
+The next two things we're going to talk about are tools for digging into a new data set, and finding out what the heck is in there. They are:
+
+1. The `skim` function from the `skimr` package
+  
+  ```r
+  install.packages('skimr')
+  library(skimr)
+  ```
+2. The `ggpairs` function from the `GGally` package
+  
+  ```r
+  install.packages('GGally')
+  library(GGally)
+  ```
+
+Both of these are most useful in the context of a larger data set, so let's bring in the `ncbirths` data set as usual.
+
+
+```r
+ncbirths &lt;- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+                     stringsAsFactors = FALSE)
+```
+
+
+
+---
+
+class: skimmed
+
+## skim
+
+```r
+skim(ncbirths)
+```
+
+
+&lt;table style='width: auto;'
+        class='table table-condensed'&gt;
+&lt;caption&gt;Data summary&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Name &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ncbirths &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Number of rows &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Number of columns &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; _______________________ &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Column type frequency: &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; character &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; numeric &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 7 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ________________________ &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Group variables &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; None &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+**Variable type: character**
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; skim_variable &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_missing &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; complete_rate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; min &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; max &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; empty &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_unique &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; whitespace &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; mature &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; premie &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; sex &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+**Variable type: numeric**
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; skim_variable &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_missing &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; complete_rate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p25 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p50 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p75 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p100 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hist &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; fage &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 171 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.83 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.26 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.76 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 25.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 35.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▃▇▇▂▁ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; mage &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 27.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.21 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 22.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 27.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 32.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 50.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▃▇▇▂▁ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; weeks &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.33 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.93 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 37.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 39.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 40.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 45.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▁▁▁▇▂ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; visits &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.99 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.95 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▂▇▇▁▁ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gained &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.97 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.33 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.24 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 85.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▂▇▅▁▁ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; weight &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.38 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.75 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▁▁▇▇▁ &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; smoker &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.13 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.33 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ▇▁▁▁▁ &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+class: skimmed
+## skim lite
+Sometimes, the characters used to draw the histograms can cause problems. If you find yourself encoutering strange unicode errors about character  &lt;U+2587&gt; , try using the `skim_without_charts()` function instead of `skim`:
+
+
+```r
+skim_without_charts(ncbirths, weight, gained) # just these two to demonstrate
+```
+
+
+&lt;table style='width: auto;'
+        class='table table-condensed'&gt;
+&lt;caption&gt;Data summary&lt;/caption&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Name &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; ncbirths &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Number of rows &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1000 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Number of columns &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 10 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; _______________________ &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Column type frequency: &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; numeric &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; ________________________ &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Group variables &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; None &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+**Variable type: numeric**
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; skim_variable &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; n_missing &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; complete_rate &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; mean &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; sd &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p0 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p25 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p50 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p75 &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; p100 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; weight &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.10 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.38 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.31 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.06 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.75 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; gained &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 27 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.97 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.33 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 14.24 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 20.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 30.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 38.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 85.00 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## ggpairs
+
+`ggpairs` is a function to visualize the relationship between all possible pairs of variables in your data set, in what is often called a "scatter plot matrix".
+
+If you have 2 variables, your plot will be a 2x2 matrix with 4 sub-plots. If you have 3, a 3x3 matrix with 9 sub-plots. If you have 4, a 4x3 matrix with 16 sub-plots. You get the idea...
+
+Why is this important? Because you run out of room on a laptop screen fast.
+
+---
+
+## ggpairs
+
+
+```r
+ggpairs(ncbirths)
+```
+
+![](slides_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+
+---
+
+Let's just look at the first 4 variables to get a better idea of what's happening
+
+```r
+ggpairs(ncbirths, columns = 1:4)
+```
+
+![](slides_files/figure-html/first_four_pairs-1.png)&lt;!-- --&gt;
+
+---
+
+Mostly same information in different forms above and below the diagonal
+
+
+```r
+ggpairs(ncbirths, columns = 1:4)
+```
+
+![](slides_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+
+---
+
+If you want histograms instead of smoothed density estimates along the diagonal, use this:
+
+```r
+ggpairs(ncbirths, columns = 1:4, diag = list(continuous='barDiag'))
+```
+
+![](slides_files/figure-html/hist_diagonal-1.png)&lt;!-- --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
