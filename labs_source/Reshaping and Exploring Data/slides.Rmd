@@ -170,8 +170,8 @@ So to undo the wider-to-longer normalization we just performed, we would use thi
 
 ```{r,eval=FALSE}
 spread(data = temperature,
-       key = "date",
-       value = "temp")
+       key = date,
+       value = temp)
 ```
 
 - the `key` argument is the "date" column, because the "date" column holds the values we want to be new variables
@@ -186,7 +186,7 @@ class: sothis
 ## The `spread()` function
 So this:
 ```r
-spread(data = temperature, key = "date", value = "temp")
+spread(data = temperature, key = date, value = temp)
 ```
 
 .pull-left[
@@ -199,7 +199,7 @@ knitr::kable(temperature)
 .pull-right[
 back into this:
 ```{r, echo=FALSE}
-knitr::kable(spread(data = temperature, key = "date", value = "temp"))
+knitr::kable(spread(data = temperature, key = date, value = temp))
 ```
 ]
 

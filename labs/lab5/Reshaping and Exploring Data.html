@@ -328,8 +328,8 @@ So to undo the wider-to-longer normalization we just performed, we would use thi
 
 ```r
 spread(data = temperature,
-       key = "date",
-       value = "temp")
+       key = date,
+       value = temp)
 ```
 
 - the `key` argument is the "date" column, because the "date" column holds the values we want to be new variables
@@ -344,7 +344,7 @@ class: sothis
 ## The `spread()` function
 So this:
 ```r
-spread(data = temperature, key = "date", value = "temp")
+spread(data = temperature, key = date, value = temp)
 ```
 
 .pull-left[
@@ -1407,7 +1407,7 @@ Why is this important? Because you run out of room on a laptop screen fast.
 ggpairs(ncbirths)
 ```
 
-![](slides_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+&lt;img src="slides_files/figure-html/unnamed-chunk-23-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1417,7 +1417,7 @@ Let's just look at the first 4 variables to get a better idea of what's happenin
 ggpairs(ncbirths, columns = 1:4)
 ```
 
-![](slides_files/figure-html/first_four_pairs-1.png)&lt;!-- --&gt;
+&lt;img src="slides_files/figure-html/first_four_pairs-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1428,7 +1428,7 @@ Mostly same information in different forms above and below the diagonal
 ggpairs(ncbirths, columns = 1:4)
 ```
 
-![](slides_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+&lt;img src="slides_files/figure-html/unnamed-chunk-24-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -1438,7 +1438,7 @@ If you want histograms instead of smoothed density estimates along the diagonal,
 ggpairs(ncbirths, columns = 1:4, diag = list(continuous='barDiag'))
 ```
 
-![](slides_files/figure-html/hist_diagonal-1.png)&lt;!-- --&gt;
+&lt;img src="slides_files/figure-html/hist_diagonal-1.svg" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
