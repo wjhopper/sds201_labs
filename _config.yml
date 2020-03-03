@@ -51,6 +51,7 @@ collections:
       - "Data Visualization with ggplot"
       - "Data Types and Manipulation"
       - "Data Manipulation with dplyr"
+      - "Reshaping and Exploring Data"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

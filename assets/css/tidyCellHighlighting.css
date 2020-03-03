@@ -1,0 +1,87 @@
+table.rmdtable td {
+  padding: .3em;
+}
+
+.gather p, .gather table {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.sothis table {
+  font-size: 20px;
+}
+
+.spread_table table {
+  margin-bottom: 20px;
+}
+.gather table:first-of-type th:nth-child(2),
+.gather table:first-of-type th:nth-child(3),
+.gather table:first-of-type th:nth-child(4),
+.gather table:last-of-type td:nth-child(2) {
+  background: #FF5733;
+}
+
+.gather table:first-of-type td:nth-child(2),
+.gather table:first-of-type td:nth-child(3),
+.gather table:first-of-type td:nth-child(4),
+.gather table:last-of-type td:nth-child(3){
+  background: #33DBFF;
+}
+
+.gather2 table {
+  margin: 40px auto;
+}
+
+.gather2 table:first-of-type th:nth-child(2),
+.gather2 table:first-of-type td:nth-child(2) {
+  background: #FF5733;
+}
+
+.gather2 table:first-of-type th:nth-child(3),
+.gather2 table:first-of-type td:nth-child(3){
+  background: #5733FF;
+}
+
+.gather2 table:first-of-type th:nth-child(4),
+.gather2 table:first-of-type td:nth-child(4){
+  background: #33FF57;
+}
+
+.gather2 table:last-of-type tr:nth-child(2),
+.gather2 table:last-of-type tr:nth-child(3) {
+  background: #FF5733;
+}
+
+.gather2 table:last-of-type tr:nth-child(4),
+.gather2 table:last-of-type tr:nth-child(5){
+  background: #5733FF;
+}
+
+.gather2 table:last-of-type tr:nth-child(6),
+.gather2 table:last-of-type tr:nth-child(7){
+  background: #33FF57;
+}
+
+.gather2 table.rmdtable tr:nth-child(odd) td:nth-child(1) {
+    background-color: #e6e6e6;
+}
+
+.gather2 table.rmdtable tr:nth-child(even) td:nth-child(1) {
+    background-color: #FFF;
+}
+
+.skimmed table {
+  font-size: 12px;
+}
+
+.skimmed td, th{
+  padding: 1px;
+}
+
+.skimmed p {
+  margin: 1px;
+}
+
+.skimmed strong {
+  font-size: 12px;
+}
