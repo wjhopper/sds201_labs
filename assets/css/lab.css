@@ -1,16 +1,20 @@
 body {
-  counter-reset: exercises toc /* initialize counters */
+  counter-reset: exercises toc; /* initialize counters */
+  font-size: 18px;
 }
+.col-md-3 { width: 12%; }
 
-p { margin: 5px 0; }
+#TOC { width: 65%; max-width: 130px; }
 
-ol li, ul li {
-  list-style-position: inside;
-}
+.col-md-9 { width: 88%; }
 
-div[id^='exercise'] {
-  background:rgba(49, 126, 172, 0.1);
-}
+p { margin: 5px 0;}
+
+img {margin: 5px 0;}
+
+ol li, ul li { list-style-position: inside; }
+
+div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
 
 div[id^='exercise'] > h2 {
   font-weight: bold;
@@ -24,7 +28,7 @@ div[id^='exercise'] > h2::after {
   counter-increment: exercises;
 }
 
-.tocify-header > li:after {
+li[data-unique^="exercise"]::after  {
     content: " " counter(toc); /* Use the counter as content */
     counter-increment: toc; /* Increment the counter by 1 */
 }
@@ -35,14 +39,14 @@ div[id^='exercise'] > h2::after {
   margin-bottom: 0;
 }
 
-.level3 > h3 {
-  margin: 0;
-}
+.level3 > h3 { margin: 0;}
 
-#license { 
-  color: #4C721D;
-  border:1px solid #4C721D;
+.attention { 
+  color: #000;
+  border: 2px solid #ff2e2e;
   padding: 10px 10px;
-  background-color: rgba(76, 114, 29, 0.2);
+  background-color: rgb(255, 110, 110);
   border-radius: 5px;
 }
+
+.table {width: inherit; background-color: white;}
