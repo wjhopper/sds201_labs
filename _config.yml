@@ -52,6 +52,7 @@ collections:
       - "Data Types and Manipulation"
       - "Data Manipulation with dplyr"
       - "Reshaping and Exploring Data"
+      - "Bivariate Regression"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

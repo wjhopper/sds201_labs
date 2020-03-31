@@ -2,7 +2,7 @@ library(yaml)
 library(rmarkdown)
 library(pander)
 
-all_labs <- yaml.load_file(file.path("..", "/_config.yml"))$collections$labs$order
+all_labs <- yaml.load_file(file.path("..", "_config.yml"))$collections$labs$order
 
 ## Make static files dir if we need to
 output_dir <- file.path("..", "labs")
@@ -26,7 +26,7 @@ for (lab in all_labs) {
   ## Enumerate and render all Rmarkdown files
   rmd_files <- list.files(pattern = "*\\.Rmd$", full.names = TRUE)
   for (file in rmd_files) {
-    rmarkdown::render(file)
+    rmarkdown::render(file, envir = new.env())
   }
   
   # Switch back to old wd, since all our paths were relative to that directory.
