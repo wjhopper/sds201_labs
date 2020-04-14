@@ -6,6 +6,8 @@ body {
 
 #TOC { width: 65%; max-width: 130px; }
 
+.tocify-header { text-indent: 0; }
+
 .col-md-9 { width: 88%; }
 
 p { margin: 5px 0;}
@@ -50,3 +52,8 @@ li[data-unique^="exercise"]::after  {
 }
 
 .table {width: inherit; background-color: white;}
+
+
+.pagedtable table { width: auto;}
+
+.pagedtable th { max-width: none !important;}
