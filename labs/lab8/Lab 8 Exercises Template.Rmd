@@ -1,6 +1,6 @@
 
 ---
-title: 'Problem Set 08: Sampling Distribution Solutions'
+title: 'Problem Set 08: Sampling Distributions'
 author: "Will Hopper"
 output:
   html_document:
