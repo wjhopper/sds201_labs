@@ -1,0 +1,149 @@
+
+---
+title: 'Problem Set 08: Sampling Distribution Solutions'
+author: "Will Hopper"
+output:
+  html_document:
+    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    theme: lumen
+    toc: yes
+    toc_float:
+      collapsed: false
+    toc_depth: 2
+    df_print: paged
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+In this problem set we will explore the effects of sampling variability on the sample proportion, and practice constructing sampling distributions using exact, simulation, and estimation methods. Our population of interest will be the bowl of red and white balls from [ModernDive Chapter 7](https://moderndive-bert.netlify.com/7-sampling.html).
+
+First load the necessary packages:
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(moderndive)
+```
+
+Since the `bowl` data frame comes built-in with the `moderndive` package, we don't need to load any outside data for this problem set. Before diving into problems, we'll start with two demonstrations: how to compute the proportion of red balls in a sample, and how to make your random samples reproducible.
+
+## Demonstration 1: Finding the sample proportion
+Since the `bowls` data frame represents the balls in the physical bowl from Sabin-Reed 301 using the words "red" and "white", it takes a bit of data wrangling to find the proportion of red balls in the bowl, or in a sample from that bowl. Note that similar a similar procedure is also given in [ModernDive 7.2.1](https://moderndive-bert.netlify.com/7-sampling.html#using-the-virtual-shovel-once).
+
+### Step 1: "Test" each ball for red-ness
+We'll use the `==` equality test to compare each row of the `color` column to the word "red". Matches will be represented as `TRUE`s and mismatches will be represented as `FALSE`s. We'll save all those `TRUE` and `FALSE` values in a new column called `is_red`.
+
+```{r, max.print=4}
+bowl
+mutate(bowl, is_red = color == "red")
+```
+
+### Step 2: Use `mean` to find the proportion of red balls
+Next, we find the proportion of red balls among the total number of balls by finding the proportion of `TRUE`s among the total number of logical values. We can actually do this in one quick step, using the `mean` function to average all the logical values!
+
+```{r}
+mutate(bowl, is_red = color == "red") %>%
+  summarize(p_red = mean(is_red))
+```
+
+We learn that 37.5% of the balls in the bowl are red (900 out of 2400).
+
+**Why does using this technique work?** Recall the formula for the mean:
+
+$$\frac{\sum_{i=1}^{n}{x_i}}{N}$$
+
+In this case, our $x_i$ values were a bunch of `TRUE`s and `FALSE`s - so, the numerator represents the sum of 2,400 `TRUE` and `FALSE` values. How can you add `TRUE` and `FALSE` values together? By treating them as 0's and 1's! So, we have a long sequence like $\sum_{i=1}^{n}{x_i} = 0 + 0 + 0 + 1 + 0 + {} ...{} + 1 + 0 + 0$.
+
+Now, recall that a `TRUE` meant red. This means that in our sum, we have a 1 for every red ball, and a 0 for every white ball. Thus, it's like our white balls don't count towards the sum - only red balls do. This realization makes it clear that the numerator of our formula represents counting up the number of red balls! So, we end up with the number of red balls divided by the total number of ball, $N$ - in other words, the proportion of red balls!
+
+### Step 3: Use `var` to find the variance of the red balls
+Just like we used the `mean` function to find the sample proportion, we can use the `var` function to find the sample variance of all those 0's (white balls) and 1's (red balls).
+
+```{r}
+mutate(bowl, is_red = color == "red") %>%
+  summarize(p_red = mean(is_red),
+            sigma_sq = var(is_red)
+            )
+```
+
+We're done! We have the proportion of red balls in the population (a.k.a. the population mean, .375), as well as the population variance (.234) two very important values to keep in mind throughout the rest of this problem set.
+
+## Demonstration 2: Reproducing your random samples
+Consider the following 3 random samples of balls from the bowl, paying attention to the values of the `ball_ID` variable obtained each time.
+```{r}
+rep_sample_n(bowl, size = 3, reps = 1)
+rep_sample_n(bowl, size = 3, reps = 1)
+rep_sample_n(bowl, size = 3, reps = 1)
+```
+
+No ball appeared in multiple samples. In fact, each sample was completely unique (in terms of ball ID's at least, if not colors). But now, consider the next three random samples:
+```{r}
+set.seed(10)
+rep_sample_n(bowl, size = 3, reps = 1)
+set.seed(10)
+rep_sample_n(bowl, size = 3, reps = 1)
+set.seed(10)
+rep_sample_n(bowl, size = 3, reps = 1)
+```
+
+Now, our three samples are perfectly identical - we got balls 491, 368, and 1484 each time. And, it's easy to see what we did differently to make this happen - we used the `set.seed()` function. But, what does `set.seed(10)` do?
+
+Briefly, it controls how R's *Random Number Generator* (RNG) behaves. R uses a RNG to generate random samples of data, and while the sequence of numbers it generates is completely unpredictable once it starts, we do have control over one aspect of the RNG: *where it starts* generating random numbers. If we can make the RNG always start its sequence in a particular location, we can make it generate the same random numbers again and again. That's what the `set.seed()` function does: it "seeds" the random number generator with a particular starting location of your choosing (that's what the number inside the parenthesis is for).
+
+So, what does this mean for your problem set? It means that **whenever you use the `rep_sample_n` function, you should first seed the random number generator using set.seed()**. The number you put inside the parenthesis is not important. What is important is that you:
+
+1. Seed the RNG before each sample, so you can re-obtain an identical sample if needed (e.g., so you get the same answer every time you knit the document).
+2. Using a *unique* seed number for each unique sample, so that your sample for problem two is not the same as for problem three, or problem four. Sampling distributions are quite boring when there is no variability between samples =)
+
+To help remind you, I'll give you a "suggested seed" value for each problem where you need to take a random sample from the bowl. Now, on with the problems!
+
+## Exercise
+Based on what you know about the population (the bowl of red and white balls) from Demonstration #1, specify what you know about the sampling distribution of the proportion of red balls, assuming samples of size 19. Be sure to explain your methodology. Remember, the sample proportion is the same as the sample mean in this case! 
+
+### Solution
+
+
+## Exercise
+Conduct a simulation to estimate the properties of the sampling distribution of the proportion of red balls (again assuming samples of size 19) and compare these properties with the true values found in Exercise 1. To perform this simulation, you should use the `rep_sample_` function to collect 1,000 independent samples (i.e., your simulation should collect 1,000 replicates).
+
+**Suggested Seed: `set.seed(99)`**
+
+### Solution
+
+
+## Exercise
+Use a single sample of 19 balls to estimate the properties of the sampling distribution of the proportion of red balls, and compare these properties with the true values found in Exercise 1. To obtain this sample, you should use the `rep_sample_n` function again. Be sure to explain your methodology for estimating the properties of the sampling distribution.
+
+**Suggested Seed: `set.seed(321)`**
+
+### Solution
+
+
+## Exercise
+
+Repeat Exercises one through three again, but this time assuming 190 observations per sample. Then, use your work from all the exercises to replace the NA values in the following tables below. What characteristic of the sampling distribution is revealed by comparing row one and row two in each table?
+
+**Suggested Seed: set.seed(510)**
+
+#### Table 1: Mean of the sampling distribution the proportion red balls
+
+| Sample Size ($N$) | Exact Mean | Mean estimated by simulation | Mean estimated using one sample |
+| :---------------: | :--------: | :--------------------------: | :-----------------------------: |
+| 19                | NA         | NA                           | NA                              |
+| 190               | NA         | NA                           | NA                              |
+
+#### Table 2: Variance of the sampling distribution the proportion red balls
+
+| Sample Size ($N$) | Exact Variance | Variance estimated by simulation | Variance estimated using one sample |
+| :---------------: | :------------: | :------------------------------: | :---------------------------------: |
+| 19                | NA             | NA                               | NA                                  |
+| 190               | NA             | NA                               | NA                                  |
+
+### Solution
+
+
+## Exercise
+Why are the *exact* properties of the sampling distribution never known, or estimated by repeatedly sampling (like our simulations do), in real life situations?
+
+### Solution
+
