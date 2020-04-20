@@ -1,0 +1,90 @@
+
+---
+title: 'Problem Set 09: Confidence Intervals'
+author: "Will Hopper"
+output:
+  html_document:
+    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    theme: lumen
+    toc: yes
+    toc_float:
+      collapsed: false
+    toc_depth: 2
+    df_print: paged
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+In this problem set, we'll practice constructing and interpreting confidence intervals using data on textbook prices. These data were collected during the Fall 2018 semester at UCLA, to compare prices at the campus bookstore to prices on Amazon.com
+
+Importantly, these data represent a *sample* of textbook prices for courses at UCLA, because not all courses from the Fall 2018 are included in the data set. Thus, all of our statistics will be sample statistics that *estimate* true population parameters. 
+
+As always, begin by loading the necessary packages, and the data. Don't forget to explore the data using `glimpse`, `skim`, or just in the R Studio data viewer.
+
+```{r, message=FALSE}
+library(skimr)
+library(ggplot2)
+library(moderndive)
+library(infer)
+library(dplyr)
+
+textbooks <- read.csv("https://wjhopper.github.io/sds201_labs/data/ucla_textbooks_f18.csv")
+```
+
+# Data Exploration
+
+## Exercise
+Report the sample mean and sample variance of new textbook prices at the campus bookstore and on Amazon.com. Compare the statistics you find for the campus bookstore to those on Amazon.com.
+
+### Solution
+
+
+# Bootstrap Confidence Intervals
+For exercises in this section, feel free use the `infer` package workflow described in [ModernDive Chapter 8.4](https://moderndive-bert.netlify.app/8-confidence-intervals.html#infer-workflow), or do things the "old fashioned" way (e.g., using `dplyr`, `ggplot` and `rep_sample_n` directly).
+
+**Note:** Just like last week's problem set, don't forget to seed your computer's Random Number Generator using the `set.seed()` function before doing any computations that require random sampling! That way, you'll get the same sample every time you run that code chunk or knit your document. To help remind you, I'll include a "suggested seed" for every exercise where random sampling is necessary.
+
+
+## Exercise
+Construct a bootstrap sampling distribution of the average campus bookstore textbook price using 1,000 bootstrap replicates. Visualize the bootstrap distribution using a histogram, and describe the distribution you see.
+
+**Suggested Seed: `set.seed(54321)`**
+
+### Solution
+
+
+## Exercise
+Find the 95% Confidence interval of the bootstrap distribution. What does this interval tell you? Be as precise as possible in your answer.
+
+### Solution
+
+
+# Single-sample Confidence Intervals
+
+## Exercise
+Estimate the **90%** confidence interval based on the original sample of prices in the `textbooks` data frame.
+
+**Hints** The central limit theorem will be useful, as will the quantile conversion formula from [ModernDive 8.3.2](https://moderndive-bert.netlify.app/8-confidence-intervals.html#se-method).
+
+### Solution
+
+
+## Exercise
+Why is the interval created in Exercise 4 narrower than the one created in Exercise 3?
+
+### Solution
+
+
+## Exercise
+Re-sample 100 more data sets from the original `textbooks` data set, but don't combine them together to create a bootstrap sampling distribution. Instead, find the mean and variance of each one, and create a 90% confidence interval for each re-sampled data set (using the same method you used in Exercise #3).
+
+Assume that the true average price of a new textbook at the campus bookstore, across the entire population of new textbooks at UCLA campus bookstore, was the same as the average price you calculated in Exercise 1.
+
+How many of your 100 confidence interval do you expect to capture the mean of the population? How many actually did?
+
+**Suggested Seed: set.seed(42)**
+
+### Solution
+
+
