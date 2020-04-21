@@ -47,7 +47,7 @@ For exercises in this section, feel free use the `infer` package workflow descri
 
 
 ## Exercise
-Construct a bootstrap sampling distribution of the average campus bookstore textbook price using 1,000 bootstrap replicates. Visualize the bootstrap distribution using a histogram, and describe the distribution you see.
+Construct a bootstrap sampling distribution of the average price for new textbooks at the campus bookstore using 1,000 bootstrap replicates. Visualize the bootstrap distribution using a histogram, and describe the distribution you see.
 
 **Suggested Seed: `set.seed(54321)`**
 
@@ -55,7 +55,7 @@ Construct a bootstrap sampling distribution of the average campus bookstore text
 
 
 ## Exercise
-Find the 95% Confidence interval of the bootstrap distribution. What does this interval tell you? Be as precise as possible in your answer.
+Find the 95% confidence interval of the bootstrap distribution. What does this interval tell you? Be as precise as possible in your answer.
 
 ### Solution
 
@@ -63,7 +63,7 @@ Find the 95% Confidence interval of the bootstrap distribution. What does this i
 # Single-sample Confidence Intervals
 
 ## Exercise
-Estimate the **90%** confidence interval based on the original sample of prices in the `textbooks` data frame.
+Estimate the **90%** confidence interval for new textbook prices at the campus bookstore data based on just the original sample (i.e., the `textbooks` data frame).
 
 **Hints** The central limit theorem will be useful, as will the quantile conversion formula from [ModernDive 8.3.2](https://moderndive-bert.netlify.app/8-confidence-intervals.html#se-method).
 
@@ -77,7 +77,7 @@ Why is the interval created in Exercise 4 narrower than the one created in Exerc
 
 
 ## Exercise
-Re-sample 100 more data sets from the original `textbooks` data set, but don't combine them together to create a bootstrap sampling distribution. Instead, find the mean and variance of each one, and create a 90% confidence interval for each re-sampled data set (using the same method you used in Exercise #3).
+Re-sample 100 more data sets from the original `textbooks` data set, but don't combine them together to create a bootstrap sampling distribution. Instead, find the mean and variance of the new textbook prices at the campus bookstore in each one, and create a 90% confidence interval for each re-sampled data set (using the same method you used in Exercise #3).
 
 Assume that the true average price of a new textbook at the campus bookstore, across the entire population of new textbooks at UCLA campus bookstore, was the same as the average price you calculated in Exercise 1.
 

@@ -2884,7 +2884,7 @@ textbooks &lt;- read.csv(&quot;https://wjhopper.github.io/sds201_labs/data/ucla_
 <p><strong>Note:</strong> Just like last week’s problem set, don’t forget to seed your computer’s Random Number Generator using the <code>set.seed()</code> function before doing any computations that require random sampling! That way, you’ll get the same sample every time you run that code chunk or knit your document. To help remind you, I’ll include a “suggested seed” for every exercise where random sampling is necessary.</p>
 <div id="exercise-1" class="section level2">
 <h2>Exercise</h2>
-<p>Construct a bootstrap sampling distribution of the average campus bookstore textbook price using 1,000 bootstrap replicates. Visualize the bootstrap distribution using a histogram, and describe the distribution you see.</p>
+<p>Construct a bootstrap sampling distribution of the average price for new textbooks at the campus bookstore using 1,000 bootstrap replicates. Visualize the bootstrap distribution using a histogram, and describe the distribution you see.</p>
 <p><strong>Suggested Seed: <code>set.seed(54321)</code></strong></p>
 <div id="solution-1" class="section level3">
 <h3>Solution</h3>
@@ -2892,7 +2892,7 @@ textbooks &lt;- read.csv(&quot;https://wjhopper.github.io/sds201_labs/data/ucla_
 </div>
 <div id="exercise-2" class="section level2">
 <h2>Exercise</h2>
-<p>Find the 95% Confidence interval of the bootstrap distribution. What does this interval tell you? Be as precise as possible in your answer.</p>
+<p>Find the 95% confidence interval of the bootstrap distribution. What does this interval tell you? Be as precise as possible in your answer.</p>
 <div id="solution-2" class="section level3">
 <h3>Solution</h3>
 </div>
@@ -2902,7 +2902,7 @@ textbooks &lt;- read.csv(&quot;https://wjhopper.github.io/sds201_labs/data/ucla_
 <h1>Single-sample Confidence Intervals</h1>
 <div id="exercise-3" class="section level2">
 <h2>Exercise</h2>
-<p>Estimate the <strong>90%</strong> confidence interval based on the original sample of prices in the <code>textbooks</code> data frame.</p>
+<p>Estimate the <strong>90%</strong> confidence interval for new textbook prices at the campus bookstore data based on just the original sample (i.e., the <code>textbooks</code> data frame).</p>
 <p><strong>Hints</strong> The central limit theorem will be useful, as will the quantile conversion formula from <a href="https://moderndive-bert.netlify.app/8-confidence-intervals.html#se-method">ModernDive 8.3.2</a>.</p>
 <div id="solution-3" class="section level3">
 <h3>Solution</h3>
@@ -2917,7 +2917,7 @@ textbooks &lt;- read.csv(&quot;https://wjhopper.github.io/sds201_labs/data/ucla_
 </div>
 <div id="exercise-5" class="section level2">
 <h2>Exercise</h2>
-<p>Re-sample 100 more data sets from the original <code>textbooks</code> data set, but don’t combine them together to create a bootstrap sampling distribution. Instead, find the mean and variance of each one, and create a 90% confidence interval for each re-sampled data set (using the same method you used in Exercise #3).</p>
+<p>Re-sample 100 more data sets from the original <code>textbooks</code> data set, but don’t combine them together to create a bootstrap sampling distribution. Instead, find the mean and variance of the new textbook prices at the campus bookstore in each one, and create a 90% confidence interval for each re-sampled data set (using the same method you used in Exercise #3).</p>
 <p>Assume that the true average price of a new textbook at the campus bookstore, across the entire population of new textbooks at UCLA campus bookstore, was the same as the average price you calculated in Exercise 1.</p>
 <p>How many of your 100 confidence interval do you expect to capture the mean of the population? How many actually did?</p>
 <p><strong>Suggested Seed: set.seed(42)</strong></p>
