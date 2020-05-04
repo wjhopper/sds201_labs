@@ -3,43 +3,15 @@ layout: default
 title: Home
 ---
 
-{% for lab in site.labs %}
-<article>
-  <div class="featured-posts" {% if post.image %}style="background-image:url({{ site.baseurl }}/assets/img/{{ post.image }})"{% endif %}>
-    <h2><span>{{ lab.title }}</span></h2>
-    <div class="post-excerpt">
-      {{ lab }}
+{% assign labs = site.labs | sort: "title" %}
+
+{% for lab in labs %}
+  <article>
+    <div class="featured-posts" {% if post.image %}style="background-image:url({{ site.baseurl }}/assets/img/{{ post.image }})"{% endif %}>
+      <h2><span>{{ lab.title }}</span></h2>
+      <div class="post-excerpt">
+        {{ lab }}
+      </div>
     </div>
-  </div>
-</article> 
+  </article>
 {% endfor %}
-
-<!--
-<article>
-  
-  <div class="featured-posts" {% if post.image %}style="background-image:url({{ site.baseurl }}/assets/img/{{ post.image }})"{% endif %}>
-   <h2><a href="{{ site.baseurl }}{{ post.url }}"><span>{{ post.title }}</span></a></h2>
-   <div class="post-excerpt">
-     {{ post.excerpt }}
-   </div>
-  </div>
-
-</article>
--->
-
-
-<!-- Pagination links
-<div class="pagination">
-  {% if paginator.next_page %}
-    <a class="pagination-button pagination-active next" href="{{ site.baseurl }}{{ paginator.next_page_path }}">{{ site.data.settings.pagination.previous_page }}</a>
-  {% else %}
-    <span class="pagination-button">{{ site.data.settings.pagination.previous_page }}</span>
-  {% endif %}
-
-  {% if paginator.previous_page %}
-    <a class="pagination-button pagination-active" href="{{ site.baseurl }}{{ paginator.previous_page_path }}">{{ site.data.settings.pagination.next_page }}</a>
-    {% else %}
-      <span class="pagination-button">{{ site.data.settings.pagination.next_page }}</span>
-  {% endif %}
-</div>
- -->
