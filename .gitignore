@@ -15,3 +15,5 @@ _site
 labs_source/*/*.html
 labs_source/*/*/remark-css*
 labs_source/*/*_files
+problem_sets/*/*.html
+problem_sets/*/*_files

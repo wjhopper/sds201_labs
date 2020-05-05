@@ -1,0 +1,130 @@
+
+---
+title: 'Problem Set 06: Bivariate Regression'
+author: "Will Hopper"
+output:
+  html_document:
+    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    theme: lumen
+    toc: yes
+    toc_float:
+      collapsed: false
+    toc_depth: 2
+    df_print: paged
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+In this problem set we will work with a data set concerning hate crimes rates by US state occurring in  November 2016. For more context about these data, you can read a FiveThirtyEight article about these data that appeared in January of 2017: ["Higher Rates Of Hate Crimes Are Tied To Income
+Inequality"](https://fivethirtyeight.com/features/higher-rates-of-hate-crimes-are-tied-to-income-inequality/)
+
+We will model these data using regression models with a single explanatory variable, be it categorical or numeric.
+
+
+First load the necessary packages 
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(moderndive)
+```
+
+Next, load the data set from the internet:
+
+```{r}
+hate_crimes <- read.csv("https://wjhopper.github.io/sds201_labs/data/hate_crimes.csv", stringsAsFactors = FALSE)
+```
+
+The data set has 51 observations from the 11 following variables:
+
+- `state`: State name, includes District of Columbia (i.e., Washington D.C.)
+- `percent_hs_degree`: Proportion of adults 25 and older with a high-school degree (2009)
+- `share_non_citizen`: Proportion of the population that are not U.S. citizens
+- `share_white_poverty`: Proportion of white residents who are living in poverty
+- `gini_index`: GINI inequality index (higher = greater inequality)
+- `share_non_white`: Proportion of the population that is not white
+- `percent_trump`: Proportion of 2016 U.S. presidential voters who voted for Donald Trump
+- `hate_crime_rate`: Hate crimes per 100,000 people between Nov. 9 & Nov. 18, 2016 according to Southern Poverty Law Center 
+- `median_house_inc`: Median household income, divided into "high" and "low" categories
+- `unemployment`: Unemployment rate divided into "high" and "low" categories
+- `urbanization`: Proportion of the population living in metropolitan areas, divided into high" and "low" categories
+
+
+Be sure to explore the data using the `skim` or `glimpse` function, or the RStudio data viewer (just remember not to print out the whole data set in your submission!).
+
+# One Numeric Explanatory Variable
+
+For the exercises in this section, model the relationship between the hate crime rate variable (`hate_crime_rate`) as the **outcome**, and the GINI inquality index variable (`gini_index`) as the **explanatory** variable.
+
+## Exercise
+Visualize the relationship between the hate crime rate and the GINI inquality index, including the regression line. Describe the distributions of both variables, as well as the relationship between them.
+
+### Solution
+
+
+## Exercise
+Fit the regression model visualized in the previous question, and report the regression table.
+
+### Solution.
+
+
+## Exercise
+Write the regression equation first using generic GLM notation (don't worry about pretty equation formatting or anything). Then write the equation again substituting in the values you estimated in the previous exercise.
+
+
+### Solution
+
+
+## Exercise
+Based on this model, what hate crime rate would you expect to occur in a state with a GINI index of .5? What hate crime rate would you expect in state with a GINI index of 0?
+
+### Solution
+
+
+## Exercise
+The state of Colorado had a GINI index of 0.457 in 2016, and a hate crime rate of .39 per 100,000 people. What was the residual error for the state of Colorado under this regression model?
+
+### Solution
+
+
+## Exercise
+Quantify the strength of the linear relationship between the GINI inequality index and the rate of hate crimes per 100,000 people, and interpret this value.
+
+### Solution
+
+
+# One Categorical Explanatory Variable
+
+For the exercises in this section, model the relationship between the hate crime rate variable (`hate_crime_rate`) as the **outcome**, and the median household income variable (`median_house_inc`) as the **explanatory** variable.
+
+## Exercise
+Visualize the relationship between the hate crime rate and median household income, and describe the relationship between these variables.
+
+### Solution
+
+
+## Exercise
+Fit the regression model that explains variation in the rate of hate crimes using median household income category, and report the regression table.
+
+### Solution
+
+
+## Exercise
+Based on this regression model, what is:
+
+1. The value of the $b_0$ parameter?
+2. The value of the $b_1$ parameter
+3. The mean of the baseline group?
+4. The difference between the mean of the "low" income group, and the "high" income group?
+5. The mean hate crime rate of the "low" income group?
+6. The mean hate crime rate of the "high" income group?
+
+### Solution.
+
+
+## Exercise
+The state of Colorado had a hate crim rate of 0.39 in 2016 and belonged to the "high" median income group. What was the residual error for the state of Colorado under this regression model? Make sure you show your work along the way, starting with the regression equation in GLM format (but don't worry about pretty equation formatting).
+
+### Solution
+

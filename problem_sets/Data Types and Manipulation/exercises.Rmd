@@ -1,0 +1,168 @@
+
+---
+title: 'Problem Set 03: Data Types & Manipulation'
+author: "Your Name Here!"
+output:
+  html_document:
+    theme: lumen
+    toc: yes
+    toc_float: yes
+    toc_level: 2
+    df_print: kable
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{css PLEASE_DONT_TOUCH_THIS_CHUNK, echo=FALSE}
+body {
+  counter-reset: exercises toc; /* initialize counters */
+  font-size: 18px;
+}
+.col-md-3 { width: 12%; }
+
+#TOC { width: 65%; max-width: 130px; }
+
+.col-md-9 { width: 88%; }
+
+p { margin: 5px 0;}
+
+img {margin: 5px 0;}
+
+ol li, ul li { list-style-position: inside; }
+
+div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
+
+div[id^='exercise'] > h2 {
+  font-weight: bold;
+  color: #fff;
+  background:#317EAC;
+  padding: 5px 10px;
+}
+
+div[id^='exercise'] > h2::after {
+  content: " " counter(exercises);
+  counter-increment: exercises;
+}
+
+.tocify-header > li:after {
+    content: " " counter(toc); /* Use the counter as content */
+    counter-increment: toc; /* Increment the counter by 1 */
+}
+
+.level3 {
+  background: #fff;
+  padding-top: 15px;
+  margin-bottom: 0;
+}
+
+.level3 > h3 { margin: 0;}
+
+#license { 
+  color: #4C721D;
+  border:1px solid #4C721D;
+  padding: 10px 10px;
+  background-color: rgba(76, 114, 29, 0.2);
+  border-radius: 5px;
+}
+```
+
+<div id="license">
+For all exercises, make sure your R code prints out your final results!!
+</div>
+
+## Exercise
+
+Try to create a vector that holds all the 4 basic data types. Does this work? What type or types of data are stored in the resulting vector?
+
+### Solution
+
+## Exercise
+Find the grand sum of the all the elements in the two following vectors (using R, of course).
+
+```{r grand_sum}
+x <- c(149, 486, 174, 435, 188, 397, 497, 256, 346, 494)
+y <- c(1839, 2709, 2422, 1547, 1686, 2159, 2929, 651, 1358, 756)
+```
+
+### Solution
+
+## Exercise
+Consider the character vector bellow named `months`, which represents every month of the year by name.
+
+```{r example1, prompt=FALSE}
+months <- c("January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December")
+```
+
+Using indexing, 
+
+1. Select just the months of `"February"` and `"March"` from this vector
+2. Select every third month of the year from this vector
+
+## Exercise
+
+Write an expression using logical testing and indexing that, when applied to the vector `dummy`, returns the same output as the numeric indexing example shown below. In other words, a logical test that selects the 5^th^, 6^th^ and 7^th^ elements.
+
+```{r indexingActivity}
+dummy <- 17:23
+dummy[5:7]
+```
+
+## Exercise
+A local grocery store sells several varieties of fruit: grapes for $4, kiwis for $2.00, mangoes for $3.00, and apples for 99 cents. Each fruit also has a "sell by" date: the grapes must be sold by February 19th, the kiwis must be sold by February 20th, the mangoes must be sold by February 18th, and the apples must be sold by February 28th. 
+
+In R, create a "tidy" data frame that represents each fruit for sale, its price, and its expiration date. Make sure each column in your data frame has an appropriate name, and carefully consider what **data type** you represent each piece of information with.
+
+### Solution
+
+## Exercise
+From your fruit data frame, select only rows where the price is $2.00 or more.
+
+### Solution
+
+***
+
+For the rest of the problem set, you'll be working with the famous [iris](https://en.wikipedia.org/wiki/Iris_flower_data_set) data set. The data set set gives the measurements in centimeters of the sepal (a.k.a. the inner petals) length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, Iris versicolor, and Iris virginica.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Iris_versicolor_3.jpg/440px-Iris_versicolor_3.jpg)
+
+The data set comes built-in with R, and you can load it into your environment by using the `data` function.
+
+```{r iris}
+data(iris)
+```
+
+## Exercise
+What is the interquartile range for the petal length distribution (across all species)? Report your answer to 2 decimal places
+
+### Solution
+
+## Exercise
+
+Select only the first five rows and first two columns from the iris data set (no need to save the output, only print it).
+
+### Solution
+
+## Exercise
+Select only the rows of the iris data set where the iris species is setosa or versicolor (no need to save the output, only print it).
+
+### Solution
+
+## Exercise
+What species have a sepal width less than 2.1? Show how you found the answer with R code.
+
+### Solution
+
+## Exercise
+Consider the following boxplot showing the distribution of petal widths for each species of iris.
+
+```{r boxplot, echo=FALSE}
+library(ggplot2)
+ggplot(data = iris, mapping = aes(x=Species, y = Petal.Width)) +
+  geom_boxplot() + coord_flip()
+```
+
+Which species has the most variable petal lengths? Which species has the most skewed distribution of petal lengths?
+
+### Solution

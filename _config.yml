@@ -45,7 +45,8 @@ defaults:
       permalink: /posts/:title
 
 collections:
-  - labs
+   - labs
+   - problem_sets
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
