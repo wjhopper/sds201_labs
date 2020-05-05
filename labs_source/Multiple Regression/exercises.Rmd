@@ -94,7 +94,7 @@ Based on this model, what hate crime rate would you expect to occur in a "high" 
 ## Exercise
 The state of Colorado belonged to the "high" median income group, had a GINI index of 0.457 in 2016, and a hate crime rate of .39 per 100,000 people. 
 
-Back in Exercise 5 of Problem Set 6, we found that when we predicted the hate crime rate in Colorado with just the GINI index alone, our bivariate regression model had a residual error of 0.088. How much more accurate is this multiple regression model for predicting the hate crime rate in Colorado, in terms of absolute error?
+Back in Exercise 5 of Problem Set 6, we found that when we predicted the hate crime rate in Colorado with just the GINI index alone, our bivariate regression model had a residual error of 0.088. How much more accurate is this multiple regression model for predicting the hate crime rate in Colorado?
 
 ### Solution
 
