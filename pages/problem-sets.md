@@ -3,14 +3,14 @@ layout: default
 title: Problem Sets
 ---
 
-{% assign labs = site.labs | sort: "title" %}
+{% assign problem_sets = site.problem_sets | sort: "title" %}
 
-{% for lab in labs %}
+{% for ps in problem_sets %}
   <article>
     <div class="featured-posts" {% if post.image %}style="background-image:url({{ site.baseurl }}/assets/img/{{ post.image }})"{% endif %}>
-      <h2><span>{{ lab.title }}</span></h2>
+      <h2><span>{{ ps.title }}</span></h2>
       <div class="post-excerpt">
-        {{ lab }}
+        {{ ps }}
       </div>
     </div>
   </article>
