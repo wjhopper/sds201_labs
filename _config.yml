@@ -52,10 +52,6 @@ collections:
          - "Data Types and Manipulation"
          - "Data Manipulation with dplyr"
          - "Reshaping and Exploring Data"
-         - "Bivariate Regression"
-         - "Multiple Regression"
-         - "Sampling Distributions"
-         - "Confidence Intervals"
    problem_sets:
       order:
          - "Intro to R and RStudio"

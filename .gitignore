@@ -12,8 +12,8 @@ _site
 .jekyll-metadata
 
 # rendered .html files in source dirs
-labs_source/*/*.html
-labs_source/*/*/remark-css*
-labs_source/*/*_files
+labs/*/*.html
+labs/*/*/remark-css*
+labs/*/*_files
 problem_sets/*/*.html
 problem_sets/*/*_files

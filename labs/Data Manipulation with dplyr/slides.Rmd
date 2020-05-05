@@ -1,0 +1,458 @@
+
+---
+title: "Data Manipulation with dplyr"
+author: "Will Hopper"
+date: "2/11/20"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    css: ["default", "default-fonts", "../../assets/css/sds.css"]
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', "cache" = TRUE, dev='svg',prompt=FALSE)
+
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
+```
+
+## What is dplyr?
+  
+The `dplyr` package is quickly becoming the de-facto standard for common tasks that involve manipulating data frames. Some of its biggest advantages are: 
+  
+  - A streamlined and unified interface for tasks commonly performed together. 
+  - More syntactically and semantically intuitive functions than the tools in base R
+  - Often much faster!
+  - The ability to manipulate data stored in databases (e.g. MySQL, SQLite, PostgreSQL) with the same language you use for 'ordinary' data in R (i.e., data frames).
+  
+This is not to say that it replaces or makes base R syntax obsolete, but it is a great tool to have at your disposal.
+
+---
+
+## Functions == Verbs in dplyr
+`dplyr` provides some basic "verbs", i.e., functions that correspond to the most common data manipulation tasks. 
+
+This model helps build a bridge between your thoughts (i.e., what you want to do to the data, like "I want to select only observations from the first time point") into code. For example:
+
+- "I want to sort the rows" --> `arrange()`
+- "I want to select only some rows" --> `filter()`
+- "I want to select only some columns" --> `select()`
+- "I want to find the unique rows" --> `distinct()`
+- "I want to create a new column" --> `mutate()`
+- "I want to aggregate the data" --> `summarize()`
+
+---
+
+## Getting Started
+We'll start our tour by installing the `dplyr` package and loading a dataset to use in our examples.
+
+```{r installing,eval=FALSE}
+install.packages('dplyr')
+library(dplyr)
+cropYield <- read.csv("http://wjhopper.github.io/psych640-labs/data/crops.csv",
+                      stringsAsFactors = FALSE)
+head(cropYield)
+```
+
+```{r realInstall, echo=FALSE, message=FALSE, warning =FALSE}
+library(dplyr)
+cropYield <- read.csv("../../data/crops.csv", stringsAsFactors = FALSE)
+head(cropYield)
+```
+
+The `cropYield` data frame has 99 observations of 4 variables: Field, Till,	Fert,	and Yield.
+
+---
+
+## The arrange function
+The `arrange` function sorts the rows of a data frame based on the values of one or more variables. Lets use it to sort the rows of the `cropYield` data frame by fertilizer type.
+
+`arrange` expects the first argument to be the data frame to sort, and uses any remaining arguments as the names of the variables to sort by.
+```{r arrange1, R.options = list(max.print = 20), warning=FALSE}
+arrange(cropYield, Fert) # Column names are unquoted!!
+```
+
+---
+
+## The arrange function
+If you ask `arrange` to sort by multiple variables, the rows are sorted hierarchically according to the order of the variables listed in the function call. 
+
+```{r arrange2, R.options = list(max.print = 20)}
+arrange(cropYield, Fert, Yield)
+```
+
+---
+
+## The arrange function
+You can also sort by reverse alphabetical or numerically descending order by using the `desc` function (short for descending) inside the call to `arrange`.
+
+```{r arrange_desc, R.options = list(max.print = 20)}
+arrange(cropYield, Fert, desc(Yield)) # desc only works inside arrange
+```
+
+---
+
+## The filter function
+The `filter` function selects a subset of rows from the data frame based on logical tests, similar to the `[` operator.
+
+`filter` also expects the first argument to be a data frame. Any other arguments must be expressions that return logical vectors, and `filter` returns only the rows where the logical conditions are met.
+
+```{r filter1,R.options = list(max.print = 16)}
+# Find the rows where the tilling method is ridge
+filter(cropYield, Till == "Ridge")
+```
+
+---
+
+## The filter function
+If you list multiple conditions, they are combined with the `&` operator, meaning that a row must meet *both* conditions to be included in the output. 
+
+Here, a row must have it's `Till` value equal to `Ridge`, and it's `Fert` value equal to `Deep` to be part of the output.
+```{r filter2, R.options = list(max.print = 24)}
+filter(cropYield, Till == "Ridge", Fert == "Deep")
+```
+
+---
+
+## The filter function
+If you want to include a row if it meets *any* given condition (a logical `OR` statement), you must combine the conditions yourself with the `|` operator.
+
+```{r filter_OR, R.options = list(max.print = 24)}
+filter(cropYield, Till == "Ridge" | Fert == "Deep") 
+```
+
+---
+
+## Common Filtering Mistakes
+Filtering right can be hard! No, seriously! Conceptual mistakes often occur when trying to translate verbal requirements into R code, because words like "and" have such strict operational definitions in R.
+
+Consider this example: Someone asks you to analyze just the data from the "Ridge" and "Chisel" methods of tilling. You realize your first step is to filter down your data to just those two types of observations.
+
+And, you first instinct might be to take the "and" in "Ridge and Chisel" literally, and try something like this:
+
+```{r, eval=FALSE}
+filter(cropYield, Till == "Ridge" & "Chisel")
+```
+
+---
+
+## Common Filtering Mistakes
+But there are two mistakes here. First, you would need to specify the `Till ==` variable on *both* sides of the `&` - remember, the `&` operator chains together two logical values, and `"Chisel"` is not a logical value.
+
+```{r}
+filter(cropYield, Till == "Ridge" & Till == "Chisel")
+```
+
+--
+
+But even though the code runs, we get no output because this is a *conceptual* mistake.
+
+You want both the "Ridge" and "Chisel" observations in your final output, but think about this: how does R control what gets included in the final output? 
+
+It goes row, by row, by row, saying "you're in, you're in, you're out, you're in" etc. But, you've just asked for something impossible - you've asked it to include values where the `Till` variable has the the value "Chisel" **and** the value "Ridge" **at the same time** - which should never happen!!
+
+---
+
+## Common Filtering Mistakes
+So even though we verbally ask for "Ridge and Chisel", we need to ask R for "**Either** Ridge or Chisel". In other words, we need to tell R that a value of "Chisel" **or** a value of "Ridge" mean the row should be included in the output.
+
+We do this with the `|` logical operator.
+
+```{r, R.options = list(max.print = 24)}
+filter(cropYield, Till == "Ridge" | Till == "Chisel")[c(1:2, 45:46),]
+```
+
+---
+
+## Filtering with `%in%`
+In this situation, the best thing to do is rely on set-based matching with the `%in%` operator.
+
+So, if you want to include rows where the value of a variable takes on one of many allowable values (e.g., rows where `x` is 1 or 2, instead of just 1, or rows where `Till` is "Ridge" or "Chisel"), you can use the `%in%` operator.
+
+```{r filter_IN, R.options = list(max.print = 20)}
+filter(cropYield, Till %in% c("Ridge", "Chisel"))
+```
+
+---
+
+## The select function
+The `select` function allows you to pare down your data set by only keeping the columns that you specify, and also allows you to rename and reorder the selected columns on the fly.
+
+When you rename a column, the existing column name goes on the right of the `=`, and the new name goes on the left - just like assigning a new variable!
+```{r select1, R.options = list(max.print = 12)}
+colnames(cropYield) # just for our reference
+select(cropYield, fertilizer = Fert, bushels = Yield, Till)
+```
+
+---
+
+## The select function
+The `select` function even allows you to select a continuous range of columns using the start and end column names, separated with the `:` operator, just like a numeric vector!!!
+```{r select2, R.options = list(max.print = 20)}
+# So awesome! But, you can't rename at the same time with this syntax
+select(cropYield, Till:Yield)
+```
+
+---
+
+## The select function
+You can even specify just the columns you *don't* want to keep, which is useful for very wide data frames where you want to discard just one or two columns
+```{r select4, R.options = list(max.print = 20)}
+# The - says to drop this column
+select(cropYield, -Field)
+```
+
+---
+
+## The rename function
+You can use the `rename` function if you want to change any column names without removing any columns.
+```{r rename, R.options = list(max.print = 24)}
+# Existing column name on the right of the =, new name on the left 
+rename(cropYield, fieldID = Field)
+```
+
+---
+
+## The mutate function
+You can use the mutate function to create new variables in your data frame.
+
+Its especially useful for creating new variables based on existing ones, and changing/adding multiple columns at the same time.
+
+```{r mutate, R.options = list(max.print = 24)}
+mutate(cropYield, Field = factor(Field), yeildSq = Yield^2)
+```
+
+---
+
+## The mutate function
+A cool feature of the `mutate` function is that you can use new variables immediately after you create them, within the same call to mutate!!
+
+```{r mutate2, R.options = list(max.print = 24)}
+# We create  yieldRoot, and then use it in the same function call
+mutate(cropYield, yeild_sqrd = Yield^2, orig_yield = sqrt(Yield))
+```
+
+---
+
+## The distinct function
+The `distinct` function returns only the unique rows of a data frame.
+
+Lets use it to discover all the unique combinations of `Till` and `Fert` contained in this dataset.
+
+```{r distinct}
+distinct(select(cropYield, Till, Fert))
+```
+
+---
+
+## The summarize function
+The `summarize` function is useful for applying functions that reduce your variables down to a single value.
+
+```{r summarize}
+summarize(cropYield, total_yield = sum(Yield))
+```
+
+**Important**: when you do use `summarize` on a data frame, your output will only have your new summary variables (e.g., `total_yield`).
+
+---
+
+## The summarize function
+
+You can compute multiple summary statistics at once in the summarize function
+
+```{r summarize_more}
+summarize(cropYield,
+          total_yield = sum(Yield),
+          median_yield = median(Yield),
+          min_yield = min(Yield)
+          )
+```
+
+The summarize function may not seem incredibly useful on its own, but allows us to segue into what is perhaps the biggest reason to use `dplyr`.
+
+---
+
+## The Killer Feature of dplyr
+Unless you are struggling to work with a remote MySQL server, or waiting hours for your code to run on data frames with millions of observations, it might not seem worth it to "relearn" how to do everything the "dplyr way".
+
+But `dplyr` has one feature that makes it worth every minute of learning:
+
+The ability to define persistent groups in your data frame, and apply functions to *each individual group, instead of the entire data frame*.
+
+This silver bullet is given to us by the `group_by` function.
+
+---
+
+## Group-wise operations, the hard way
+Let's try to find find the total crop yield for each tilling and fertilizer combination:
+
+```{r groupwise_bad}
+ChiselBroad <- sum(cropYield$Yield[cropYield$Till == 'Chisel'
+                    & cropYield$Fert == 'Broad'])
+ChiselBroad
+ChiselDeep <- sum(cropYield$Yield[cropYield$Till == 'Chisel'
+                   & cropYield$Fert == 'Deep'])
+ChiselDeep
+ChiselSurface <- sum(cropYield$Yield[cropYield$Till == 'Chisel'
+                      & cropYield$Fert == 'Surface'])
+ChiselSurface # And so on for 6 more groups!!
+```
+This is verbose, tedious, prone to typos, and doesn't scale to large datasets with many groups.
+
+---
+
+## The group_by function
+With `group_by`, you can specify sub-groups in your data by saying which variables in your data frame define groups of observations. For example, we can group the `cropYield` data frame into 9 smaller groups, one for each of the tilling and fertilizer combinations.
+
+```{r group_by, R.options=list("max.print" = 8)}
+cropsGrouped <- group_by(cropYield, Till, Fert) # store the grouped dataset
+cropsGrouped
+```
+
+---
+
+## The group_by function
+The `group_by` function doesn't change the external appearance of the data frame; the only noticeable change is the addition of the line `Groups: Till, Fert [9]` when the data frame is printed.
+```{r group_by2, R.options=list("max.print" = 16)}
+cropsGrouped # Inspect the grouped dataset
+```
+
+This line tells you which columns the groups are based on, and how many individual groups they form.
+
+---
+
+## Group-wise operations, the easy way
+When `dplyr` functions are applied to a grouped data frame, the operations you perform are no longer applied to the entire data frame.
+
+Instead, they are applied to **each group** of observations individually!!
+
+This technique makes finding the mean of each individual tilling/fertilizer group incredibly simple instead of complicated and tedious. Observe:
+
+```{r good_groupby}
+cropsGrouped <- group_by(cropYield, Till, Fert) # easy peasy
+group_sums <- summarize(cropsGrouped, total_yield = sum(Yield)) # lemon squeezy
+```
+
+The `group_sums` data frame now holds 9 different sums - one for each tilling and fertilizing combination!
+
+---
+
+## Group-wise operations, the easy way
+Viola!
+```{r means}
+group_sums
+```
+
+--
+
+**Important**: when you do use `summarize` on a grouped data frame, your output will only have your grouping variables, and your new summary variables.
+
+---
+
+## Group-wise operations
+Lets take a closer look at meta-data about our summary data frame.
+```{r peeling, echo=FALSE, R.options=list(tibble.print_max=4, tibble.print_min=4)}
+group_sums
+```
+The `Groups` line at the top has changed: now our data frame is only grouped by `Till`, and the group size is now `[?]`.
+
+This is because `summarize` always "peels off" the final grouping variable, because it doesn't make sense to continue grouping by the same columns. If you did, each group size would be one, because you just summarized each group down to one value.
+
+---
+
+## Group-wise operations
+You can use the `n` function, with no arguments, inside calls to `summarize` and `mutate` to count the number of observations in a group.
+```{r n, R.options=list(tibble.print_max=4, tibble.print_min=4)}
+summarize(cropsGrouped, grpSize = n())
+```
+
+---
+
+## Ungrouping
+If you want to remove the grouping you've applied to a data frame, just use the `ungroup` function to reset it back to a "normal" data frame.
+
+```{r ungroup, R.options=list(tibble.print_max=4, tibble.print_min=4)}
+ungroup(cropsGrouped) # no more "Groups" line
+```
+You can check a data frames grouped/ungrouped status with the `is.grouped` function.
+
+---
+
+## Pipes
+
+In the first slide, I told you dplyr provides "a streamlined and unified interface for tasks commonly performed together", and now I'm going back that claim up.
+
+As you may have noticed, all dplyr functions take a data frame as their first argument, and return a data frame as their output.  This is because dplyr functions are designed to be chained together and used in sequence.
+
+The `dplyr` package provides the pipe operator, written `%>%` for this specific purpose: chaining together individual functions together to form a data manipulation pipeline.
+
+---
+
+## Pipes
+
+The `%>%` operator is actually pretty simple - it takes the output of the function on its left, and send it as input to the function on its right. And even though it was designed to work with dplyr functions, it works anywhere in R!
+
+```{r simple_pipes}
+sqrt(5) # Standard syntax
+5 %>% sqrt() # "piped" syntax
+sum(c(10,8,22)) # standard syntax
+c(10,8,22) %>% sum() # "piped" syntax
+```
+
+---
+
+## A data analysis pipeline
+Here's an example of data analysis "pipeline" - a series of related operations intended to be performed in sequence
+
+```{r}
+crops <- select(cropYield, -Field)
+crops <- filter(crops, Till %in% c("Ridge", "Chisel"))
+crops <- group_by(crops, Till, Fert)
+summarize(crops, total_yeild = sum(Yield))
+```
+
+---
+
+## A data manipulation pipeline
+Let's look at how to use this pipe operator effectively with dplyr functions, by re-writing the code below to use `%>%`
+
+.pull-left[
+```{r}
+crops <- select(cropYield, -Field)
+crops <- filter(crops, Till %in% c("Ridge", "Chisel"))
+crops <- group_by(crops, Till, Fert)
+summarize(crops, total_yeild = sum(Yield))
+```
+]
+
+.pull-right[
+```{r}
+select(cropYield, -Field) %>%
+  filter(Till %in% c("Ridge", "Chisel")) %>%
+  group_by(Till, Fert) %>%
+  summarize(total_yeild = sum(Yield))
+```
+]
+
+---
+
+## Saving output from piplines
+If you wish to save the final output from your pipeline (the output of the final `summarize` funciton in this case), you place an assignment statement to the left of the **first** expression in the pipeline.
+```{r, R.options=list(tibble.print_max=4, tibble.print_min=4)}
+total_crop_yields <- select(cropYield, -Field) %>% #<<
+  filter(Till %in% c("Ridge", "Chisel")) %>%
+  group_by(Till, Fert) %>%
+  summarize(total_yeild = sum(Yield))
+total_crop_yields
+```

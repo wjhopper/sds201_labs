@@ -1,0 +1,512 @@
+
+---
+title: "Reshaping and Exploring Data"
+author: "Will Hopper"
+date: "2/11/20"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    css: ["default", "default-fonts", "../../assets/css/sds.css", "../../assets/css/tidyCellHighlighting.css"]
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup,echo=FALSE,message=FALSE,warning=FALSE}
+library(tidyr)
+library(dplyr)
+library(GGally)
+library(skimr)
+knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, cache = TRUE, dev='svg', fig.align = 'center')
+options(knitr.table.format = "html")
+```
+
+## Real data's dirty secret
+As you search for project data, you might experience a moment of profound dissapointment:
+
+1. You come up with a cool research question
+2. You actually find a source of relevant data
+3. You open up the data, and... wait what?
+
+The data is so awkward and messy, you've got tons of work to do before you get down the business of statistical inference.
+
+Today, we're going to be talking about how to deal with one of the most common kinds of messy data: data that is not in a "tidy" layout.
+
+---
+
+## Reshaping with `tidyr`
+The tools from the `tidyr` package help you re-arrange data frames, with an emphasis on helping you *normalize* datasets.
+
+There are 4 main functions for re-arranging data in the `tidyr` package:
+
+1. `gather()`: transforms data from wide(r) to long(er)
+2. `spread()`: transforms data from long(er) to wide(r)
+3. `separate()`: splits a single column into multiple columns
+4. `unite()`: combines multiple columns into a single column
+
+---
+
+## The temperature data
+We'll demonstrate how to use each function with a small dataset, so its easy to see what changes get made. So, install `tidyr`, and load the [temperature dataset](../data/temperature.csv).
+
+```{r, eval=FALSE, cache=FALSE}
+install.packages("tidyr")
+library(tidyr)
+temperature <- read.csv("https://wjhopper.github.io/psych640-labs/data/temperature.csv")
+temperature
+```
+
+```{r import_temp_data, echo=FALSE, cache=FALSE}
+temperature <- read.csv("../../data/temperature.csv")
+tmp_initial <- temperature
+```
+
+```{r display_temp_data, echo=FALSE}
+knitr::kable(temperature, caption = "High Temperatures (Farenheight)", format = "html")
+```
+
+---
+
+## The temperature data
+```{r, ref.label="display_temp_data", echo=FALSE}
+knitr::kable(temperature, caption = "High Temperatures (Farenheight)", format = "html")
+```
+
+The `temperature` dataset has measurements of 3 variables: **City**, **Date**, and **Temperature**.
+
+But the layout of the dataset is in so-called "wide form", because values of the **Date** variable (Feb_19_2017, Feb_18_2017, and Feb_17_2017) are used as unique variables themselves.
+
+Instead, the dates *should* be in the cells of the table as observed values of the **Date** variable.
+
+---
+
+## The `gather()` function 
+Let's use the `gather` function to move the dates in the column headers down into the table under a new variable **date**, and move the actual temperature measurements into a new variable called **temp**.
+
+`gather` takes 4 required arguments:
+
+1. `data`: the name of the data frame to re-arrange
+2. `key`: the name of the to-be-created variable that will hold values currently in use as variables
+3. `value`: the name of the to-be-created variable that will hold the values from the variables to be gathered.
+4. `...`: A bare list of columns to gather (or columns *not* to gather)
+
+---
+
+## The `gather()` function 
+Let's make this more specific to our situation.
+
+```{r,eval=FALSE}
+gather(data = temperature,
+       key = "date",
+       value = "temp",
+       -city)
+```
+
+- The `key` column will be named "date", because it will hold the dates that were previously used as individual variables
+- The `value` column will be named "temp" because the values in each of the Feb_19_2017, Feb_18_2017, and Feb_17_2017 variables were our actual temperature measurements.
+- We want to gather values from all the columns *except* the city column, so we can write `-city`. Alternatively, we could write `Feb_19_2017, Feb_18_2017, and Feb_17_2017`.
+
+---
+
+class: gather, spthis
+
+## The `gather()` function 
+So this:
+```r
+temperature <- gather(data = temperature, key = "date", value = "temp", -city)
+```
+.pull-left[
+turns this:
+```{r, echo=FALSE}
+knitr::kable(temperature)
+```
+]
+
+.pull-right[
+into this:
+
+```{r, echo=FALSE}
+temperature <- gather(data = temperature, key = "date", value = "temp", -city)
+knitr::kable(temperature)
+```
+]
+
+---
+
+class: gather2
+
+## The `gather()` function
+Critically, the temperature observations are still matched up with the same date!
+
+```{r, echo=FALSE}
+knitr::kable(tmp_initial) 
+```
+
+```{r, echo=FALSE}
+knitr::kable(temperature)
+```
+
+---
+
+## The `spread()` function
+The `spread` function is the complement to the `gather` function, so we can use it to undo this transformation. 
+
+Its job is to takes values from an existing variable in the dataset and "spread" them out, creating a new variable for each unique value in the old variable.
+
+The `spread` function takes 3 required arguments:
+
+1. `data`: the name of the data frame to re-arrange
+2. `key`: the name of the existing variable whose *N* unique values will be "spread out" into *N* new variables
+3. `value`: the name of the existing variable whose values will be used as values in the *N* to-be-created variables.
+
+---
+
+## The `spread()` function
+So to undo the wider-to-longer normalization we just performed, we would use this function call:
+
+```{r,eval=FALSE}
+spread(data = temperature,
+       key = date,
+       value = temp)
+```
+
+- the `key` argument is the "date" column, because the "date" column holds the values we want to be new variables
+- the `value` argument is the "temp" column, because we want the temperature measurements to be observations in the 3 date variables
+
+We don't have to specify the names of the new variable we're creating, because they are going to come from the values in the "date" variable.
+
+---
+
+class: sothis
+
+## The `spread()` function
+So this:
+```r
+spread(data = temperature, key = date, value = temp)
+```
+
+.pull-left[
+turns this:
+```{r, echo=FALSE}
+knitr::kable(temperature)
+```
+]
+
+.pull-right[
+back into this:
+```{r, echo=FALSE}
+knitr::kable(spread(data = temperature, key = date, value = temp))
+```
+]
+
+---
+
+## Common `spread()` problems
+A common issue encountered with the `spread` function is the somewhat mysterious error "<code style="color: red;">Each row of output must be identified by a unique combination of keys.</code>".
+
+Basically, this means is that when the columns given as the `key` and `value` arguments are removed, the rows of your data frame are not unique. 
+
+Thus, `spread` can't figure out which observations from the `value` column belong in which rows when it reshapes that data. Rather than potentially corrupt your data, it gives up instead.
+
+In general, the solution is to give each row a unique ID number like so:
+
+```{r eval = FALSE} 
+temperature$id <- 1:nrow(temperature)
+```
+
+---
+
+## Common `spread()` problems
+For example, I can't spread the `X` variable in this data frame into new `A` and `B` variables.
+```{r notunique,echo=FALSE}
+set.seed(10)
+d <- data.frame(X = c("A","A","B","B"),
+                Y = c(1, 1, 2, 2),
+                Z = sample(10:200, 4))
+knitr::kable(d)
+```
+
+.errormsg[
+```{r trytospread, error=TRUE}
+spread(d, key=X, value=Z)
+```
+]
+
+---
+
+## Common `spread()` problems
+To see why, imagine that the `X` and `Z` columns were gone. With just the `Y` column left, rows 1 and 2 are duplicates, as are 3 and 4.
+```{r notunique2,echo=FALSE}
+knitr::kable(d)
+```
+
+Without unique rows to match against, R can't tell whether 146 or 82 should go in the first row of column `A`. It *could guess* based on row order, but it won't.
+
+---
+
+class: spread_table
+
+## Common `spread()` problems
+If we add an ID variable, we can reshape the data.
+.pull-left[
+```{r adduniqueID1, echo=1}
+d$id <- 1:4
+knitr::kable(d)
+```
+]
+
+.pull-right[
+```{r show_spread, eval=FALSE}
+spread(d, key=X, value=Z)
+```
+```{r actuallyspread, echo=FALSE}
+knitr::kable(spread(d, key=X, value=Z)) 
+```
+]
+
+This may seem like an odd result, but if you look carefully, everything is correctly matched up. It's just that "B"'s were ever seen with a 1 in `Y`. So, all the rows associated with Y=1 are missing in column B. The same pattern holds for column A and Y=2.
+
+---
+
+## The `separate()` function
+The `separate` function is used to transform one variable in your dataset into many variables in your dataset.
+This is useful when multiple variables have been concatenated into a single variable, and you would like to examine these variables separately.
+
+For example, in our normalized `temperature` dataset, the `date` variable is actually a combination of a month, day of month, and year variable, concatenated together.
+
+```{r, echo=FALSE}
+knitr::kable(temperature)
+```
+
+---
+
+## The `separate()` function
+Let's separate this amalgamated "date" variable into 3 different variables, one for the month, day, and year.
+
+The `separate` function has 3 required arguments, and a 4^th^ optional argument you almost may want to specify.
+
+1. `data`: the name of the data frame to re-arrange
+2. `col`: the bare name of the variable to be split-up
+3. `into`: a character vector of names for the to-be-created variables
+4. `sep`: the delimiter defining how to split existing values into multiple new values. 
+
+By default, `separate` will split the values in the `col` variable on any non-alphanumeric character (e.g., `_`,  `-`, `.`, `:`, etc.). You can have it split on a character string, a numeric index (e.g., every 3^rd^ character), or using a regular expression.
+
+
+---
+
+## The `separate()` function
+In our case, we would use the separate function like so:
+```{r separate, eval=FALSE}
+separate(data = temperature,
+         col = date,
+         into = c("month", "day", "year"),
+         sep = "_")
+```
+
+- We want to separate the `col`umn named `date` *into* 3 new variables named "month", "day", and "year"
+- We are going to find the values that should go into the month, day, and year variables by splitting up the values in the `date` variable at every underscore character.
+
+
+---
+
+class: sothis
+## The `separate()` function
+So this:
+```r
+temperature <- separate(temperature, col=date, into=c("month", "day", "year"), sep = "_")
+```
+
+.pull-left[
+turns this:
+```{r, echo=FALSE}
+knitr::kable(prettifyTable(temperature, rows = 3))
+```
+]
+
+.pull-right[
+into this:
+```{r, echo=FALSE}
+temperature <- separate(temperature, col=date, into=c("month", "day", "year"), sep = "_")
+knitr::kable(prettifyTable(temperature, rows = 3))
+```
+]
+
+---
+
+
+## The `unite()` function
+The `unite` function is the complement to the separate function. As you can imagine, its job is to combine multiple variables into a single variable. 
+
+The `unite` function has 3 required arguments, and 2 other arguments you often want to specify:
+
+1. `data`: the name of the data frame to re-arrange
+2. `col`: the bare name of the to-be-created amalgam variable
+3. `...` : bare columns whose values are to be combined row-wise and placed inside the new variable `col`
+4. `sep`: the separator to use between combined values (defaults to `"_"`).
+5. `remove`: a logical value indicating whether or not to remove columns from the data frame after combining them (defaults to `TRUE`).
+
+---
+
+class: sothis
+
+## The `unite()` function
+So to undo our separation of the `date` variable, we could use this:
+```r
+unite(temperature, col=date, month, day, year)
+```
+
+.pull-left[
+to turn this:
+```{r, echo=FALSE}
+knitr::kable(prettifyTable(temperature, rows = 3))
+```
+]
+
+.pull-right[
+back into this:
+```{r, echo=FALSE}
+knitr::kable(prettifyTable(unite(temperature,
+                           col=date,
+                           month, day, year),
+                     rows = 3))
+```
+]
+
+---
+
+
+## Resources & More
+For more information about the *theory* behind the `tidyr` package, check out the [package vignette](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) and the [tidy data paper](http://vita.had.co.nz/papers/tidy-data.html).
+
+You may have noticed that the API (i.e., standard syntax) for `tidyr` functions is not unlike that of the functions in `dplyr`. This is not a coincidence; both packages have the same core authors and are part of the "[tidyverse](https://blog.rstudio.org/2016/09/15/tidyverse-1-0-0/)" collection of R packages.
+
+However, `tidyr` is *not* the only choice for reshaping data. The `reshape2` package is also quite useful. Its focus is on reshaping more broadly (e.g., from one type of data structure to another, reshaping through aggregation, etc.). If you need a more general reshaping tool, start with the following `reshape2` tutorials:
+
+- [My reshape2 lab](reshape.html)
+- [A brief but good intro to reshape2](http://seananderson.ca/2013/10/19/reshape.html)
+- [Hadley Wickham's intro to reshape2](http://had.co.nz/reshape/introduction.pdf)
+
+---
+
+## Practice
+
+Consider the following data set:
+
+```{r face_rt}
+wide <- data.frame(ID = 1:6,
+                   Face.1 = c(411,723,325,456,579,612),
+                   Face.2 = c(123,300,400,500,600,654),
+                   Face.3 = c(1457,1000,569,896,956,2345)
+                   )
+```
+
+```{r face_rt_show, echo=FALSE}
+knitr::kable(wide)
+```
+
+
+---
+
+## Practice
+
+Use the `gather` and `separate` functions to put this data set into tidy form, and then use `unite` and `spread` to put in back in the original wide format.
+
+```{r face_rt_show2, echo=FALSE}
+knitr::kable(wide)
+```
+
+---
+
+class: inverse, middle, center
+
+# Exploring Data
+
+---
+
+## Exploring New Datasets
+The next two things we're going to talk about are tools for digging into a new data set, and finding out what the heck is in there. They are:
+
+1. The `skim` function from the `skimr` package
+  ```{r, eval=FALSE}
+  install.packages('skimr')
+  library(skimr)
+  ```
+2. The `ggpairs` function from the `GGally` package
+  ```{r, eval=FALSE}
+  install.packages('GGally')
+  library(GGally)
+  ```
+
+Both of these are most useful in the context of a larger data set, so let's bring in the `ncbirths` data set as usual.
+
+```{r, eval=FALSE}
+ncbirths <- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+                     stringsAsFactors = FALSE)
+```
+
+```{r echo=FALSE}
+ncbirths <- read.csv("../../data/ncbirths.csv", stringsAsFactors = FALSE)
+```
+
+---
+
+class: skimmed
+
+## skim
+```{r, results='asis'}
+skim(ncbirths)
+```
+
+---
+
+class: skimmed
+## skim lite
+Sometimes, the characters used to draw the histograms can cause problems. If you find yourself encoutering strange unicode errors about character  <U+2587> , try using the `skim_without_charts()` function instead of `skim`:
+
+```{r, results='asis'}
+skim_without_charts(ncbirths, weight, gained) # just these two to demonstrate
+```
+
+---
+
+## ggpairs
+
+`ggpairs` is a function to visualize the relationship between all possible pairs of variables in your data set, in what is often called a "scatter plot matrix".
+
+If you have 2 variables, your plot will be a 2x2 matrix with 4 sub-plots. If you have 3, a 3x3 matrix with 9 sub-plots. If you have 4, a 4x3 matrix with 16 sub-plots. You get the idea...
+
+Why is this important? Because you run out of room on a laptop screen fast.
+
+---
+
+## ggpairs
+
+```{r, message=FALSE}
+ggpairs(ncbirths)
+```
+
+---
+
+Let's just look at the first 4 variables to get a better idea of what's happening
+```{r first_four_pairs, message=FALSE, fig.height=5.25, fig.width=7}
+ggpairs(ncbirths, columns = 1:4)
+```
+
+---
+
+Mostly same information in different forms above and below the diagonal
+
+```{r, ref.label="first_four_pairs", message=FALSE, fig.height=5.25, fig.width=7}
+```
+
+---
+
+If you want histograms instead of smoothed density estimates along the diagonal, use this:
+```{r hist_diagonal, message=FALSE, fig.height=5.25, fig.width=7}
+ggpairs(ncbirths, columns = 1:4, diag = list(continuous='barDiag'))
+```
