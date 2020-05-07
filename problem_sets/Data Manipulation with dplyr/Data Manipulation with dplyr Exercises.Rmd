@@ -81,7 +81,7 @@ library(dplyr)
 ### The data
 You will be working with the `txhousing` data set, which is included in the `ggplot2` package and will be loaded when you use `library(ggplot2)`. Take a peek at the dataset below, taking note of the data types of each variable:
 
-```{r}
+```{r R.options=list(tibble.width=85)}
 glimpse(txhousing)
 ```
 

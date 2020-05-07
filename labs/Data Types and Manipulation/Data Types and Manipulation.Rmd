@@ -203,7 +203,7 @@ This can be useful later when you want to pick out a few values from the larger 
 ## Vector Tricks
 You can create a sequential numeric vector using the colon operator `:`, instead of typing out hundreds or thousands of values by hand.
 
-```{r colon}
+```{r colon, R.options=list(width=85)}
 55:100
 ```
 
@@ -606,7 +606,7 @@ lisa[lisa <= 100] # Index vector named lisa with the results of the test.
 
 ## Relational Operators & Indexing
 We index character vectors using the `==` and `!=` operators, but not the greater/less than operators. Quantity makes no sense for characters!
-```{r charTesting}
+```{r charTesting, R.options=list(width=87)}
 months <- c("January", "February", "March", "April", "May", "June", "July",
            "August", "September", "October", "November", "December")
 months == "June" # The sixth element is TRUE

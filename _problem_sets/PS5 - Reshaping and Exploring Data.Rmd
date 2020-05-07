@@ -86,7 +86,7 @@ library(skimr)
 ### The data
 You will be working with the built-in `iris` data set again.
 
-```{r}
+```{r R.options=list(tibble.width=78)}
 glimpse(iris)
 ```
 
