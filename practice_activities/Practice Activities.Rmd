@@ -1,0 +1,122 @@
+---
+title: "Practice Activities"
+author: "William Hopper"
+date: "`r format.Date(Sys.Date(), '%m/%d/%Y')`"
+output:
+  html_fragment
+editor_options: 
+  chunk_output_type: console
+---
+
+<style>p, code, li {font-size: 20px; line-height: 1.5em;}</style>
+
+```{r, include=FALSE}
+library(moderndive)
+library(ggplot2)
+library(infer)
+library(dplyr)
+library(purrr)
+library(tidyr)
+```
+
+
+## Data set links
+
+- `ncbirths`: https://wjhopper.github.io/sds201_labs/data/ncbirths.csv
+- `ncbirths_population`: https://wjhopper.github.io/sds201_labs/data/ncbirths_population.csv
+
+## Chapter 6 Problems
+1. For the `ncbirths` data set, consider the bivariate regression model `weight ~ smoker` that uses smoking status to explain variability in infant birth weights. Visualize the relationship between these variables, and compute the $R^2$ value for the regression model. Based on the visualization and the $R^2$ value, do you think think the bivariate `weight ~ smoker` model is a more useful model than the empty model `weight ~ NULL`?
+
+2. For the `ncbirths` data set, consider the following two regression models that use smoking status and mother's age to explain variability in infant birth weights:
+
+    1. The parallel slopes (a.k.a. additive) model: `weight ~ smoker + mage`
+    2. The interaction model: `weight ~ smoker * mage`
+    
+    Visualize the relationship between these variables (including the regression lines for both models; remember that you can use the `geom_parallel_slopes` function from the `moderndive` package) and compute the *adjusted* $R^2$ value for both regression models.  Based on the visualization and the adjusted $R^2$ value, which model do you prefer? Put another way, does the parallel slopes or the interaction model provide the most accurate *and* concise description of the data?
+    
+## Chapter 7 Problems
+
+Using the `ncbirths` and `ncbirths_population` data sets, answer the following questions:
+
+1. What are the exact mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004 (assuming 125 mothers were observed in each sample)?
+2. What are the estimated mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004, based on the first 125 observed values in the `ncbirths` sample? What about based on the second set of 125 observed values?
+3. Which value from question 2 do you find more surprising?
+4. What information can we learn by examining the sampling distribution of the sample mean?
+
+## Chapter 8 Problems
+
+Consider the following plot, which shows 100 confidence intervals around 100 different sample proportions, created using the percentiles of the bootstrap distribution. The red vertical line is the true population proportion, light grey horizontal lines represent confidence intervals whose endpoints contain the true population proportion, and black horizontal horizontal lines represent confidence intervals whose endpoints **do not** contain the true population proportion.
+
+```{r, echo=FALSE, fig.width=7, fig.height=10, fig.align='center', cache=TRUE}
+p_red <- bowl %>% 
+  summarize(prop_red = mean(color == "red")) %>% 
+  pull(prop_red)
+
+set.seed(5)
+
+# Function to run infer pipeline
+bootstrap_pipeline <- function(sample_data){
+  sample_data %>% 
+    specify(formula = color ~ NULL, success = "red") %>% 
+    generate(reps = 1000, type = "bootstrap") %>% 
+    calculate(stat = "prop")
+}
+
+# Compute nested data frame with sampled data, sample proportions, all 
+# bootstrap replicates, and percentile_ci
+balls_percentile_cis <- bowl %>% 
+  rep_sample_n(size = 50, reps = 100, replace = FALSE) %>% 
+  group_by(replicate) %>% 
+  nest() %>% 
+  mutate(sample_prop = map_dbl(data, ~mean(.x$color == "red"))) %>%
+  # run infer pipeline on each nested tibble to generated bootstrap replicates
+  mutate(bootstraps = map(data, bootstrap_pipeline)) %>% 
+  group_by(replicate) %>% 
+  # Compute 95% percentile CI's for each nested element
+  mutate(percentile_ci = map(bootstraps, get_ci, type = "percentile", level = 0.80))
+
+# Identify if confidence interval captured true p
+percentile_cis <- balls_percentile_cis %>% 
+  unnest(percentile_ci) %>% 
+  mutate(captured = `10%` <= p_red & p_red <= `90%`)
+    
+# Plot them!
+ggplot(percentile_cis) +
+  geom_segment(aes(
+    y = replicate, yend = replicate, x = `10%`, xend = `90%`, 
+    color = factor(captured, levels = c("TRUE", "FALSE"))
+  )) +
+  scale_color_manual(values=c("lightgrey","black"), labels=c("Yes", "No")) +
+  # Removed point estimates since it doesn't necessarily act as center for 
+  # percentile-based CI's
+  # geom_point(aes(x = sample_prop, y = replicate, color = captured)) +
+  labs(x = expression("Proportion of red balls"), 
+       y = "Confidence interval number", 
+       color = "Captured") +
+  geom_vline(xintercept = p_red, color = "red") + 
+  coord_cartesian(xlim = c(0.1, 0.7)) + 
+  theme_bw(16) + 
+  theme(panel.grid.major.y = element_blank(), 
+        panel.grid.minor.y = element_blank(),
+        panel.grid.minor.x = element_blank()
+        )
+```
+
+
+1. Based on this plot, what condfidence level do you think was used to construct these confidence intervals? What do you based this answer on?
+
+2. Why is the statement "The 95% confidence interval ranges between 2.76 and 5.31, so there is a 95% probability the true population mean is between 2.76 and 5.31" incorrect?
+
+
+## Chapter 9 Problems
+
+Problems one through four apply to the resume and gender bias hypothesis testing example in [ModernDive Chapter 9.1 - 9.2](https://moderndive-bert.netlify.app/9-hypothesis-testing.html#ht-activity)
+
+1. What was the point of repeatedly permuting (i.e., "shuffling") the gender label across all the promotion decisions?
+
+2. The difference in the proportion of promoted males and the proportoin of promoted females was calculated from each randomly permuted data sets. What did this collection of difference scores allow us to construct?
+
+3. What was the null hypothesis in this example?
+
+4. Why did we reject the null hypothesis?

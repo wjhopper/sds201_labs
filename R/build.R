@@ -138,4 +138,12 @@ for (lecture in lectures) {
   counter <- counter + 1 # Get next lecture number
 }
 
-
+#### Practice Activities
+old <- setwd(file.path(root_dir, "practice_activities"))
+rendered_output <- rmarkdown::render(list.files(pattern = "^practice activities\\.rmd*",
+                                                ignore.case = TRUE
+                                                ),
+                                     envir = new.env()
+                                     )
+setwd(old)
+file.copy(rendered_output, file.path(root_dir, "_includes", "Practice-Activities.html"))

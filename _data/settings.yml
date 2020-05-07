@@ -9,6 +9,7 @@ google-ID: ''
 menu:
 - {name: 'Lectures', folder: 'pages', file: 'lectures.html'}
 - {name: 'Problem Sets', folder: 'pages', file: 'problem-sets.html'}
+- {name: 'Practice Activities', folder: 'pages', file: 'practice-activities.html'}
 
 # Customize site text
 pagination:

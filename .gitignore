@@ -17,3 +17,5 @@ lectures/*/*/remark-css*
 lectures/*/*_files
 problem_sets/*/*.html
 problem_sets/*/*_files
+practice_activities/*.html
+practice_activities/*_files
