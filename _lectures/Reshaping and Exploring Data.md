@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 5: Confidence Intervals'
+title: 'Lecture 5: Reshaping and Exploring Data'
 author: Will Hopper
 ---
 

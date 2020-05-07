@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 1: Confidence Intervals'
+title: 'Lecture 1: Intro to R and RStudio'
 author: Will Hopper
 ---
 

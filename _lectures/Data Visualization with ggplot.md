@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 2: Confidence Intervals'
+title: 'Lecture 2: Data Visualization with ggplot'
 author: Will Hopper
 ---
 

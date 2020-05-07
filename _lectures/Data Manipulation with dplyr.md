@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 4: Confidence Intervals'
+title: 'Lecture 4: Data Manipulation with dplyr'
 author: Will Hopper
 ---
 

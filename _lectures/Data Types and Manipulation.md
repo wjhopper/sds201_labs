@@ -1,5 +1,5 @@
 ---
-title: 'Lecture 3: Confidence Intervals'
+title: 'Lecture 3: Data Types and Manipulation'
 author: Will Hopper
 ---
 
