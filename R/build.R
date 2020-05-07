@@ -23,7 +23,7 @@ counter <- 1
 for (pset in problem_sets) {
 
   pset_path <- file.path(root_dir, "problem_sets", pset)
-  prefix <- paste0("PS", counter, " -")
+  prefix <- paste0("PS", counter)
   ## Enumerate and render all Rmarkdown files
   rmd_files <- list.files(path = pset_path, pattern = "*\\.Rmd$", full.names = TRUE)
   
@@ -37,9 +37,9 @@ for (pset in problem_sets) {
     if (!grepl("solution", tolower(basename(raw_rmd)), fixed = TRUE)) {
 
       to_copy <- basename(c("raw"=raw_rmd, "out"=rendered_output))
-      to_copy <- sub("[ \\-]exercise(s)?", "", to_copy, ignore.case = TRUE)
-      to_copy <- paste(prefix, to_copy)
-      to_copy <- gsub(" (?=.+\\.html$)", "", to_copy, perl = TRUE)
+      to_copy <- sub("exercise(s)?", "", to_copy, ignore.case = TRUE)
+      to_copy <- gsub("-{2,}", "-", to_copy, perl = TRUE)
+      to_copy <- paste0(prefix, to_copy)
       destination_paths <- file.path(root_dir, output_dir, to_copy)
       copied_succesfully <- file.copy(c(raw_rmd, rendered_output), destination_paths)
 
