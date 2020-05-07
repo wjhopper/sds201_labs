@@ -7,7 +7,7 @@ disqus:
 google-ID: ''
 
 menu:
-- {name: 'Labs', folder: 'pages', file: 'labs.html'}
+- {name: 'Lectures', folder: 'pages', file: 'lectures.html'}
 - {name: 'Problem Sets', folder: 'pages', file: 'problem-sets.html'}
 
 # Customize site text

@@ -12,7 +12,7 @@ problem_sets <- collections$problem_sets$order
 # Set output dir. Create it if needed, otherwise clean it out
 output_dir <- paste0("_", "problem_sets")
 if ( !file.exists(file.path(root_dir, output_dir)) ) {
-  dir.create(output_dir)
+  dir.create(file.path(root_dir, output_dir))
 } else {
   unlink(list.files(file.path(root_dir, output_dir),full.names = TRUE),
          recursive = TRUE
@@ -72,17 +72,17 @@ for (pset in problem_sets) {
 
   post_file <- file.path(root_dir, "_problem_sets", paste0(pset, ".md"))
   writeLines(c(yaml_header, body), con=post_file, sep="")
-  counter <- counter + 1 # Get next lab number
+  counter <- counter + 1 # Get next problem set number
 }
 
 
 # #### Building Problem Sets Collection ####
-labs <- collections$labs$order
+lectures <- collections$lectures$order
 
 # Set output dir. Create it if needed, otherwise clean it out
-output_dir <- paste0("_", "labs")
+output_dir <- paste0("_", "lectures")
 if ( !file.exists(file.path(root_dir, output_dir)) ) {
-  dir.create(output_dir)
+  dir.create(file.path(root_dir, output_dir))
 } else {
   unlink(list.files(file.path(root_dir, output_dir),full.names = TRUE),
          recursive = TRUE
@@ -90,37 +90,33 @@ if ( !file.exists(file.path(root_dir, output_dir)) ) {
 }
 
 counter <- 1
-for (lab in labs) {
+for (lecture in lectures) {
   
-  lab_dir <- file.path(root_dir, "labs", lab)
-  prefix <- paste0("Lab", counter, " -")
+  lecture_dir <- file.path(root_dir, "lectures", lecture)
+  prefix <- paste0("Lecture", counter, " -")
   
   ## Enumerate and render all Rmarkdown files
-  rmd_files <- list.files(path = lab_dir, pattern = "*\\.Rmd$", full.names = TRUE)
+  rmd_files <- list.files(path = lecture_dir, pattern = "*\\.Rmd$", full.names = TRUE)
   
-  old <- setwd(lab_dir)
+  old <- setwd(lecture_dir)
   for (raw_rmd in rmd_files) {
     rendered_output <- rmarkdown::render(raw_rmd, envir = new.env())
   }
   setwd(old)
-  ## Copy the lab directory to the collection folder
+  ## Copy the lecture directory to the collection folder
   ## We can't recursively copy a folder to a new name
-  ## So we create the new location, list the files in lab directory, and copy those to the new location
+  ## So we create the new location, list the files in lecture directory, and copy those to the new location
   ## in order the achieve the "copy and rename" effect. Maybe an actual copy and rename would be faster?
   ## But, at this way we can remove the .Rmd file and the knitr cache from the list of to be copied files
-  destination_dir <- file.path(root_dir, output_dir, gsub(" ", "_", lab))
+  destination_dir <- file.path(root_dir, output_dir, gsub(" ", "_", lecture))
   success <- dir.create(destination_dir)
-  files_to_copy <- list.files(lab_dir, full.names = TRUE)
+  files_to_copy <- list.files(lecture_dir, full.names = TRUE)
   files_to_copy <- grep("_cache$|\\.Rmd$", files_to_copy, invert = TRUE, value = TRUE)
   success <- file.copy(files_to_copy, to = destination_dir, recursive = TRUE)
-  
-  ## Rename slides to have informative names
-  # slides <- list.files(destination_dir, pattern = "slides\\.[[:alpha:]]+$", full.names = TRUE, ignore.case = TRUE)
-  # file.rename(from=slides, to=sub("slides", lab, slides, ignore.case = TRUE))
-  
-  ## Generate "post" with links for labs collection
+
+  ## Generate "post" with links for lectures collection
   yaml_header <- paste0("---\n",
-                        as.yaml(list(title = paste0("Lab ", counter, " - ", lab),
+                        as.yaml(list(title = paste0("Lecture ", counter, ": ", pset),
                                      author = "Will Hopper"
                                      )
                         ),
@@ -131,15 +127,15 @@ for (lab in labs) {
   slides_relative_url <- paste0("{{site.baseurl}}", sub("^/_", "/", slides_relative_url))
   
   # Careful; if the slides_relative_url vector is longer than length one, this produces a NESTED markdown list
-  body <- list(pandoc.link.return(url = slides_relative_url, text = paste0("Lab ", counter, " Slides")))
+  body <- list(pandoc.link.return(url = slides_relative_url, text = paste0("Lecture ", counter, " Slides")))
   body <- pandoc.list.return(body, add.end.of.list = FALSE)
   
-  post_file <- file.path("..", "_labs", paste0(lab, ".md"))
+  post_file <- file.path("..", "_lectures", paste0(lecture, ".md"))
   if (file.exists(post_file)) {
     file.remove(post_file)
   }
   writeLines(c(yaml_header, body), con=post_file, sep="")
-  counter <- counter + 1 # Get next lab number
+  counter <- counter + 1 # Get next lecture number
 }
 
 

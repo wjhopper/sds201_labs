@@ -1,0 +1,427 @@
+---
+title: "Visualizing Data with ggplot"
+author: "Will Hopper"
+date: "`r format(Sys.Date(), '%b %d, %Y')`"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+    css: ["default", "default-fonts", "../../assets/css/sds.css"]
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, echo=FALSE, warning=FALSE}
+library(whoppeR)
+library(pander)
+library(ggplot2)
+knitr::opts_chunk$set("warning"=FALSE, "message"=FALSE, "fig.align" = 'center', "cache" = TRUE, dev='svg')
+```
+
+## The Grammar of Graphics
+The `ggplot2` package provides a library of plotting and graphics tools that implements the ["Grammar of Graphics"](http://www.springer.com/us/book/9780387245447) (Wilkinson, 2005; Wilkinson, Anand, & Grossman, 2005).
+
+Wilkinson's "Grammar of Graphics" is both a technical description of the structures used to produce quantitative visualizations, as well as a new language to describe the visual features of quantitative visualizations.
+
+In many ways, it formalizes what you intuitively know about plots and graphs already, but had no specific words for.
+
+Before going any further, let's make sure the `ggplot2` package is installed and loaded in R
+
+```{r fakeinstall, eval=FALSE}
+install.packages("ggplot2") # only need to do this once
+library(ggplot) # need to do this every time you open RStudio
+```
+
+---
+
+## The Grammar of Graphics
+The `ggplot` system of plotting distinguishes between four main sets of features that all visualizations posses.
+
+- Data
+    - The observations that the plot is dedicated to displaying
+- Geoms
+    - The geometric objects used to instantiate the data visually
+- Aesthetics
+    - The perceptual features of the data displayed in a plot
+- Scales
+    - The aspects of a plot that allow you to measure the aesthetics
+---
+
+## Data
+
+- The source of the observations in a ggplot is always a `data.frame` object in R
+
+- A `data.frame` is like a table of data arranged in "tidy" form
+    - Rows are all observations from one unit
+    - Columns are all measurements of one variable
+---
+
+## Aesthetics
+
+Aesthetics are the "simple" features possessed by data when they are displayed visually
+
+- The color of a datum is one of its aesthetics
+- The x position of a datum is one of its aesthetics
+- The y position of a datum is one of its aesthetics
+- The size of a datum is one of its aesthetics
+- The shape of a datum is one of its aesthetics
+
+In any visualization, aesthetics may or may not be used to carry information 
+
+  - E.g., the color of each datum may be the same, or colors may differ in order to convey that there are different groups of data.
+
+---
+
+## Geoms
+
+Geoms are the geometric objects chosen to instantiate the data visually, like points, lines, bars, or text.
+
+Choosing the right geom can bring clarity to your visualization
+
+  - The same observations could be visualized with circles, or lines, or rectangular bars, or with all 3!
+
+Different geoms have different aesthetics
+  
+  - A bar can't have a shape aesthetic (it's already a rectangle), but it can take on different border colors, different fill colors, and different positions
+  - A line can't have a shape aesthetic (it's a line) or a fill aesthetic (it's 1D, you can't fill it), but it can have different types (dotted, dashed, etc) and line colors.
+
+---
+
+## Scales
+Scales are the features of a plot that allow you to measure the aesthetics (i.e., map them back from colors and shapes to the variable and values of the dataset)
+
+  - The ticks and labels on the x axis might allow you to match axis position with a specific timepoint
+  - The colors and labels in a legend allow you to match colors to a specific group
+  
+The general term "scales" is chosen over the more common term "legend" because these features of the plot are used to measure and map many different aesthetics, discrete or continuous.
+
+---
+
+## ggplot is dataset-driven plotting
+The ggplot tool set is specifically oriented around creating a plot from your *dataset*, rather than from individual vectors.
+
+In my view, this is the best conceptual model to have: all plots begin with data, and data are never a set of values without a context. 
+
+This is the main reason we choose data frames as the structure to hold our data in R. Data frames allows us to efficiently organize our data by the unique observations we've made, and each variable we've made observations of.
+
+So the main aim of the `ggplot` tool set is to take the relational structure you've already defined in your data frame and translate it into a visualization via *aesthetic mappings*.
+
+---
+
+## Mapping variables to aesthetics
+Making a plot with `ggplot2` always begins with a call to the `ggplot` function, which takes 2 arguments:
+
+  - `data`: The name of the data frame which holds the information you'd like to plot
+  - `mapping:` The list of aesthetic mappings to use for the plot
+
+---
+
+## Mapping variables to aesthetics
+The `mapping` argument requires a special list of values created by the function `aes`. The `aes` function constructs this list when you provide it special key/value pairs 
+
+  - The "keys" are unquoted names of plot aesthetics (`x`, `y`, `color`, `shape`, `linetype`, etc.)
+  - The "values" are unquoted names of variables (i.e., column names) in your data frame
+
+---
+
+## Getting Started
+Let's get into some code! We'll be creating visualizations of the `ncbirths` data set, so let's start by importing that data set into R.
+
+```{r remote_data, eval=FALSE}
+ncbirths <- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+                     stringsAsFactors = FALSE)
+head(ncbirths, n = 4) # Take a peek at the data
+```
+
+```{r local_data, echo=FALSE}
+ncbirths <- read.csv("../../data/ncbirths.csv")
+head(ncbirths, n = 4)
+```
+
+---
+
+## A First Plot
+Let's begin by visualizing the distribution of infant birth weights using a histogram. Remember, a histogram shows the number of (or proportion of) values that fall within specific intervals, called **bins**.
+
+The range of values your variable has is represented along the x-axis in a histogram, so we'll need to map the variable representing the birth weights (called `weights`) to the `x` aesthetic.
+
+```{r frist, eval = FALSE}
+ggplot(data = ncbirths,
+       mapping = aes(x = weight)
+       )
+```
+
+All ggplot figures are made beginning with the `ggplot` function. Inside the parenthesis, I told it: 
+
+1. The data to use for plotting (`data=ncbirths`)
+2. The aesthetic mapping to use (`mapping = aes(x = weight)`)
+
+---
+
+## A First (Blank) Plot
+```{r frist_two, ref.label="frist", echo=TRUE, fig.height=4, fig.width=8.5}
+```
+
+Wait, where's the data?
+
+---
+
+## We need a geom!
+Our plot is blank because we didn't add any geometric objects to represent the data!
+
+In ggplot, we add a geom objects to represent the data by adding a new "layer" containing those geom objects onto the plot.
+
+We do this, we need two things: we need a function to create the geometric object layer, and function to add it to the plot.
+
+---
+
+## We need a geom!
+As pointed out earlier, ggplot supports creating many different geometric objects, and there is a different function to create the layer for each one. 
+
+The names of the these functions follow a common pattern: `geom_`, followed by the name of the geometric object.
+
+  - `geom_point`, `geom_line`, `geom_bar`, `geom_boxplot`, etc.
+
+For histograms, `ggplot` provides a specialized geom, named `geom_histogram`
+
+
+To add this geom to the plot, we literally add it - using the `+` symbol!
+
+---
+
+## Completing our histogram
+Let's finish our histogram now, with the following code:
+
+```{r histogram, fig.height=4, fig.width=8.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = weight)
+       ) +
+  geom_histogram()
+```
+
+---
+
+## Customizing our histogram
+Let's customize our histogram by widening the bins, changing the border color (the `color` argument) and the interior color (the `fill` argument)
+
+.noverticalmargin[
+```{r histogram2, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = weight)) +
+  geom_histogram(binwidth = .5, color = "white", fill = "steelblue")
+```
+
+Note that none of these arguments went inside the aesthetic mapping argument as they do not specifically represent mappings of variables.
+]
+
+---
+
+## ggplots are first-class
+Note that we do *not* necessarily have to create the entire plot at once. ggplots can be saved as R objects, instead of being drawn in the plot window, simply by using the assignment operator.
+
+```{r firstclass, fig.height = 2.75}
+weight_hist <- ggplot(data = ncbirths, mapping = aes(x = weight))
+weight_hist <- weight_hist + geom_histogram(binwidth = .5)
+weight_hist
+```
+
+---
+
+## Faceting to create panels
+It's common practice to compare distributions of two related groups by plotting their data side-by-side across multiple panels.
+
+> *Think of panels as sub-plots within your larger visualization.*
+
+For example, we may want to compare the birth weights of babies born to smokers to the birth weights of babies born to non-smokers, by plotting two side-by-side histograms.
+
+When using `ggplot`, the term **facet** is synonymous with sub-plot or panel.
+
+---
+
+## Faceting to create panels
+
+Within `ggplot`, there are two functions for "faceting" your data: `facet_grid`, and `facet_wrap`
+
+> *Faceting = breaking your observations into sub-groups, and displaying each sub-group in a different panel*
+
+`facet_grid` is useful for displaying sub-groups in a matrix-like grid, when the number of subgroups is evenly divisible
+
+`facet_wrap` is useful for displaying sub-groups in a "ragged" grid, where there may be fewer plots than there are rows and columns
+
+> *You can think of `facet_wrap` as a more general version of `facet_grid`*
+
+---
+## Faceting with facet_wrap
+You add facets to your plot just like you were adding a geom, but with one twist. 
+
+You don't use an aesthetic mapping, but rather a special symbol called the **formula** operator.
+
+```{r histogram3, fig.height=3, fig.width=6.5}
+weight_hist + facet_wrap(~smoker)
+```
+
+The `~smoker` command can by read as "group all the values in my plot by all the unique values in the smoker variable"
+
+---
+
+## Controlling faceting direction
+If you wanted your 3 plots to be arranged vertically instead of side-by-side, you can force ggplot to facet with just a single "column" using the `ncol` argument:
+
+```{r histogram4, fig.height=4, fig.width=4.5}
+weight_hist + facet_wrap(~smoker, ncol=1)
+```
+
+---
+
+## Changing geoms
+Let's switch things up by changing our faceted histogram to a dot plot. In this dot plot, we're going to show **every** observation of the weight variable as a point, instead of binning and counting them. 
+
+The observed weight is going to be represented with the y-axis position, and the smoking/non-smoking status will be indicated along the x-axis.
+
+To make these changes, we need to: 
+
+1. Change our aesthetic mapping to have `weight` mapped to `y` instead of `x`, and `smoker` mapped to `x` instead of faceted.
+
+2. Change geom's, from `geom_histogram` to `geom_point`.
+
+---
+
+## Changing geoms
+```{r dot, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = smoker, y = weight)) +
+  geom_point()
+```
+
+But there are few issues with this plot: the continuous x-axis, and the overlapping points.
+
+---
+## Making `smoker` categorical
+
+We can convince R that `smoker` should be a categorical variable by using the `factor` function, and editing the x-axis label
+
+```{r dot1, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+  geom_point() +
+  xlab("Smoker")
+```
+
+See how the observation where the smoking status was `NA` has been kept instead of dropped.
+
+---
+
+## Reducing overplotting
+We can also reduce overlap between the points (called "overplotting") within each smoking group by "jittering" them.
+
+> *Jitter = randomly shifting all points a small distance horizontally and/or vertically*
+
+All we have to is add a little more information to the `geom_point()` function using the `position` argument and the `position_jitter` function:
+
+```{r jitter, eval=FALSE}
+geom_point(position = position_jitter(width=.15))
+```
+
+The `width` value controls how far you want each point to be randomly "jittered" from side-to-side.
+
+---
+
+## Jittering
+Let's see how it looks when we add it to our dot plot
+
+```{r dot2, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths, mapping = aes(x = factor(smoker), y = weight)) +
+geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+Wow, there were a lot more points hiding under there!
+
+---
+ 
+## Adding color to our aesthetic mapping
+Another way to visually distinguish between sub-groups in your data is to color your geom's according to which group an observation belongs to.
+
+To add a group specific coloring, we need to map the variable in our data set representing that group to the color or fill aesthetic in our plot. 
+
+Here we'll add color to represent male and female babies. Remember that if you want to use different aesthetic mappings for a plot, you'll want to "start over" and make a new plot with the `ggplot` function
+
+---
+## Adding color
+
+```{r dot3, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker")
+```
+
+Note that we got our color legend automatically!
+
+---
+
+## Adjusting the color scale
+But, we may not like the colors R and ggplot2 pick for us. I'm going to show you two options for customizing the colors in your plots
+
+1. Manually specifying each color
+2. Using a specialized color "palette" that has been already built.
+
+---
+
+## Manual colors
+ggplot includes a function called `scale_color_manual` for overriding the default colors with ones of your choosing.
+
+You can use hexadecimal RGB color codes, or pick from one of R's 657 built-in color names!
+
+```{r colors}
+colors() # prints the whole list of names!
+```
+
+---
+
+## Manual Colors
+.noverticalmargin[
+
+Let's try "wheat4" and "cadetblue2".
+
+```{r dot4, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_manual(values=c("wheat4", "cadetblue2"))
+```
+
+Yikes!
+]
+
+---
+
+## Pre-built Palettes
+
+A pre-built color palette is perhaps a safer and easier choice. The `RColorBrewer` package comes with several pre-built palettes, which we can see by loading the package and using `display.brewer.all()`
+
+```{r brewer, eval=FALSE}
+library(RColorBrewer)
+display.brewer.all() # it is a huge plot!
+```
+
+![](Data-Visualization-with-ggplot_files/figure-html/brewer_pal.svg)
+
+---
+
+## Pre-built Palettes
+I'm a big fan of the "Set1" palette, and we can use it in our plot with the `scale_color_brewer` function:
+
+```{r dot5, fig.height=3, fig.width=6.5}
+ggplot(data = ncbirths,
+       mapping = aes(x = factor(smoker), y = weight, color=sex)
+       ) +
+  geom_point(position = position_jitter(width=.15)) +
+  xlab("Smoker") +
+  scale_color_brewer(palette="Set1")
+```

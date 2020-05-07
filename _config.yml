@@ -45,7 +45,7 @@ defaults:
       permalink: /posts/:title
 
 collections:
-   labs:
+   lectures:
       order:
          - "Intro to R and RStudio"
          - "Data Visualization with ggplot"
