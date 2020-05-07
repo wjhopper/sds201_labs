@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Will Hopper" />
+<meta name="author" content="Your Name Here!" />
 
 
 <title>Problem Set 05: Reshaping and Exploring Data</title>
@@ -2623,6 +2623,48 @@ h6 {
 }
 </style>
 
+<style type="text/css; charset=utf-8">body {
+counter-reset: exercises toc; 
+font-size: 18px;
+}
+.col-md-3 { width: 12%; }
+#TOC { width: 65%; max-width: 130px; }
+.tocify-header { text-indent: 0; }
+.col-md-9 { width: 88%; }
+p { margin: 5px 0;}
+img {margin: 5px 0;}
+ol li, ul li { list-style-position: inside; }
+div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
+div[id^='exercise'] > h2 {
+font-weight: bold;
+color: #fff;
+background:#317EAC;
+padding: 5px 10px;
+}
+div[id^='exercise'] > h2::after {
+content: " " counter(exercises);
+counter-increment: exercises;
+}
+li[data-unique^="exercise"]::after {
+content: " " counter(toc); 
+counter-increment: toc; 
+}
+.level3 {
+background: #fff;
+padding-top: 15px;
+margin-bottom: 0;
+}
+.level3 > h3 { margin: 0;}
+.attention { color: #000;
+border: 2px solid #ff2e2e;
+padding: 10px 10px;
+background-color: rgb(255, 110, 110);
+border-radius: 5px;
+}
+.table {width: inherit; background-color: white;}
+.pagedtable table { width: auto;}
+.pagedtable th { max-width: none !important;}
+</style>
 
 
 
@@ -2775,6 +2817,12 @@ div.tocify {
   border-radius: 0px;
 }
 
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
 
 </style>
 
@@ -2805,67 +2853,11 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Problem Set 05: Reshaping and Exploring Data</h1>
-<h4 class="author">Will Hopper</h4>
+<h4 class="author">Your Name Here!</h4>
 
 </div>
 
 
-<!-- PLEASE DONT TOUCH ANY OF THE STYLING CODE BELOW -->
-<style type="text/css">
-body {
-  counter-reset: exercises toc; /* initialize counters */
-  font-size: 18px;
-}
-.col-md-3 { width: 12%; }
-
-#TOC { width: 65%; max-width: 130px; }
-
-.col-md-9 { width: 88%; }
-
-p { margin: 5px 0;}
-
-img {margin: 5px 0;}
-
-ol li, ul li { list-style-position: inside; }
-
-div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
-
-div[id^='exercise'] > h2 {
-  font-weight: bold;
-  color: #fff;
-  background:#317EAC;
-  padding: 5px 10px;
-}
-
-div[id^='exercise'] > h2::after {
-  content: " " counter(exercises);
-  counter-increment: exercises;
-}
-
-.tocify-header > li:after {
-    content: " " counter(toc); /* Use the counter as content */
-    counter-increment: toc; /* Increment the counter by 1 */
-}
-
-.level3 {
-  background: #fff;
-  padding-top: 15px;
-  margin-bottom: 0;
-}
-
-.level3 > h3 { margin: 0;}
-
-.attention { 
-  color: #000;
-  border: 2px solid #ff2e2e;
-  padding: 10px 10px;
-  background-color: rgb(255, 110, 110);
-  border-radius: 5px;
-}
-
-.table {width: inherit; background-color: white;}
-</style>
-<!-- Exercises begin below -->
 <p>In this problem set, we will practice some of the key data reshaping tasks using the tools from the <code>tidyr</code> package, and practice the “getting to know you” phase of exploring a new data set with <code>skim</code> and <code>ggpairs</code>.</p>
 <div id="libraries" class="section level3">
 <h3>Libraries</h3>
@@ -2982,7 +2974,7 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1,h2,h3",
+      selectors: "h1,h2",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
@@ -2991,7 +2983,7 @@ $(document).ready(function ()  {
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
-    options.showAndHide = true;
+    options.showAndHide = false;
     options.smoothScroll = true;
 
     // tocify

@@ -1,76 +1,20 @@
 
 ---
 title: 'Problem Set 05: Reshaping and Exploring Data'
-author: "Will Hopper"
+author: "Your Name Here!"
 output:
   html_document:
+    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
     theme: lumen
     toc: yes
-    toc_float: yes
-    toc_level: 2
+    toc_float:
+      collapsed: false
+    toc_depth: 2
     df_print: paged
     self_contained: true
 editor_options: 
   chunk_output_type: console
 ---
-
-<!-- PLEASE DONT TOUCH ANY OF THE STYLING CODE BELOW -->
-<style type="text/css">
-body {
-  counter-reset: exercises toc; /* initialize counters */
-  font-size: 18px;
-}
-.col-md-3 { width: 12%; }
-
-#TOC { width: 65%; max-width: 130px; }
-
-.col-md-9 { width: 88%; }
-
-p { margin: 5px 0;}
-
-img {margin: 5px 0;}
-
-ol li, ul li { list-style-position: inside; }
-
-div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
-
-div[id^='exercise'] > h2 {
-  font-weight: bold;
-  color: #fff;
-  background:#317EAC;
-  padding: 5px 10px;
-}
-
-div[id^='exercise'] > h2::after {
-  content: " " counter(exercises);
-  counter-increment: exercises;
-}
-
-.tocify-header > li:after {
-    content: " " counter(toc); /* Use the counter as content */
-    counter-increment: toc; /* Increment the counter by 1 */
-}
-
-.level3 {
-  background: #fff;
-  padding-top: 15px;
-  margin-bottom: 0;
-}
-
-.level3 > h3 { margin: 0;}
-
-.attention { 
-  color: #000;
-  border: 2px solid #ff2e2e;
-  padding: 10px 10px;
-  background-color: rgb(255, 110, 110);
-  border-radius: 5px;
-}
-
-.table {width: inherit; background-color: white;}
-</style>
-
-<!-- Exercises begin below -->
 
 In this problem set, we will practice some of the key data reshaping tasks using the tools from the `tidyr` package, and practice the "getting to know you" phase of exploring a new data set with `skim` and `ggpairs`.
 
