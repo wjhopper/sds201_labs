@@ -492,7 +492,7 @@ We'll start with numeric indexing vectors to get a feel for the general procedur
 
 ## Numeric Index Vectors 
 We'll start by slicing smaller chunks out of a larger vector. Here, the numeric vectors inside the brackets tell R the *positions* of the elements we wish to extract.
-```{r large_and_smaller}
+```{r large_and_smaller, R.options=list(width=85)}
 alphabet <- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o",
               "p","q","r","s","t","u","v","w","x","y","z") 
 alphabet[c(1,26)] # Extract First and 26th element
@@ -525,7 +525,7 @@ alphabet[1,5,10]
 
 Instead of creating a vector of values you *do* want to pick out, it may be easier to come up with a vector of ones you *don't* want. We can use negative number's to specify which vector elements we don't want. 
 
-```{r negatives}
+```{r negatives, R.options=list(width=85)}
 alphabet[c(-1,-26)] # Same as alphabet[2:24]
 alphabet[-1:-10]
 ```

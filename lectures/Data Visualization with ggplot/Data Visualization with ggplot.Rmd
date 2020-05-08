@@ -376,7 +376,7 @@ ggplot includes a function called `scale_color_manual` for overriding the defaul
 
 You can use hexadecimal RGB color codes, or pick from one of R's 657 built-in color names!
 
-```{r colors}
+```{r colors, R.options=list(width=85)}
 colors() # prints the whole list of names!
 ```
 
