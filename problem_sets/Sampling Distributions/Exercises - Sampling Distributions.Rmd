@@ -4,7 +4,7 @@ title: 'Problem Set 08: Sampling Distributions'
 author: "Will Hopper"
 output:
   html_document:
-    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    css: "https://wjhopper.github.io/SDS-201/assets/css/lab.css"
     theme: lumen
     toc: yes
     toc_float:

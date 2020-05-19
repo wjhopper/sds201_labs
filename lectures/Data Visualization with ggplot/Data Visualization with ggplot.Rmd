@@ -133,7 +133,7 @@ The `mapping` argument requires a special list of values created by the function
 Let's get into some code! We'll be creating visualizations of the `ncbirths` data set, so let's start by importing that data set into R.
 
 ```{r remote_data, eval=FALSE}
-ncbirths <- read.csv("https://wjhopper.github.io/sds201_labs/data/ncbirths.csv",
+ncbirths <- read.csv("https://wjhopper.github.io/SDS-201/data/ncbirths.csv",
                      stringsAsFactors = FALSE)
 head(ncbirths, n = 4) # Take a peek at the data
 ```

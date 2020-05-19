@@ -4,7 +4,7 @@ title: "Lab 1 Exercises: Intro to R and RStudio"
 author: "Your Name Here!"
 output:
   html_document:
-    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    css: "https://wjhopper.github.io/SDS-201/assets/css/lab.css"
     theme: lumen
     toc: yes
     toc_float:

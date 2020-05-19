@@ -4,7 +4,7 @@ title: 'Problem Set 06: Bivariate Regression'
 author: "Will Hopper"
 output:
   html_document:
-    css: "https://wjhopper.github.io/sds201_labs/assets/css/lab.css"
+    css: "https://wjhopper.github.io/SDS-201/assets/css/lab.css"
     theme: lumen
     toc: yes
     toc_float:
@@ -33,7 +33,7 @@ library(moderndive)
 Next, load the data set from the internet:
 
 ```{r}
-hate_crimes <- read.csv("https://wjhopper.github.io/sds201_labs/data/hate_crimes.csv", stringsAsFactors = FALSE)
+hate_crimes <- read.csv("https://wjhopper.github.io/SDS-201/data/hate_crimes.csv", stringsAsFactors = FALSE)
 ```
 
 The data set has 51 observations from the 11 following variables:

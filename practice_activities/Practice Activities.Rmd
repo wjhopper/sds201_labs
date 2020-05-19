@@ -22,8 +22,8 @@ library(tidyr)
 
 ## Data set links
 
-- `ncbirths`: https://wjhopper.github.io/sds201_labs/data/ncbirths.csv
-- `ncbirths_population`: https://wjhopper.github.io/sds201_labs/data/ncbirths_population.csv
+- `ncbirths`: https://wjhopper.github.io/SDS-201/data/ncbirths.csv
+- `ncbirths_population`: https://wjhopper.github.io/SDS-201/data/ncbirths_population.csv
 
 ## Chapter 6 Problems
 1. For the `ncbirths` data set, consider the bivariate regression model `weight ~ smoker` that uses smoking status to explain variability in infant birth weights. Visualize the relationship between these variables, and compute the $R^2$ value for the regression model. Based on the visualization and the $R^2$ value, do you think think the bivariate `weight ~ smoker` model is a more useful model than the empty model `weight ~ NULL`?
