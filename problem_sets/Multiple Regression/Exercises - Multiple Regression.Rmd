@@ -1,6 +1,6 @@
 
 ---
-title: 'Problem Set 07: Multiple Regression'
+title: 'Problem Set: Multiple Regression'
 author: "Will Hopper"
 output:
   html_document:
@@ -68,15 +68,12 @@ Fit the parallel slopes regression model visualized in the previous question, an
 ## Exercise
 Based on this regression model, what is:
 
-1. The value of the $b_0$ parameter?
-2. The value of the $b_1$ parameter?
-3. The value of the $b_2$ parameter?
-4. The y intercept of the baseline income group?
-5. The y intercept of the "high" income group?
-6. The difference between the y intercept of the "low" income group, and the "high" income group?
-7. The difference between hate crime rate of the "low" income group and the "high" income group when the GINI index is .44?
-8. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "high" income state?
-9. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "low" income state?
+1. The y intercept of the baseline income group?
+2. The y intercept of the "high" income group?
+3. The difference between hate crime rate of the "low" income group and the "high" income group when the GINI index is 0?
+4. The difference between hate crime rate of the "low" income group and the "high" income group when the GINI index is 44?
+5. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "high" income state?
+6. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "low" income state?
 
 *HINT:* Some of the items in this list are identical. In other words, some of these items refer to the same quantities in the regression table.
 
@@ -84,17 +81,15 @@ Based on this regression model, what is:
 
 
 ## Exercise
-Based on this model, what hate crime rate would you expect to occur in a "high" income state with a GINI index of .5? What hate crime rate would you expect to occur in a "low" income state with a GINI index of .5?
-
-**HINT**: You may find it helpful to write out the regression model in GLM notation as a first step.
+Based on this model, what hate crime rate would you expect to occur in a "high" income state with a GINI index of 50? What hate crime rate would you expect to occur in a "low" income state with a GINI index of 50? Use the regression equation for this model to find the answer, showing your work along the way.
 
 ### Solution
 
 
 ## Exercise
-The state of Colorado belonged to the "high" median income group, had a GINI index of 0.457 in 2016, and a hate crime rate of .39 per 100,000 people. 
+The state of Colorado belonged to the "high" median income group, had a GINI index of 45.7 in 2016, and a hate crime rate of .39 per 100,000 people. 
 
-Back in Exercise 5 of Problem Set 6, we found that when we predicted the hate crime rate in Colorado with just the GINI index alone, our bivariate regression model had a residual error of 0.088. How much more accurate is this multiple regression model for predicting the hate crime rate in Colorado?
+Back in Exercise 5 of Problem Set 6, we found that when we predicted the hate crime rate in Colorado with just the GINI index alone, our bivariate regression model had a residual error of about .9. Was the prediction under this multiple regression model more accurate than the prediction under the bivariate model?
 
 ### Solution
 
@@ -111,28 +106,22 @@ Visualize the relationship between the hate crime rate, the GINI inequality inde
 ## Exercise
 Fit the interaction model visualized in the previous question, and report the regression table.
 
-### Solution.
+### Solution
 
 
 ## Exercise
 Based on this regression model, what is:
 
-1. The value of the $b_0$ parameter?
-2. The value of the $b_1$ parameter?
-3. The value of the $b_2$ parameter?
-4. The value of the $b_3$ parameter?
-5. The predicted hate crime rate for the baseline group when the GINI index is 0?
-6. The y intercept of the "low" income group?
-7. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "high" income state?
-8. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "low" income state?
+1. The predicted hate crime rate for the baseline group when the GINI index is 0?
+2. The difference between the predicted change in hate crime rate for a one percentage point increase in the GINI index for a "high" income state, and the predicted change in hate crime rate for a one percentage point increase in the GINI index for a "low" income state?
+3. The change in the y intercept of the "low" income group, compared to the "high" income group?
+4. The predicted increase in hate crime rate for a one percentage point increase in the GINI index for a "low" income state?
 
 ### Solution.
 
 
 ## Exercise
-Based on this model, what hate crime rate would you expect to occur in a "low" income state with a GINI index of .5?
-
-**HINT**: You may find it helpful to write out the regression model in GLM notation as a first step.
+Based on this model, what hate crime rate would you expect to occur in a "low" income state with a GINI index of 50? Use the regression equation for this model to find the answer, showing your work along the way.
 
 ### Solution
 
