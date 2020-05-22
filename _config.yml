@@ -75,5 +75,4 @@ exclude:
    - renv/
    - renv.lock
    - sds201_labs.Rproj
-   - labs_source/
    - R/

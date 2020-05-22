@@ -26,20 +26,29 @@ for (pset in problem_sets) {
   prefix <- paste0("PS", counter, " -")
   ## Enumerate and render all Rmarkdown files
   rmd_files <- list.files(path = pset_path, pattern = "*\\.Rmd$", full.names = TRUE)
-
+  
+  ## Changing the wd really shouldn't be neccesary. But I can't get it to use the cache without it.
+  old <- setwd(pset_path)
+  
   for (raw_rmd in rmd_files) {
 
     rendered_output <- rmarkdown::render(raw_rmd, envir = new.env())
 
-    if (!grepl("solution", raw_rmd, fixed = TRUE)) {
-      destination_paths <- sapply(c(raw_rmd, rendered_output),
-                                  function(x) { file.path(root_dir, output_dir, paste(prefix, basename(x))) }
-                                  )
+    if (!grepl("solution", tolower(basename(raw_rmd)), fixed = TRUE)) {
+
+      to_copy <- basename(c("raw"=raw_rmd, "out"=rendered_output))
+      to_copy <- sub("[ \\-]exercise(s)?", "", to_copy, ignore.case = TRUE)
+      to_copy <- paste(prefix, to_copy)
+      to_copy <- gsub(" (?=.+\\.html$)", "", to_copy, perl = TRUE)
+      destination_paths <- file.path(root_dir, output_dir, to_copy)
       copied_succesfully <- file.copy(c(raw_rmd, rendered_output), destination_paths)
+
     }
 
   }
-
+  
+  setwd(old)
+  
   yaml_header <- paste0("---\n",
                         as.yaml(list(title = paste0("Problem Set ", counter, ": ", pset),
                                      author = "Will Hopper"
@@ -67,7 +76,7 @@ for (pset in problem_sets) {
 }
 
 
-#### Building Problem Sets Collection ####
+# #### Building Problem Sets Collection ####
 labs <- collections$labs$order
 
 # Set output dir. Create it if needed, otherwise clean it out
@@ -88,10 +97,12 @@ for (lab in labs) {
   
   ## Enumerate and render all Rmarkdown files
   rmd_files <- list.files(path = lab_dir, pattern = "*\\.Rmd$", full.names = TRUE)
+  
+  old <- setwd(lab_dir)
   for (raw_rmd in rmd_files) {
     rendered_output <- rmarkdown::render(raw_rmd, envir = new.env())
   }
-  
+  setwd(old)
   ## Copy the lab directory to the collection folder
   ## We can't recursively copy a folder to a new name
   ## So we create the new location, list the files in lab directory, and copy those to the new location
@@ -119,6 +130,7 @@ for (lab in labs) {
   slides_relative_url <- sub(root_dir, "", list.files(destination_dir, pattern="\\.html$", full.names = TRUE))
   slides_relative_url <- paste0("{{site.baseurl}}", sub("^/_", "/", slides_relative_url))
   
+  # Careful; if the slides_relative_url vector is longer than length one, this produces a NESTED markdown list
   body <- list(pandoc.link.return(url = slides_relative_url, text = paste0("Lab ", counter, " Slides")))
   body <- pandoc.list.return(body, add.end.of.list = FALSE)
   
