@@ -88,9 +88,6 @@ ggplot(percentile_cis) +
     color = factor(captured, levels = c("TRUE", "FALSE"))
   )) +
   scale_color_manual(values=c("lightgrey","black"), labels=c("Yes", "No")) +
-  # Removed point estimates since it doesn't necessarily act as center for 
-  # percentile-based CI's
-  # geom_point(aes(x = sample_prop, y = replicate, color = captured)) +
   labs(x = expression("Proportion of red balls"), 
        y = "Confidence interval number", 
        color = "Captured") +
@@ -104,19 +101,30 @@ ggplot(percentile_cis) +
 ```
 
 
-1. Based on this plot, what condfidence level do you think was used to construct these confidence intervals? What do you based this answer on?
+1. Based on this plot, what condfidence level do you think was used to construct these confidence intervals? What do you base this answer on?
 
 2. Why is the statement "The 95% confidence interval ranges between 2.76 and 5.31, so there is a 95% probability the true population mean is between 2.76 and 5.31" incorrect?
 
 
 ## Chapter 9 Problems
 
-Problems one through four apply to the resume and gender bias hypothesis testing example in [ModernDive Chapter 9.1 - 9.2](https://moderndive-bert.netlify.app/9-hypothesis-testing.html#ht-activity)
+Problems one through four apply to the resume and gender bias hypothesis testing example in [ModernDive Chapter 9.1 - 9.2](https://moderndive.netlify.app/9-hypothesis-testing.html#ht-activity)
 
 1. What was the point of repeatedly permuting (i.e., "shuffling") the gender label across all the promotion decisions?
 
-2. The difference in the proportion of promoted males and the proportoin of promoted females was calculated from each randomly permuted data sets. What did this collection of difference scores allow us to construct?
+2. The difference in the proportion of promoted males and the proportoin of promoted females was calculated from each randomly permuted data set. What did this collection of difference scores allow us to construct?
 
 3. What was the null hypothesis in this example?
 
 4. Why did we reject the null hypothesis?
+
+
+## Chapter 10 Problems
+
+1. According to the bivariate regression model described in [ModernDive Section 10.1.1](https://moderndive.com/10-inference-for-regression.html#teaching-evaluations-analysis), what is the predicted difference in teaching score between a professor with a beauty score of 4 and a beauty score 0f 5? What value in the regression table tells us this value and why?
+
+2. Imagine that the relationship of teaching evaluation scores and percieved beauty was studied at every large university across the country, using surveys from 463 courses at each university just as the original UT Austin study did. Because of sampling variability, we would expect that the slope of the `score ~ bty_avg` bivariate regression model fit to each data set would be different. Based on the regression model fit to the original UT Austin data and described in [ModernDive Section 10.1.1](https://moderndive.com/10-inference-for-regression.html#teaching-evaluations-analysis), what would we expect the standard deviation of all these different slopes to be?
+
+3. According to the regression model described in [ModernDive Section 10.1.1](https://moderndive.com/10-inference-for-regression.html#teaching-evaluations-analysis), what is the probability of observing a slope greater than or equal to .067, assuming the "null" distribution of slopes is the true sampling distribution of slopes?
+
+4. Explain [Figure 10.11](https://moderndive.com/10-inference-for-regression.html#fig:p-value-slope) in about one paragraph, written as though you were talking to another student in the course. 
