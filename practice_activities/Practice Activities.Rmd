@@ -37,12 +37,12 @@ library(tidyr)
     
 ## Chapter 7 Problems
 
-Using the `ncbirths` and `ncbirths_population` data sets, answer the following questions:
-
-1. What are the exact mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004 (assuming 125 mothers were observed in each sample)?
-2. What are the estimated mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004, based on the first 125 observed values in the `ncbirths` sample? What about based on the second set of 125 observed values?
-3. Which value from question 2 do you find more surprising?
-4. What information can we learn by examining the sampling distribution of the sample mean?
+1. What information can we learn by examining the sampling distribution of the sample mean?
+2. Using the `ncbirths_population` data, find the mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004 (assuming 1000 mothers were observed in each sample).
+    - **Hint**: The formulas given by the central limit will be extremely useful
+3. Using the `ncbirths` sample, find the mean and variance of the sampling distribution of the average age of mothers giving birth in North Carolina in 2004.
+    - **Hint**: The formulas given by the central limit will again be extremely useful
+4. Which of the values calculated in problems 2 and 3 are exact values, and which are estimates?
 
 ## Chapter 8 Problems
 
