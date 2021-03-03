@@ -16,21 +16,21 @@ img {margin: 5px 0;}
 
 ol li, ul li { list-style-position: inside; }
 
-div[id^='exercise'] { background:rgba(49, 126, 172, 0.1); }
+div[id^='exercise' i] { background:rgba(49, 126, 172, 0.1); }
 
-div[id^='exercise'] > h2 {
+div[id^='exercise' i] > h2 {
   font-weight: bold;
   color: #fff;
   background:#317EAC;
   padding: 5px 10px;
 }
 
-div[id^='exercise'] > h2::after {
+div[id^='exercise' i] > h2::after {
   content: " " counter(exercises);
   counter-increment: exercises;
 }
 
-li[data-unique^="exercise"]::after  {
+li[data-unique^="exercise" i]::after  {
     content: " " counter(toc); /* Use the counter as content */
     counter-increment: toc; /* Increment the counter by 1 */
 }
